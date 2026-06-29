@@ -17,12 +17,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full bg-white dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">
       {/* Top Black Progress Announcement Banner Line */}
-      <div className="w-full bg-[#111827] dark:bg-[#121214] text-white dark:text-neutral-200 py-2 px-4 text-center text-xs sm:text-sm font-medium tracking-wide border-b border-neutral-800 dark:border-neutral-800 flex items-center justify-center gap-2 select-none">
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[11px] font-semibold border border-emerald-500/30">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Live Progress
-        </span>
-        <span>Progress pembuatan website ini sudah mencapai <strong>43%</strong></span>
+      <div className="w-full bg-[#111827] dark:bg-[#121214] text-white dark:text-neutral-200 py-2.5 px-4 text-center text-xs sm:text-sm font-medium tracking-wide border-b border-neutral-800 dark:border-neutral-800 flex items-center justify-center select-none">
+        <span>Progress pembuatan website ini sudah mencapai <strong className="font-semibold text-white dark:text-white underline decoration-neutral-500">43%</strong></span>
       </div>
 
       <div className="max-w-[1440px] h-[60px] mx-auto px-4 sm:px-6 flex items-center justify-between">

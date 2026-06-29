@@ -72,12 +72,12 @@ export default function FooterReveal() {
           </div>
 
           {/* Clean Seamless Cal.com Calendar Embed Container */}
-          <div className="relative z-10 w-full max-w-[1000px] h-[460px] sm:h-[500px] lg:h-[480px] overflow-hidden rounded-xl bg-transparent flex-shrink-0">
+          <div className="relative z-10 w-full max-w-[1000px] h-[580px] sm:h-[500px] lg:h-[480px] overflow-y-auto sm:overflow-hidden rounded-xl bg-transparent flex-shrink-0">
             <Cal 
               key={theme}
               namespace="30min"
               calLink="alifiahamzah/30min"
-              style={{ width: "100%", height: "100%", overflow: "hidden" }}
+              style={{ width: "100%", height: "100%", overflow: "auto" }}
               config={{ 
                 "layout": "month_view", 
                 "useSlotsViewOnSmallScreen": "true", 
