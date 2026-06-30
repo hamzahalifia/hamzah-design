@@ -3,11 +3,11 @@ import { Link, NavLink } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
-import { RollingText } from './magicui/RollingText';
 
+import { RollingText } from './magicui/RollingText';
 import AnimatedThemeToggler from './magicui/AnimatedThemeToggler';
 
-export default function Navbar() {
+export default function Navbar({ hideNavLinks = false }) {
   const { theme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -16,16 +16,12 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">
-      {/* Top Black Progress Announcement Banner Line */}
-      <div className="w-full bg-[#111827] dark:bg-[#121214] text-white dark:text-neutral-200 py-2.5 px-4 text-center text-xs sm:text-sm font-medium tracking-wide border-b border-neutral-800 dark:border-neutral-800 flex items-center justify-center select-none">
-        <span>Progress pembuatan website ini sudah mencapai <strong className="font-semibold text-white dark:text-white underline decoration-neutral-500">43%</strong></span>
-      </div>
 
       <div className="max-w-[1440px] h-[60px] mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Clickable SVG Logomark */}
         <Link to="/" onClick={closeMobileMenu} className="flex items-center group py-1" aria-label="Home">
           <img 
-            src={theme === 'dark' ? '/images/logo-white.svg' : '/images/logo-dark.svg'} 
+            src={theme === 'dark' ? '/images/general/logo-white.svg' : '/images/general/logo-dark.svg'} 
             alt="Alifia Hamzah Logo" 
             className="h-9 w-auto object-contain group-hover:scale-105 transition-transform duration-200"
           />
@@ -34,59 +30,63 @@ export default function Navbar() {
         {/* Right Action Bar */}
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Desktop Navigation Items */}
-          <nav className="hidden md:flex items-center gap-8 mr-2">
-            <NavLink
-              to="/about"
-              className={({ isActive }) =>
-                `text-sm py-1 ${
-                  isActive
-                    ? 'text-black dark:text-white underline underline-offset-4 font-semibold'
-                    : 'text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400'
-                }`
-              }
-            >
-              <RollingText>About</RollingText>
-            </NavLink>
-            <NavLink
-              to="/work"
-              className={({ isActive }) =>
-                `text-sm py-1 ${
-                  isActive
-                    ? 'text-black dark:text-white underline underline-offset-4 font-semibold'
-                    : 'text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400'
-                }`
-              }
-            >
-              <RollingText>Work</RollingText>
-            </NavLink>
-            <NavLink
-              to="/exploration"
-              className={({ isActive }) =>
-                `text-sm py-1 ${
-                  isActive
-                    ? 'text-black dark:text-white underline underline-offset-4 font-semibold'
-                    : 'text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400'
-                }`
-              }
-            >
-              <RollingText>Exploration</RollingText>
-            </NavLink>
-          </nav>
+          {!hideNavLinks && (
+            <nav className="hidden md:flex items-center gap-8 mr-2">
+              <NavLink
+                to="/about"
+                className={({ isActive }) =>
+                  `text-sm py-1 ${
+                    isActive
+                      ? 'text-black dark:text-white underline underline-offset-4 font-semibold'
+                      : 'text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400'
+                  }`
+                }
+              >
+                <RollingText>About</RollingText>
+              </NavLink>
+              <NavLink
+                to="/work"
+                className={({ isActive }) =>
+                  `text-sm py-1 ${
+                    isActive
+                      ? 'text-black dark:text-white underline underline-offset-4 font-semibold'
+                      : 'text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400'
+                  }`
+                }
+              >
+                <RollingText>Work</RollingText>
+              </NavLink>
+              <NavLink
+                to="/exploration"
+                className={({ isActive }) =>
+                  `text-sm py-1 ${
+                    isActive
+                      ? 'text-black dark:text-white underline underline-offset-4 font-semibold'
+                      : 'text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400'
+                  }`
+                }
+              >
+                <RollingText>Exploration</RollingText>
+              </NavLink>
+            </nav>
+          )}
 
           {/* Animated Theme Toggle Button */}
           <AnimatedThemeToggler />
 
           {/* Mobile Hamburger Menu Button */}
-          <button
-            onClick={toggleMobileMenu}
-            aria-label="Toggle Navigation Menu"
-            className="md:hidden p-1.5 rounded-md text-attio-text-primary-light dark:text-attio-text-primary-dark hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer"
-          >
-            <Icon
-              icon={mobileMenuOpen ? 'solar:close-square-linear' : 'solar:hamburger-menu-linear'}
-              className="w-6 h-6"
-            />
-          </button>
+          {!hideNavLinks && (
+            <button
+              onClick={toggleMobileMenu}
+              aria-label="Toggle Navigation Menu"
+              className="md:hidden p-1.5 rounded-md text-attio-text-primary-light dark:text-attio-text-primary-dark hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer"
+            >
+              <Icon
+                icon={mobileMenuOpen ? 'solar:close-square-linear' : 'solar:hamburger-menu-linear'}
+                className="w-6 h-6"
+              />
+            </button>
+          )}
         </div>
       </div>
 
@@ -112,7 +112,7 @@ export default function Navbar() {
                   }`
                 }
               >
-                About
+                <RollingText>About</RollingText>
               </NavLink>
               <NavLink
                 to="/work"
@@ -125,7 +125,7 @@ export default function Navbar() {
                   }`
                 }
               >
-                Work
+                <RollingText>Work</RollingText>
               </NavLink>
               <NavLink
                 to="/exploration"
@@ -138,7 +138,7 @@ export default function Navbar() {
                   }`
                 }
               >
-                Exploration
+                <RollingText>Exploration</RollingText>
               </NavLink>
             </div>
           </motion.div>

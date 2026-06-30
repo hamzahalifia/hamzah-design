@@ -47,9 +47,9 @@ export default function FooterReveal() {
   return (
     <footer className="relative lg:sticky bottom-0 z-10 lg:z-0 w-full h-auto lg:h-screen bg-[#FAFAFB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between border-t border-attio-border-light dark:border-attio-border-dark overflow-visible lg:overflow-hidden transition-colors duration-300">
       {/* Outer Wrapper Matching App.jsx Structure Exactly */}
-      <div className="max-w-[1440px] w-full mx-auto px-0 lg:px-6 flex-1 flex flex-col justify-between overflow-hidden">
-        {/* Centered Bounded Section Sharing Left/Right Borders with Calibrated Desktop Padding for 100vh Fit */}
-        <div className="relative z-10 flex-1 border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-dot-grid flex flex-col justify-start lg:justify-center items-center text-center px-4 sm:px-6 py-8 lg:pt-8 lg:pb-6 my-0 overflow-visible lg:overflow-hidden">
+      <div className="max-w-[1440px] w-full mx-auto px-0 lg:px-6 flex-1 flex flex-col justify-between overflow-visible lg:overflow-hidden">
+        {/* Centered Bounded Section Sharing Left/Right Borders with Dynamic Height */}
+        <div className="relative z-10 flex-1 border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-dot-grid flex flex-col justify-start lg:justify-center items-center text-center px-4 sm:px-6 pt-12 pb-12 lg:pt-[90px] lg:pb-0 my-0 overflow-visible lg:overflow-hidden">
           
           {/* Larger MagicUI DotPattern Background */}
           <DotPattern
@@ -72,19 +72,28 @@ export default function FooterReveal() {
           </div>
 
           {/* Clean Seamless Cal.com Calendar Embed Container */}
-          <div className="relative z-10 w-full max-w-[1000px] h-[580px] sm:h-[500px] lg:h-[480px] overflow-y-auto sm:overflow-hidden rounded-xl bg-transparent flex-shrink-0">
-            <Cal 
-              key={theme}
-              namespace="30min"
-              calLink="alifiahamzah/30min"
-              style={{ width: "100%", height: "100%", overflow: "auto" }}
-              config={{ 
-                "layout": "month_view", 
-                "useSlotsViewOnSmallScreen": "true", 
-                "theme": theme === 'dark' ? 'dark' : 'light',
-                "hideEventTypeDetails": false
+          <div className="relative z-10 w-full max-w-[1000px] h-[500px] sm:h-[430px] lg:h-[415px] overflow-hidden rounded-xl bg-transparent flex-shrink-0">
+            <div 
+              style={{ 
+                width: "117.65%", 
+                height: "117.65%", 
+                transform: "scale(0.85)", 
+                transformOrigin: "top left" 
               }}
-            />
+            >
+              <Cal 
+                key={theme}
+                namespace="30min"
+                calLink="alifiahamzah/30min"
+                style={{ width: "100%", height: "100%", overflow: "auto" }}
+                config={{ 
+                  "layout": "month_view", 
+                  "useSlotsViewOnSmallScreen": "true", 
+                  "theme": theme === 'dark' ? 'dark' : 'light',
+                  "hideEventTypeDetails": false
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

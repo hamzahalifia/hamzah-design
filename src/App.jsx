@@ -7,8 +7,18 @@ import Navbar from './components/Navbar';
 import ProfileSidebar from './components/ProfileSidebar';
 import WorkShowcase from './components/WorkShowcase';
 import FooterReveal from './components/FooterReveal';
-import UnderConstruction from './components/UnderConstruction';
 import WorkDetail from './components/WorkDetail';
+import About from './components/About';
+import WorkPage from './components/WorkPage';
+import ExplorationPage from './components/ExplorationPage';
+import NotFound from './components/NotFound';
+import ServerError from './components/ServerError';
+import ErrorBoundary from './components/ErrorBoundary';
+
+import LoginPage from './components/admin/LoginPage';
+import AdminDashboard from './components/admin/AdminDashboard';
+import WorkEditor from './components/admin/WorkEditor';
+import ExplorationEditor from './components/admin/ExplorationEditor';
 
 function HomePage() {
   const { theme } = useTheme();
@@ -33,7 +43,10 @@ function HomePage() {
             <ProfileSidebar />
 
             {/* Right Scrollable Work Showcase Column */}
-            <WorkShowcase />
+            <div className="flex-1">
+
+              <WorkShowcase />
+            </div>
           </div>
         </div>
       </main>
@@ -48,14 +61,32 @@ export default function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<UnderConstruction pageTitle="About" />} />
-          <Route path="/work" element={<UnderConstruction pageTitle="Work" />} />
-          <Route path="/work/:workId" element={<WorkDetail />} />
-          <Route path="/exploration" element={<UnderConstruction pageTitle="Exploration" />} />
-        </Routes>
+        <ErrorBoundary>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/work" element={<WorkPage />} />
+            <Route path="/work/:workId" element={<WorkDetail />} />
+            <Route path="/exploration" element={<ExplorationPage />} />
+            
+            {/* Admin & CMS Routes — only mounted in dev */}
+            <Route path="/login" element={<LoginPage />} />
+            {import.meta.env.DEV && (
+              <>
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/work/new" element={<WorkEditor />} />
+                <Route path="/admin/work/edit/:id" element={<WorkEditor />} />
+                <Route path="/admin/exploration/new" element={<ExplorationEditor />} />
+                <Route path="/admin/exploration/edit/:id" element={<ExplorationEditor />} />
+              </>
+            )}
+
+            {/* Error state pages */}
+            <Route path="/500" element={<ServerError />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ErrorBoundary>
       </BrowserRouter>
     </ThemeProvider>
   );

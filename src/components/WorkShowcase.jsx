@@ -1,66 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { RollingText } from './magicui/RollingText';
-
-const FEATURED_WORKS = [
-  {
-    id: 1,
-    slug: "work-1",
-    title: "Resolving a 40% Efficiency Loss in HR Timeshift Management",
-    description: "In 2025, PT Neuronworks Indonesia suffered from fragmented manual shift permit tracking that cost productive work hours every month. Here is how we transformed the operational workflow with a story-data approach.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 2,
-    slug: "work-2",
-    title: "Story-Data Enterprise Dashboard Transformation.",
-    description: "Streamlining real-time data visual hierarchy for multi-tier management reporting, reducing decision latency by 35%.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 3,
-    slug: "work-3",
-    title: "Scalable Design System & Component Infrastructure.",
-    description: "Unifying design language across 12+ enterprise platforms with high-density component libraries and automated token sync.",
-    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
-  },
-];
-
-const EXPLORATIONS = [
-  {
-    id: 1,
-    title: "AI Prompt Flow Canvas",
-    category: "Generative UI & Graph Nodes",
-    description: "An experimental canvas interface designed for configuring complex multi-agent LLM chains visually with real-time token telemetry.",
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 2,
-    title: "Dark Mode Data Widget Studio",
-    category: "Design System & Components",
-    description: "A high-density widget ecosystem tailored for enterprise financial risk monitors, featuring custom HSL monochromatic themes.",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 3,
-    title: "Spatial Analytics Control Room",
-    category: "3D Visualizations & GIS",
-    description: "Real-time spatial data rendering engine built for logistics dispatchers to monitor fleet telematics across global hubs.",
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 4,
-    title: "Micro-Interaction Prototyping",
-    category: "Motion & UI Engineering",
-    description: "Exploration of spring physics-based gestures and tactile feedback components for high-frequency trading web terminals.",
-    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
-  },
-];
+import { GridPattern } from './magicui/GridPattern';
+import ClosePopup from './ClosePopup';
 
 export default function WorkShowcase() {
   const [selectedExploration, setSelectedExploration] = useState(null);
+  const [works, setWorks] = useState([]);
+  const [explorations, setExplorations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadShowcaseData() {
+      try {
+        const [worksRes, explorationsRes] = await Promise.all([
+          fetch('/api/works'),
+          fetch('/api/explorations')
+        ]);
+        if (worksRes.ok && explorationsRes.ok) {
+          const worksData = await worksRes.json();
+          const explorationsData = await explorationsRes.json();
+          setWorks(worksData);
+          setExplorations(explorationsData);
+        }
+      } catch (err) {
+        console.error("Gagal memuat data showcase:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadShowcaseData();
+  }, []);
 
   return (
     <section className="flex-1 bg-white dark:bg-[#0A0A0B] divide-y divide-attio-border-light dark:divide-attio-border-dark">
@@ -80,8 +53,16 @@ export default function WorkShowcase() {
           </Link>
         </div>
 
+        {/* Loading Spinner */}
+        {loading && (
+          <div className="py-20 flex flex-col items-center justify-center gap-2 text-neutral-400">
+            <Icon icon="svg-spinners:180-ring" className="w-6 h-6 text-neutral-500" />
+            <span className="text-xs">Memuat karya...</span>
+          </div>
+        )}
+
         {/* Featured Work Flush Cards */}
-        {FEATURED_WORKS.map((work) => (
+        {!loading && works.map((work) => (
           <Link key={work.id} to={`/work/${work.slug}`} className="block group">
             <motion.div
               initial={{ opacity: 0.9, y: 10 }}
@@ -91,15 +72,26 @@ export default function WorkShowcase() {
               className="p-5 lg:p-6 flex flex-col md:flex-row items-start justify-start gap-5 lg:gap-6 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer"
             >
               {/* Project Image Preview */}
-              <div className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative">
-                <motion.img
-                  src={work.image}
-                  alt={work.title}
-                  loading="lazy"
-                  whileHover={{ scale: 1.04 }}
-                  transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                  className="w-full h-full object-cover transform-gpu will-change-transform pointer-events-auto"
-                />
+              <div className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative border border-attio-border-light dark:border-attio-border-dark">
+                {work.heroImage && (work.heroImage.endsWith('.mp4') || work.heroImage.toLowerCase().includes('.mp4')) ? (
+                  <video
+                    src={work.heroImage}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04] pointer-events-auto"
+                  />
+                ) : (
+                  <motion.img
+                    src={work.heroImage}
+                    alt={work.title}
+                    loading="lazy"
+                    whileHover={{ scale: 1.04 }}
+                    transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+                    className="w-full h-full object-cover transform-gpu will-change-transform pointer-events-auto"
+                  />
+                )}
               </div>
 
               {/* Project Details */}
@@ -108,7 +100,7 @@ export default function WorkShowcase() {
                   {work.title}
                 </h3>
                 <p className="text-sm font-normal text-[#6B7280] dark:text-neutral-400 leading-relaxed">
-                  {work.description}
+                  {work.desc}
                 </p>
               </div>
             </motion.div>
@@ -134,14 +126,22 @@ export default function WorkShowcase() {
 
         {/* 2x2 Grid Seamless Cards */}
         <div className="p-5 lg:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {EXPLORATIONS.map((exp) => (
-              <motion.div
-                key={exp.id}
-                initial={{ opacity: 0.9 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                onClick={() => setSelectedExploration(exp)}
+          {loading && (
+            <div className="py-20 flex flex-col items-center justify-center gap-2 text-neutral-400">
+              <Icon icon="svg-spinners:180-ring" className="w-6 h-6 text-neutral-500" />
+              <span className="text-xs">Memuat eksplorasi...</span>
+            </div>
+          )}
+          
+          {!loading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {explorations.map((exp) => (
+                <motion.div
+                  key={exp.id}
+                  initial={{ opacity: 0.9 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  onClick={() => setSelectedExploration(exp)}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="group rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 cursor-pointer h-[230px] relative"
               >
@@ -161,65 +161,79 @@ export default function WorkShowcase() {
               </motion.div>
             ))}
           </div>
+          )}
         </div>
       </div>
 
-      {/* Large Detail Modal Popup for Exploration Items */}
-      <AnimatePresence>
-        {selectedExploration && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-10">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedExploration(null)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-md"
-            />
-
-            {/* Modal Box */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="relative z-10 max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0A0A0B] border border-attio-border-light dark:border-attio-border-dark rounded-2xl shadow-2xl p-6 space-y-6"
-            >
-              {/* Modal Close Button */}
-              <button
+      {/* Large Detail Modal Popup for Exploration Items — portaled to body to avoid z-index issues */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {selectedExploration && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 lg:p-10">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 onClick={() => setSelectedExploration(null)}
-                className="absolute top-4 right-4 p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-              >
-                <Icon icon="solar:close-square-linear" className="w-5 h-5" />
-              </button>
+                className="fixed inset-0 bg-black/60 backdrop-blur-md"
+              />
 
-              {/* Large Image Showcase */}
-              <div className="w-full h-[300px] sm:h-[450px] rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 relative">
-                <img
-                  src={selectedExploration.image}
-                  alt={selectedExploration.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              {/* Card Wrapper (relative for ClosePopup sibling) */}
+              <div className="relative z-10 max-w-4xl w-full mx-auto">
+                <ClosePopup onClose={() => setSelectedExploration(null)} />
 
-              {/* Detail Content */}
-              <div className="space-y-3 px-2">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
-                    {selectedExploration.category}
-                  </span>
-                </div>
-                <h3 className="font-serif-attio text-3xl font-normal text-neutral-900 dark:text-white">
-                  {selectedExploration.title}
-                </h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                  {selectedExploration.description}
-                </p>
+                {/* Modal Card */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  className="bg-white dark:bg-[#0A0A0B] border border-[#CDD1CD] dark:border-attio-border-dark rounded-2xl shadow-2xl overflow-hidden"
+                >
+                  {/* Interactive Grid Pattern in top right with radial mask */}
+                  <div className="absolute top-0 right-0 w-64 h-64 z-0 overflow-hidden [mask-image:radial-gradient(220px_circle_at_top_right,white,transparent)] pointer-events-none">
+                    <GridPattern 
+                      width={32} 
+                      height={32} 
+                      squares={[[10, 10]]} 
+                      className="opacity-70 dark:opacity-40" 
+                    />
+                  </div>
+
+                  {/* Scrollable Content Area */}
+                  <div className="relative z-10 max-h-[85vh] overflow-y-auto p-6 space-y-6">
+                    {/* Large Image Showcase */}
+                    <div className="w-full h-[300px] sm:h-[450px] rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 relative">
+                      <img
+                        src={selectedExploration.image}
+                        alt={selectedExploration.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Detail Content */}
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
+                          {selectedExploration.category}
+                        </span>
+                      </div>
+                      <h3 className="font-serif-attio text-3xl font-normal text-neutral-900 dark:text-white">
+                        {selectedExploration.title}
+                      </h3>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                        {selectedExploration.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   );
 }

@@ -27,18 +27,19 @@ export function AnimatedThemeToggler({ className = '', ...props }) {
     });
 
     transition.ready.then(() => {
-      const clipPath = [
-        `circle(0px at ${x}px ${y}px)`,
-        `circle(${endRadius}px at ${x}px ${y}px)`,
-      ];
+      // Always expand the circle outward from the button — works for both directions
       document.documentElement.animate(
         {
-          clipPath: theme === 'dark' ? clipPath.reverse() : clipPath,
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
         },
         {
           duration: 450,
           easing: 'ease-in-out',
-          pseudoElement: theme === 'dark' ? '::view-transition-old(root)' : '::view-transition-new(root)',
+          // Always animate the incoming view (the new theme)
+          pseudoElement: '::view-transition-new(root)',
         }
       );
     });

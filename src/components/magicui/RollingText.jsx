@@ -1,40 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export const RollingText = ({ children, className }) => {
+export const RollingText = ({ children, hoverText, className }) => {
   const text = typeof children === 'string' ? children : '';
   const letters = Array.from(text);
+  const hoverLetters = typeof hoverText === 'string' ? Array.from(hoverText) : Array.from(text);
+  const [hovered, setHovered] = useState(false);
 
   return (
-    <span className={`inline-flex items-center select-none group/roll cursor-pointer ${className || ''}`}>
+    <span
+      className={`inline-flex items-center select-none cursor-pointer ${className || ''}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {letters.map((char, index) => {
         if (char === ' ') {
-          return <span key={index} className="inline-block">&nbsp;</span>;
+          return (
+            <span key={index} className="inline-block">
+              &nbsp;
+            </span>
+          );
         }
+
+        const hoverChar = hoverLetters[index] || char;
 
         return (
           <span
             key={index}
-            className="relative inline-block overflow-hidden"
-            style={{ height: '1.2em', lineHeight: '1.2em' }}
+            className="relative inline-block"
+            style={{
+              height: '1.2em',
+              lineHeight: '1.2em',
+              overflow: 'hidden',
+            }}
           >
-            {/* Primary Character Rolling Up */}
+            {/* Primary — slides up & out */}
             <span
+              className="block"
               style={{
-                transitionDelay: `${index * 25}ms`,
+                transition: `transform 300ms cubic-bezier(0.33, 1, 0.68, 1) ${index * 25}ms`,
+                transform: hovered ? 'translateY(-100%)' : 'translateY(0)',
               }}
-              className="block transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] transform translate-y-0 group-hover/roll:-translate-y-full"
             >
               {char}
             </span>
 
-            {/* Secondary Character Rolling In from Below */}
+            {/* Secondary — slides up from below into place */}
             <span
+              className="absolute top-0 left-0 block"
               style={{
-                transitionDelay: `${index * 25}ms`,
+                transition: `transform 300ms cubic-bezier(0.33, 1, 0.68, 1) ${index * 25}ms`,
+                transform: hovered ? 'translateY(0)' : 'translateY(100%)',
               }}
-              className="absolute inset-0 block transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] transform translate-y-full group-hover/roll:translate-y-0"
             >
-              {char}
+              {hoverChar}
             </span>
           </span>
         );

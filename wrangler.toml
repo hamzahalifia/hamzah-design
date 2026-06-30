@@ -1,0 +1,9 @@
+name = "hamzah-design"
+compatibility_date = "2026-06-30"
+pages_build_output_dir = "dist"
+
+
+[[d1_databases]]
+binding = "hamzahdesign_db"
+database_name = "hamzahdesign-db"
+database_id = "dd578af9-10cc-46ca-8b97-e809fc9b81a5"
