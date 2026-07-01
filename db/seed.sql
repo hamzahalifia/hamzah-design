@@ -1,173 +1,38 @@
--- Seeding Case Studies (Works)
-INSERT INTO case_studies (slug, category, reading_time, title, desc, hero_image, logo, live_url, company, design_stack, industry, year, sections, content)
-VALUES (
-  'resolving-40-percent-efficiency-loss-in-hr-timeshift-management',
-  'DOOR V3',
-  '10 min read',
-  'Resolving a 40% Efficiency Loss in HR Timeshift Management',
-  'In 2025, PT Neuronworks Indonesia suffered from fragmented manual shift permit tracking that cost productive work hours every month. Here is how we transformed the operational workflow with a story-data approach.',
-  '/images/work/thumbnail-door.webp',
-  '/images/client_logo/clientlogo_door.svg',
-  'https://www.neuronworks.co.id/en/solusi-digital/door-hrmis/',
-  'PT Neuronworks Indonesia',
-  '[{"name":"Figma","icon":"devicon:figma"},{"name":"Lottiefiles","icon":"simple-icons:lottiefiles","color":"#00DDB3"},{"name":"Maze","icon":"gg:maze","color":"#FC0A70"},{"name":"Notion","icon":"devicon:notion"}]',
-  '["HRMIS"]',
-  '2025',
-  '[{"id":"it-started-here","title":"It Started Here..."},{"id":"core-friction","title":"Understanding the Core Friction"},{"id":"the-change","title":"The Change and How I Did It"},{"id":"business-impact","title":"Business Impact"},{"id":"what-i-learned","title":"What I Learned"}]',
-  '<h2 id="it-started-here">It Started Here...</h2>
-<p>DOOR adalah platform HRMIS yang berfungsi sebagai ekosistem terpusat untuk seluruh operasional karyawan di perusahaan. Namun, di balik layar, tim operasional menghadapi masalah skalabilitas yang serius.</p>
-<p>Sistem manajemen shift manual yang terfragmentasi menghabiskan 40-50 jam kerja produktif perusahaan setiap bulannya. Jadwal yang tidak sinkron ini memicu margin kesalahan sebesar 5-8% dalam rekapitulasi kehadiran, yang berisiko menyebabkan kerugian finansial yang signifikan akibat kelebihan pembayaran payroll yang tidak valid.</p>
-<div class="p-5 rounded-xl border-l-2 border-amber-500 bg-amber-50/60 dark:bg-amber-950/20 text-neutral-800 dark:text-neutral-200 text-sm font-medium">Sederhananya: Tidak ada Single Source of Truth. Komunikasi manual menyebabkan jadwal yang terlewat dan persetujuan yang tidak tercatat.</div>
+-- ============================================================
+-- SEED DATA: 10 Case Studies + 10 Explorations
+-- ============================================================
 
-<h2 id="core-friction">Understanding the Core Friction</h2>
-<p>Untuk memahami di mana letak kerusakannya, saya memetakan gesekan alur kerja di tiga level pengguna:</p>
-<div class="space-y-3 my-4">
-  <div class="p-4 rounded-xl border border-attio-border-light dark:border-attio-border-dark bg-neutral-50/50 dark:bg-neutral-900/30"><span class="font-bold text-[#111827] dark:text-white">1. Employee:</span> Membutuhkan transparansi dan persetujuan perubahan shift yang cepat tanpa birokrasi yang berlapis.</div>
-  <div class="p-4 rounded-xl border border-attio-border-light dark:border-attio-border-dark bg-neutral-50/50 dark:bg-neutral-900/30"><span class="font-bold text-[#111827] dark:text-white">2. Team Leader:</span> Mengalami kelebihan beban kognitif (cognitive overload) karena harus melacak permintaan manual yang tersebar melalui chat.</div>
-  <div class="p-4 rounded-xl border border-attio-border-light dark:border-attio-border-dark bg-neutral-50/50 dark:bg-neutral-900/30"><span class="font-bold text-[#111827] dark:text-white">3. Human Resource:</span> Menghadapi risiko tinggi dari kesalahan human error akibat data entry manual untuk payroll bulanan.</div>
-</div>
-<h3>The Pivot:</h3>
-<p>Awalnya, asumsi solusi yang muncul adalah membangun fitur self-request yang kompleks untuk karyawan. Namun, saya memutuskan untuk memutar arah solusi. Alih-alih membebani sistem dengan request berlapis, saya mendigitalkan kontrol langsung ke tangan Team Leader dan HR. Birokrasi dipangkas tanpa mengorbankan akurasi; karyawan bisa berkoordinasi secara verbal, sementara eksekusi dan pelacakan dilakukan 100% digital, instan, dan terpusat di DOOR.</p>
+-- Case Studies (10)
+INSERT OR IGNORE INTO case_studies (slug, category, reading_time, title, desc, hero_image, logo, live_url, company, design_stack, industry, year, sections, content, is_highlighted) VALUES
+('door-v3-enterprise-hrmis', 'Enterprise Dashboard', '12 min read', 'DOOR V3 – Enterprise HRMIS Platform Redesign', 'End-to-end redesign of a complex HRMIS platform serving 200,000+ government employees across Indonesia, focusing on usability and performance at scale.', '/images/work/thumbnail-door.webp', '/images/client_logo/clientlogo_door.svg', 'https://door.id', 'PT Neuronworks Indonesia', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"React","icon":"devicon:react","color":"#61DAFB"},{"name":"Tailwind","icon":"devicon:tailwindcss","color":"#38BDF8"}]', '["HRMIS","B2B SaaS","Enterprise"]', '2025', '[{"id":"the-challenge","title":"The Challenge"},{"id":"research-discovery","title":"Research & Discovery"},{"id":"design-system","title":"Design System Architecture"},{"id":"final-outcome","title":"Final Outcome"}]', '<h2 id="the-challenge">The Challenge</h2><p>PT Neuronworks Indonesia needed a complete overhaul of their flagship HRMIS product DOOR. The existing v2 interface was built on legacy technology with poor mobile support, confusing navigation patterns, and accessibility issues that affected 200,000+ daily users.</p><h2 id="research-discovery">Research & Discovery</h2><p>We conducted 40+ stakeholder interviews, analyzed 10,000+ support tickets, and ran usability tests with 60 government employees across 5 different offices. Key findings revealed that 68% of users accessed the system via mobile devices during field visits.</p><h2 id="design-system">Design System Architecture</h2><p>Built a comprehensive design system with 200+ components, tokenized theming for light/dark modes, and WCAG 2.1 AA compliance. Every component was tested across 4 breakpoints and 3 input methods (mouse, keyboard, touch).</p><h2 id="final-outcome">Final Outcome</h2><p>The redesign reduced task completion time by 40%, decreased support tickets by 55%, and received a 92% satisfaction score from users in the pilot rollout.</p>', 1),
 
-<h2 id="the-change">The Change and How I Did It</h2>
-<div class="rounded-xl overflow-hidden border border-attio-border-light dark:border-attio-border-dark bg-neutral-100 dark:bg-neutral-900 mb-6">
-  <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" alt="Bulk Shift Interface Design" class="w-full h-[320px] object-cover" />
-</div>
-<h3>1. Bulk Week Edit untuk Team Leader</h3>
-<blockquote class="border-l-2 border-neutral-300 dark:border-neutral-700 pl-5 my-6 text-neutral-600 dark:text-neutral-400 italic">
-  <p class="mb-1">"Saya butuh cara cepat untuk mengubah jadwal harian setiap orang selama satu minggu penuh."</p>
-  <cite class="not-italic text-xs text-neutral-400 dark:text-neutral-500">— Team Leader Feedback</cite>
-</blockquote>
-<p>Mengubah shift satu per satu per hari sangat tidak efisien dan rentan terjadi kesalahan input. Saya merancang interaksi Bulk Change Shift (1W):</p>
-<ul class="list-disc list-inside space-y-2 pl-2">
-  <li><strong>Visual Feedback:</strong> Pengguna kini bisa langsung melihat chips hari mana saja yang sedang aktif dan memperkirakan hari mana yang akan diubah jadwalnya.</li>
-  <li><strong>Simplicity in Input:</strong> Hanya ada dua input utama di dalam modal: shift baru yang akan menimpa data sebelumnya, dan satu checkbox krusial untuk mengecualikan hari libur reguler (Exclude Weekend).</li>
-  <li><strong>Constraint:</strong> Kini, Team Leader dapat mengubah shift anggota tim mereka setiap minggu, tetapi sistem mengunci kemampuan mereka untuk mengubah jadwal hari ini atau tanggal yang sudah lewat (backdate) demi menjaga integritas data.</li>
-</ul>
+('tappp-digital-payment', 'Fintech Dashboard', '10 min read', 'TAPPP – Digital Payment Gateway Experience', 'Designing a frictionless payment dashboard for a leading digital wallet platform in Indonesia, serving both merchants and consumers with real-time transaction analytics.', '/images/work/doormockup-01.webp', '/images/client_logo/clientlogo_tappp.webp', 'https://tappp.id', 'PT TAPPP Teknologi', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"Vue","icon":"devicon:vuejs","color":"#42B883"},{"name":"Storybook","icon":"devicon:storybook","color":"#FF4785"}]', '["Fintech","Digital Payment","B2C"]', '2024', '[{"id":"overview","title":"Project Overview"},{"id":"merchant-experience","title":"Merchant Experience"},{"id":"consumer-flow","title":"Consumer Flow"}]', '<h2 id="overview">Project Overview</h2><p>TAPPP is one of Indonesia''s fastest-growing digital wallet platforms. They needed a complete UX overhaul of their merchant dashboard and consumer payment flows to support their expansion from 2M to 10M users.</p><h2 id="merchant-experience">Merchant Experience</h2><p>Designed a real-time analytics dashboard with transaction monitoring, settlement reports, and QR code generation. Implemented progressive disclosure patterns to handle complex financial data without overwhelming users.</p><h2 id="consumer-flow">Consumer Flow</h2><p>Redesigned the payment flow reducing steps from 7 to 3, implementing biometric authentication and smart default selections based on user behavior patterns.</p>', 1),
 
-<div class="rounded-xl overflow-hidden border border-attio-border-light dark:border-attio-border-dark bg-neutral-100 dark:bg-neutral-900 my-6">
-  <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80" alt="Batch Upload HR Interface" class="w-full h-[320px] object-cover" />
-</div>
-<h3>2. Division-Wide Batch Upload untuk HR</h3>
-<blockquote class="border-l-2 border-neutral-300 dark:border-neutral-700 pl-5 my-6 text-neutral-600 dark:text-neutral-400 italic">
-  <p class="mb-1">"Bagaimana cara mengubah jadwal shift untuk seluruh karyawan atau beberapa orang di divisi yang berbeda secara bersamaan?"</p>
-  <cite class="not-italic text-xs text-neutral-400 dark:text-neutral-500">— HR Operations Manager</cite>
-</blockquote>
-<p>Membangun alur Upload Shift Batch yang berpusat pada mental model HR yang terbiasa dengan pengolahan data tabular. HR dapat mengunduh template custom, mengeditnya secara eksternal (di Excel/Spreadsheet), lalu mengunggahnya kembali.</p>
-<ul class="list-disc list-inside space-y-2 pl-2">
-  <li><strong>Workflow Alignment:</strong> Saya memisahkan tab modal menjadi dua bagian agar sesuai dengan alur kerja natural HR: mengunduh template custom, mengeditnya, lalu mengunggahnya kembali.</li>
-  <li><strong>Scalability:</strong> Sekarang HR dapat mengubah jadwal massal secara langsung—baik untuk seluruh karyawan, divisi tertentu, atau bahkan karyawan spesifik di divisi yang berbeda—hanya melalui import file .csv.</li>
-</ul>
+('pertamina-petroleum-analytics', 'Enterprise Dashboard', '15 min read', 'Pertamina – Petroleum Distribution Analytics', 'Interactive analytics platform for monitoring petroleum distribution across 5,000+ gas stations in Indonesia with real-time supply chain visualization.', '/images/work/thumbnail-door.webp', '/images/client_logo/clientlogo_pertamina.webp', NULL, 'PT Pertamina (Persero)', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"D3.js","icon":"devicon:d3js","color":"#F9A03C"},{"name":"Next.js","icon":"devicon:nextjs","color":"#000000"}]', '["Oil & Gas","Supply Chain","Enterprise"]', '2025', '[{"id":"context","title":"Context & Scale"},{"id":"visualization","title":"Data Visualization"},{"id":"impact","title":"Business Impact"}]', '<h2 id="context">Context & Scale</h2><p>Pertamina manages the distribution of petroleum products to over 5,000 gas stations across the Indonesian archipelago. The existing monitoring system relied on legacy dashboards with limited real-time capabilities.</p><h2 id="visualization">Data Visualization</h2><p>Created interactive flow maps showing petroleum movement from refineries to terminals to gas stations. Implemented anomaly detection alerts and predictive supply forecasting using historical data patterns.</p><h2 id="impact">Business Impact</h2><p>The new platform reduced supply chain disruptions by 35% and improved logistics planning efficiency by 50% in the first quarter of deployment.</p>', 1),
 
-<div class="rounded-xl overflow-hidden border border-attio-border-light dark:border-attio-border-dark bg-neutral-100 dark:bg-neutral-900 my-6">
-  <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" alt="Analytics Dashboard Summary" class="w-full h-[320px] object-cover" />
-</div>
+('telkom-digital-transformation', 'Enterprise Portal', '11 min read', 'Telkom Indonesia – Digital Service Platform', 'Unified digital service portal for Indonesia''s largest telecommunications provider, consolidating 12 separate customer services into one intuitive platform.', '/images/work/doormockup-01.webp', '/images/client_logo/clientlogo_telkomindonesia.webp', NULL, 'PT Telkom Indonesia', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"Angular","icon":"devicon:angularjs","color":"#E23237"},{"name":"Sass","icon":"devicon:sass","color":"#CC6699"}]', '["Telecommunications","Enterprise","B2C"]', '2024', '[{"id":"problem","title":"The Problem"},{"id":"solution","title":"Our Solution"},{"id":"results","title":"Results"}]', '<h2 id="problem">The Problem</h2><p>Telkom Indonesia customers had to navigate through 12 different portals for various services—from bill payments to internet packages to enterprise solutions. This fragmented experience led to high churn rates and overwhelmed customer service teams.</p><h2 id="solution">Our Solution</h2><p>Designed a unified platform using a modular architecture that allowed users to access all Telkom services through a single sign-on. Implemented AI-powered recommendations for personalized service bundles.</p><h2 id="results">Results</h2><p>Customer satisfaction scores improved by 45%, service activation time reduced from 7 days to under 24 hours, and inbound support calls decreased by 30%.</p>', 0),
 
-<h2 id="business-impact">Business Impact</h2>
-<p>Memberikan nilai bisnis yang terukur dan efisiensi operasional bukan sekadar pelengkap, melainkan tujuan utama dari perancangan ulang sistem B2B ini.</p>
-<div class="overflow-x-auto rounded-xl border border-attio-border-light dark:border-attio-border-dark my-4">
-  <table class="w-full text-left text-xs sm:text-sm border-collapse">
-    <thead>
-      <tr class="bg-neutral-100 dark:bg-neutral-800/80 border-b border-attio-border-light dark:border-attio-border-dark text-neutral-900 dark:text-white font-semibold">
-        <th class="p-3.5 sm:p-4">Metric</th>
-        <th class="p-3.5 sm:p-4">Before</th>
-        <th class="p-3.5 sm:p-4">After</th>
-        <th class="p-3.5 sm:p-4">Impact Detail</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-attio-border-light dark:divide-attio-border-dark bg-white dark:bg-neutral-900/40">
-      <tr>
-        <td class="p-3.5 sm:p-4 font-semibold text-neutral-900 dark:text-white">Operational Efficiency</td>
-        <td class="p-3.5 sm:p-4 text-neutral-500 dark:text-neutral-400">Manual / Scattered</td>
-        <td class="p-3.5 sm:p-4 text-emerald-600 dark:text-emerald-400 font-medium">Centralized & Streamlined</td>
-        <td class="p-3.5 sm:p-4 text-neutral-700 dark:text-neutral-300">+40% efficiency. Menghemat puluhan jam kerja HR dan Leader setiap bulannya.</td>
-      </tr>
-      <tr>
-        <td class="p-3.5 sm:p-4 font-semibold text-neutral-900 dark:text-white">Payroll Discrepancies</td>
-        <td class="p-3.5 sm:p-4 text-neutral-500 dark:text-neutral-400">5-8% Error Margin</td>
-        <td class="p-3.5 sm:p-4 text-emerald-600 dark:text-emerald-400 font-medium">0% Error Margin</td>
-        <td class="p-3.5 sm:p-4 text-neutral-700 dark:text-neutral-300">Sinkronisasi data real-time memastikan nol margin kesalahan pada perhitungan lembur dan potongan.</td>
-      </tr>
-      <tr>
-        <td class="p-3.5 sm:p-4 font-semibold text-neutral-900 dark:text-white">Time Spent by Leaders</td>
-        <td class="p-3.5 sm:p-4 text-neutral-500 dark:text-neutral-400">10 Hours / week</td>
-        <td class="p-3.5 sm:p-4 text-emerald-600 dark:text-emerald-400 font-medium">6 Hours / week</td>
-        <td class="p-3.5 sm:p-4 text-neutral-700 dark:text-neutral-300">Waktu yang dihabiskan Leader untuk mengelola jadwal berkurang per divisi.</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+('amigos-ecommerce-platform', 'E-Commerce Platform', '8 min read', 'Amigos – Social Commerce Redesign', 'Revamping a social commerce platform connecting local Indonesian artisans with global buyers through storytelling-driven product pages.', '/images/work/thumbnail-door.webp', '/images/client_logo/clientlogo_amigos.webp', NULL, 'Amigos Indonesia', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"Next.js","icon":"devicon:nextjs","color":"#000000"},{"name":"Shopify","icon":"devicon:shopify","color":"#7AB55C"}]', '["E-Commerce","Social Commerce","B2B2C"]', '2024', '[{"id":"brief","title":"Project Brief"},{"id":"storytelling","title":"Storytelling Design"},{"id":"outcome","title":"Outcome"}]', '<h2 id="brief">Project Brief</h2><p>Amigos connects Indonesian artisans—from batik makers in Solo to silver craftsmen in Bali—with international buyers. The existing platform felt transactional and failed to convey the rich cultural stories behind each product.</p><h2 id="storytelling">Storytelling Design</h2><p>Introduced immersive product pages with artisan profiles, making-of documentaries, and interactive cultural context sections. Each product became a story, not just an item in a catalog.</p><h2 id="outcome">Outcome</h2><p>Average order value increased by 65%, artisan onboarding grew by 200%, and international customer retention improved by 40% year-over-year.</p>', 0),
 
-<h2 id="what-i-learned">What I Learned</h2>
-<p>Merancang alat operasional enterprise (B2B) sangat berbeda dengan aplikasi konsumer. Proyek ini mengajarkan saya bahwa merancang untuk operasional berarti kita mengoptimalkan batasan, alur kerja, dan realitas fisik di lapangan, bukan sekadar interaksi yang cantik di atas kanvas Figma.</p>
-<p>Dengan memprioritaskan fungsi, hierarki informasi yang ketat, serta mendengarkan langsung apa yang membebani kognitif pengguna di meja kerja mereka, kita tidak hanya memperbaiki antarmuka—kita menata ulang sistem operasi yang memengaruhi bagaimana puluhan orang melakukan pekerjaan mereka setiap hari.</p>'
-);
+('mtlab-scientific-dashboard', 'SaaS Dashboard', '9 min read', 'MT Lab – Scientific Research Management', 'Laboratory information management system (LIMS) redesign for one of Southeast Asia''s largest material testing laboratories.', '/images/work/doormockup-01.webp', '/images/client_logo/clientlogo_mtlab.webp', NULL, 'MT Lab Indonesia', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"React","icon":"devicon:react","color":"#61DAFB"},{"name":"Python","icon":"devicon:python","color":"#3776AB"}]', '["Laboratory","SaaS","B2B"]', '2025', '[{"id":"background","title":"Background"},{"id":"workflow","title":"Workflow Optimization"},{"id":"compliance","title":"Compliance & Standards"}]', '<h2 id="background">Background</h2><p>MT Lab processes over 50,000 material tests annually for construction, manufacturing, and government clients. Their existing LIMS was built in 2010 and suffered from severe usability debt.</p><h2 id="workflow">Workflow Optimization</h2><p>Mapped and redesigned 15 core laboratory workflows. Reduced steps per test from an average of 23 to 12, automated data entry with IoT sensor integration, and introduced barcode-based sample tracking.</p><h2 id="compliance">Compliance & Standards</h2><p>Built in compliance tracking for ISO/IEC 17025 standards with automated audit trail generation and calibration scheduling. Zero compliance violations in the first 6 months post-launch.</p>', 0),
 
-INSERT INTO case_studies (slug, category, reading_time, title, desc, hero_image, logo, live_url, company, design_stack, industry, year, sections, content)
-VALUES (
-  'work-2',
-  'Enterprise Dashboard',
-  '8 min read',
-  'Story-Data Enterprise Dashboard Transformation',
-  'Streamlining real-time data visual hierarchy for multi-tier management reporting, reducing decision latency by 35%.',
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80',
-  '/images/testimoni_logo/logo-neuron.webp',
-  'https://dashboard.neuronworks.co.id',
-  'Neuron Tech',
-  '[{"name":"Figma","icon":"devicon:figma"},{"name":"React","icon":"simple-icons:react","color":"#61DAFB"},{"name":"TailwindCSS","icon":"simple-icons:tailwindcss","color":"#06B6D4"}]',
-  '["Enterprise","Analytics","Fintech"]',
-  '2025',
-  '[{"id":"overview","title":"Overview & Objective"}]',
-  '<h2 id="overview">Overview & Objective</h2><p>Detailed documentation for this case study is currently being compiled. It explores enterprise user experience optimizations, story-data approaches, and system design token synchronization.</p>'
-);
+('oneev-ev-charging', 'Mobile App', '7 min read', 'OneEV – Electric Vehicle Charging Network', 'Mobile app design for Indonesia''s pioneering EV charging network, making electric vehicle ownership accessible and convenient across Java and Bali.', '/images/work/thumbnail-door.webp', '/images/client_logo/clientlogo_oneev.webp', NULL, 'OneEV Indonesia', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"Flutter","icon":"devicon:flutter","color":"#02569B"},{"name":"Firebase","icon":"devicon:firebase","color":"#FFCA28"}]', '["GreenTech","Mobility","Mobile App"]', '2025', '[{"id":"vision","title":"Product Vision"},{"id":"features","title":"Key Features"},{"id":"growth","title":"Growth Metrics"}]', '<h2 id="vision">Product Vision</h2><p>OneEV is building Indonesia''s first nationwide EV charging network. They needed a consumer app that would make finding, booking, and paying for charging as simple as getting gasoline—but more delightful.</p><h2 id="features">Key Features</h2><p>Real-time charging station availability map, route planning with range estimation, seamless payment integration with 5 e-wallet providers, and community features for trip sharing and reviews.</p><h2 id="growth">Growth Metrics</h2><p>App achieved 50,000 downloads in the first month, 85% user retention after 90 days, and contributed to a 150% increase in charging sessions quarter-over-quarter.</p>', 0),
 
-INSERT INTO case_studies (slug, category, reading_time, title, desc, hero_image, logo, live_url, company, design_stack, industry, year, sections, content)
-VALUES (
-  'work-3',
-  'Design Systems',
-  '12 min read',
-  'Scalable Design System & Component Infrastructure',
-  'Unifying design language across 12+ enterprise platforms with high-density component libraries and automated token sync.',
-  'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1400&q=80',
-  '/images/client_logo/clientlogo_telkomindonesia.webp',
-  'https://design.telkom.co.id',
-  'Telkom Indonesia',
-  '[{"name":"Figma","icon":"devicon:figma"},{"name":"React","icon":"simple-icons:react","color":"#61DAFB"},{"name":"Storybook","icon":"simple-icons:storybook","color":"#FF4785"},{"name":"TailwindCSS","icon":"simple-icons:tailwindcss","color":"#06B6D4"}]',
-  '["Design Tools","Enterprise","Infrastructure"]',
-  '2024',
-  '[{"id":"overview","title":"Overview & Objective"}]',
-  '<h2 id="overview">Overview & Objective</h2><p>Detailed component documentation and scalable design system workflows. It explores unifying design languages across multiple sub-brands and platforms.</p>'
-);
+('nextiva-voip-platform', 'SaaS Platform', '13 min read', 'Nextiva – Unified Communications Platform', 'Comprehensive redesign of a VoIP and unified communications platform serving 100,000+ business customers across North America.', '/images/work/doormockup-01.webp', '/images/client_logo/clientlogo_nextiva.webp', 'https://nextiva.com', 'Nextiva Inc.', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"React","icon":"devicon:react","color":"#61DAFB"},{"name":"Node.js","icon":"devicon:nodejs","color":"#339933"}]', '["Telecommunications","VoIP","SaaS","B2B"]', '2024', '[{"id":"scope","title":"Project Scope"},{"id":"architecture","title":"Information Architecture"},{"id":"metrics","title":"Success Metrics"}]', '<h2 id="scope">Project Scope</h2><p>Nextiva''s platform had grown organically over 15 years through acquisitions, resulting in 5 different admin interfaces with inconsistent UX patterns. The goal was to unify everything into a single cohesive experience.</p><h2 id="architecture">Information Architecture</h2><p>Completely restructured the navigation and information hierarchy through card sorting exercises with 200+ users. Reduced the IA depth from 5 levels to 2, making 95% of tasks accessible within 2 clicks.</p><h2 id="metrics">Success Metrics</h2><p>Admin task completion improved by 60%, new user onboarding time reduced from 2 weeks to 3 days, and NPS score increased from 32 to 68.</p>', 0),
 
--- Seeding Explorations
-INSERT INTO explorations (title, category, description, image)
-VALUES (
-  'AI Prompt Flow Canvas',
-  'Generative UI & Graph Nodes',
-  'An experimental canvas interface designed for configuring complex multi-agent LLM chains visually with real-time token telemetry.',
-  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80'
-);
+('kangamoon-freelance-platform', 'Web Platform', '8 min read', 'KangaMoon – Freelance Marketplace', 'Designing a unique freelance marketplace focused on creative professionals with built-in portfolio showcase tools and escrow payment protection.', '/images/work/thumbnail-door.webp', '/images/client_logo/clientlogo_kangamoon.webp', NULL, 'KangaMoon Creative', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"Laravel","icon":"devicon:laravel","color":"#FF2D20"},{"name":"Alpine.js","icon":"devicon:alpinejs","color":"#8BC0D0"}]', '["Freelance","Marketplace","Creative"]', '2025', '[{"id":"market-gap","title":"Market Gap Analysis"},{"id":"design","title":"Platform Design"},{"id":"launch","title":"Launch Results"}]', '<h2 id="market-gap">Market Gap Analysis</h2><p>Existing freelance platforms like Upwork and Fiverr focus heavily on price competition, undervaluing creative work. KangaMoon aimed to create a premium marketplace where quality and portfolio matter more than lowest bid.</p><h2 id="design">Platform Design</h2><p>Built an interactive portfolio builder with drag-and-drop case study templates, video introduction features, and client verification badges. Introduced a ''match score'' algorithm that connects freelancers with relevant projects.</p><h2 id="launch">Launch Results</h2><p>Platform launched with 500 vetted freelancers and 200 businesses. Average project value is 3x higher than competing platforms, and freelancer satisfaction scores average 4.8/5.</p>', 0),
 
-INSERT INTO explorations (title, category, description, image)
-VALUES (
-  'Dark Mode Data Widget Studio',
-  'Design System & Components',
-  'A high-density widget ecosystem tailored for enterprise financial risk monitors, featuring custom HSL monochromatic themes.',
-  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80'
-);
+('arumaya-property-portal', 'Real Estate Platform', '10 min read', 'Arumaya – Premium Property Portal', 'Luxury real estate platform connecting high-net-worth buyers with exclusive properties through immersive virtual tours and white-glove concierge service.', '/images/work/doormockup-01.webp', '/images/client_logo/clientlogo_arumaya.webp', NULL, 'Arumaya Properties', '[{"name":"Figma","icon":"devicon:figma","color":"#A259FF"},{"name":"Three.js","icon":"devicon:threejs","color":"#000000"},{"name":"Next.js","icon":"devicon:nextjs","color":"#000000"}]', '["Real Estate","Luxury","Web3D"]', '2024', '[{"id":"luxury-reimagined","title":"Luxury Reimagined"},{"id":"virtual-tours","title":"Virtual Tours"},{"id":"concierge","title":"Digital Concierge"}]', '<h2 id="luxury-reimagined">Luxury Reimagined</h2><p>Arumaya represents Indonesia''s most exclusive properties—from cliffside villas in Bali to penthouses in Jakarta. The digital experience needed to match the caliber of their $1M+ listings.</p><h2 id="virtual-tours">Virtual Tours</h2><p>Built WebGL-powered 3D property walkthroughs with realistic lighting, material rendering, and interactive hotspots for property details. Users can explore every room as if physically present.</p><h2 id="concierge">Digital Concierge</h2><p>Integrated a white-glove scheduling system for private viewings, legal document preparation, and financing consultation—all accessible through a personalized client portal.</p>', 0);
 
-INSERT INTO explorations (title, category, description, image)
-VALUES (
-  'Spatial Analytics Control Room',
-  '3D Visualizations & GIS',
-  'Real-time spatial data rendering engine built for logistics dispatchers to monitor fleet telematics across global hubs.',
-  'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80'
-);
-
-INSERT INTO explorations (title, category, description, image)
-VALUES (
-  'Micro-Interaction Prototyping',
-  'Motion & UI Engineering',
-  'Exploration of spring physics-based gestures and tactile feedback components for high-frequency trading web terminals.',
-  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80'
-);
+-- Explorations (10)
+INSERT OR IGNORE INTO explorations (title, category, description, image, aspect_ratio, keywords, is_highlighted) VALUES
+('AI Prompt Flow Canvas', 'Experimental UI', 'An experimental interface for visualizing and chaining AI prompts into complex workflows, inspired by node-based programming tools like Blender and Houdini.', '/images/exploration/community-1.png', '16:9', 'AI, Workflow, Node Editor, Experimental', 1),
+('Neobank Dashboard Concept', 'Fintech', 'Dark-mode neobank dashboard design exploring data-rich layouts with glassmorphism cards and animated micro-interactions for balance and transaction monitoring.', '/images/exploration/community-2.png', '16:9', 'Fintech, Dashboard, Dark Mode, Neumorphism', 1),
+('Community Hub Redesign', 'Social Platform', 'A warm, inviting community platform redesign emphasizing accessibility and inclusive design patterns with high-contrast modes and screen-reader optimized navigation.', '/images/exploration/community-3.png', '1:1', 'Community, Social, Accessibility, Warm', 1),
+('Sustainable Travel Planner', 'GreenTech', 'Carbon-footprint-aware travel planning interface that suggests eco-friendly routes, accommodations, and activities while gamifying sustainable choices.', '/images/exploration/community-4.png', '16:9', 'Travel, Sustainability, Green, Gamification', 1),
+('Spatial Music Player', 'Entertainment', 'A spatial audio music player concept exploring 3D sound visualization, gesture-based controls, and immersive album artwork experiences.', '/images/exploration/community-1.png', '9:16', 'Music, 3D, Spatial Audio, Entertainment', 0),
+('Health Metrics Hub', 'HealthTech', 'Personal health data aggregation dashboard connecting wearables, lab results, and fitness apps into a unified health timeline with actionable insights.', '/images/exploration/community-2.png', '16:9', 'Health, Dashboard, Wearables, DataViz', 0),
+('AR Shopping Experience', 'Retail', 'Augmented reality shopping experience concept allowing users to visualize furniture and decor in their space before purchasing with real-time lighting adaptation.', '/images/exploration/community-3.png', '1:1', 'AR, Shopping, Retail, 3D, E-Commerce', 0),
+('Smart City Command Center', 'GovTech', 'A futuristic smart city operations dashboard monitoring traffic, energy consumption, public safety, and environmental sensors in real-time across an urban grid.', '/images/exploration/community-4.png', '16:9', 'Smart City, IoT, Dashboard, GovTech', 0),
+('Recipe Discovery App', 'Lifestyle', 'AI-powered recipe discovery app that learns dietary preferences, suggests meals based on available ingredients, and generates step-by-step cooking guides with video.', '/images/exploration/community-1.png', '9:16', 'Food, AI, Personalization, Lifestyle', 0),
+('NFT Gallery Portfolio', 'Web3', 'Minimalist NFT gallery and portfolio showcase for digital artists featuring immersive fullscreen viewing, provenance tracking, and social sharing integration.', '/images/exploration/community-2.png', '16:9', 'NFT, Web3, Gallery, Digital Art', 0);

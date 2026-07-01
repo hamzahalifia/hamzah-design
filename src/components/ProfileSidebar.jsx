@@ -155,14 +155,14 @@ export default function ProfileSidebar() {
             {/* Sapaan */}
             <div>
               <h1 className="font-serif-attio text-[30px] leading-tight text-[#111827] dark:text-[#E5E7EB]">
-                I'm Hamzah,<br />
-                Your Design Partner.
+                I'm Alifia Hamzah,<br />
+                Enterprise Product Designer.
               </h1>
             </div>
 
             {/* Bio */}
             <p className="text-base leading-6 text-[#111827] dark:text-[#E5E7EB] font-normal">
-              For the last 4 year, I partner with companies to build and scale their data-driven enterprise tools with a story-data approach.
+              For the last 4 years, I partner with companies to build and scale their data-driven enterprise tools with a story-data approach.
             </p>
           </div>
 

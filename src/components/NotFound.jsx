@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { useTheme } from '../context/ThemeContext';
 import { RollingText } from './magicui/RollingText';
 import InteractiveGridPattern from './magicui/InteractiveGridPattern';
@@ -9,7 +10,12 @@ export default function NotFound() {
   const { theme } = useTheme();
 
   return (
-    <motion.div
+    <>
+      <Helmet>
+        <title>Page Not Found — Alifia Hamzah</title>
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
+      <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
@@ -80,5 +86,6 @@ export default function NotFound() {
         </motion.div>
       </div>
     </motion.div>
+    </>
   );
 }

@@ -6,19 +6,22 @@ import { Link } from 'react-router-dom';
 import { RollingText } from './magicui/RollingText';
 import { GridPattern } from './magicui/GridPattern';
 import ClosePopup from './ClosePopup';
+import { Cursor } from './core/cursor';
 
 export default function WorkShowcase() {
   const [selectedExploration, setSelectedExploration] = useState(null);
   const [works, setWorks] = useState([]);
   const [explorations, setExplorations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isCursorHovering, setIsCursorHovering] = useState(false);
+  const [cursorText, setCursorText] = useState('View Detail');
 
   useEffect(() => {
     async function loadShowcaseData() {
       try {
         const [worksRes, explorationsRes] = await Promise.all([
-          fetch('/api/works'),
-          fetch('/api/explorations')
+          fetch('/api/works?highlighted=true'),
+          fetch('/api/explorations?highlighted=true')
         ]);
         if (worksRes.ok && explorationsRes.ok) {
           const worksData = await worksRes.json();
@@ -37,6 +40,47 @@ export default function WorkShowcase() {
 
   return (
     <section className="flex-1 bg-white dark:bg-[#0A0A0B] divide-y divide-attio-border-light dark:divide-attio-border-dark">
+      {/* Cursor */}
+      <Cursor
+        variants={{
+          initial: { scale: 0.3, opacity: 0 },
+          animate: { scale: 1, opacity: 1 },
+          exit: { scale: 0.3, opacity: 0 },
+        }}
+        springConfig={{
+          bounce: 0.001,
+        }}
+        transition={{
+          ease: 'easeInOut',
+          duration: 0.15,
+        }}
+      >
+        <motion.div
+          animate={{
+            width: isCursorHovering ? (cursorText === 'Read Case Study' ? 140 : 96) : 0,
+            height: isCursorHovering ? 32 : 0,
+            opacity: isCursorHovering ? 1 : 0,
+            scale: isCursorHovering ? 1 : 0,
+          }}
+          className="flex items-center justify-center rounded-[24px] bg-gray-500/45 backdrop-blur-md dark:bg-gray-300/45 overflow-hidden"
+        >
+          <AnimatePresence>
+            {isCursorHovering ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                className="inline-flex w-full items-center justify-center"
+              >
+                <div className="inline-flex items-center text-xs font-semibold text-white dark:text-black whitespace-nowrap font-sans">
+                  {cursorText}
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </motion.div>
+      </Cursor>
+
       {/* Featured Work Container */}
       <div id="work" className="divide-y divide-attio-border-light dark:divide-attio-border-dark">
         {/* Section Header with Refined Smaller Heading (text-lg) */}
@@ -72,7 +116,11 @@ export default function WorkShowcase() {
               className="p-5 lg:p-6 flex flex-col md:flex-row items-start justify-start gap-5 lg:gap-6 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer"
             >
               {/* Project Image Preview */}
-              <div className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative border border-attio-border-light dark:border-attio-border-dark">
+              <div
+                onMouseEnter={() => { setIsCursorHovering(true); setCursorText('Read Case Study'); }}
+                onMouseLeave={() => setIsCursorHovering(false)}
+                className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative border border-attio-border-light dark:border-attio-border-dark"
+              >
                 {work.heroImage && (work.heroImage.endsWith('.mp4') || work.heroImage.toLowerCase().includes('.mp4')) ? (
                   <video
                     src={work.heroImage}
@@ -142,24 +190,27 @@ export default function WorkShowcase() {
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   onClick={() => setSelectedExploration(exp)}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="group rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 cursor-pointer h-[230px] relative"
-              >
-                <motion.img
-                  src={exp.image}
-                  alt={exp.title}
-                  loading="lazy"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                  className="w-full h-full object-cover transform-gpu will-change-transform"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 rounded-full bg-white/90 dark:bg-black/90 text-xs font-semibold shadow-attio-sm">
-                    View Detail
-                  </span>
-                </div>
-              </motion.div>
-            ))}
+                  onMouseEnter={() => { setIsCursorHovering(true); setCursorText('View Detail'); }}
+                  onMouseLeave={() => setIsCursorHovering(false)}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="group rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 cursor-pointer h-[230px] relative"
+                >
+                  <motion.img
+                    src={exp.image}
+                    alt={exp.title}
+                    loading="lazy"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+                    className="w-full h-full object-cover transform-gpu will-change-transform"
+                  />
+                  {/* Hover overlay with title */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 pointer-events-none">
+                    <h4 className="text-sm font-semibold text-white leading-tight line-clamp-2">
+                      {exp.title}
+                    </h4>
+                  </div>
+                </motion.div>
+              ))}
           </div>
           )}
         </div>

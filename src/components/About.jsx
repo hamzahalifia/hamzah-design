@@ -5,6 +5,9 @@ import Navbar from './Navbar';
 import FooterReveal from './FooterReveal';
 import { RollingText } from './magicui/RollingText';
 import { ProgressiveBlur } from './magicui/ProgressiveBlur';
+import { Tilt } from './core/tilt';
+import { BorderTrail } from './core/border-trail';
+import PageMeta from './SEO/PageMeta';
 
 /* ─── Data ─────────────────────────────────────────────── */
 
@@ -33,7 +36,52 @@ const AI_OPTIONS = [
     icon: 'selfhst:grok',
     url: 'https://grok.com/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him',
   },
+  {
+    id: 'perplexity',
+    label: 'Perplexity',
+    icon: 'simple-icons:perplexity',
+    url: 'https://www.perplexity.ai/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him',
+  },
 ];
+
+const SUGGESTED_QUESTIONS = [
+  {
+    id: 'saas-fit',
+    label: 'Verify SaaS Fit',
+    icon: 'solar:widget-bold-duotone',
+    query: 'Would Alifia Hamzah be a strong UI/UX design partner for a B2B SaaS startup? Based on public info from https://hamzah.design, summarize his experience, portfolio, strengths, and client fit.'
+  },
+  {
+    id: 'case-studies',
+    label: 'Audit Case Studies',
+    icon: 'solar:document-bold-duotone',
+    query: 'Summarize the enterprise product design case studies, design process, and data-driven methods of Alifia Hamzah from his portfolio at https://hamzah.design'
+  },
+  {
+    id: 'design-philosophy',
+    label: 'Simplify Workflows',
+    icon: 'solar:magic-stick-bold-duotone',
+    query: 'What is Alifia Hamzah\'s design philosophy for simplifying complex workflows and enterprise systems? Answer using details from https://hamzah.design'
+  }
+];
+
+const getQueryUrl = (aiId, queryText) => {
+  const query = encodeURIComponent(queryText);
+  switch (aiId) {
+    case 'claude':
+      return `https://claude.ai/new?q=${query}`;
+    case 'chatgpt':
+      return `https://chatgpt.com/?q=${query}`;
+    case 'gemini':
+      return `https://gemini.google.com/app?q=${query}`;
+    case 'grok':
+      return `https://grok.com/?q=${query}`;
+    case 'perplexity':
+      return `https://www.perplexity.ai/?q=${query}`;
+    default:
+      return `https://claude.ai/new?q=${query}`;
+  }
+};
 
 const TESTIMONIALS = [
   {
@@ -80,6 +128,7 @@ const SOCIAL_LINKS = [
   { id: 'instagram', icon: 'bi:instagram', url: 'https://www.instagram.com/hamzahalifia' },
   { id: 'x', icon: 'bi:twitter-x', url: 'https://x.com/hamzahalifia' },
   { id: 'dribbble', icon: 'bi:dribbble', url: 'https://dribbble.com/hamzahalifia' },
+  { id: 'layers', icon: 'bi:layers-fill', url: 'https://layers.to/hamzahalifia' },
   { id: 'behance', icon: 'bi:behance', url: 'https://www.behance.net/alifiahamzah' },
   { id: 'upwork', icon: 'simple-icons:upwork', url: 'https://www.upwork.com/freelancers/~01c75d8b7b914aa93d?mp_source=share' },
   { id: 'contra', icon: 'bi:person-workspace', url: 'https://contra.com/alifiahamzah?referralExperimentNid=SOCIAL_REFERRAL_PROGRAM&referrerUsername=alifiahamzah' },
@@ -213,8 +262,8 @@ function RollingTestimonials({ testimonials }) {
       </div>
 
       {/* Progressive Blur Overlays */}
-      <ProgressiveBlur direction="top" className="from-white dark:from-[#0A0A0B] to-transparent h-16" />
-      <ProgressiveBlur direction="bottom" className="from-white dark:from-[#0A0A0B] to-transparent h-16" />
+      <ProgressiveBlur direction="top" className="h-16" />
+      <ProgressiveBlur direction="bottom" className="h-16" />
     </div>
   );
 }
@@ -224,6 +273,7 @@ function RollingTestimonials({ testimonials }) {
 export default function About() {
   const [selectedAI, setSelectedAI] = useState(AI_OPTIONS[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [prompt, setPrompt] = useState(SUGGESTED_QUESTIONS[0].query);
   const [openAccordion, setOpenAccordion] = useState(null);
 
   const toggleAccordion = (id) => {
@@ -232,6 +282,59 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
+      <PageMeta
+        title="About Alifia Hamzah — Product Designer"
+        description="Learn about Alifia Hamzah, a Product Designer based in Bandung, Indonesia, specializing in data-driven enterprise tools and story-data design methodology."
+        keywords="Alifia Hamzah, About, Product Designer, Bandung, Indonesia, Enterprise Design, Data-Driven Design, Alifia Hamzah Product Designer, Alifia Hamzah UI/UX Designer, Alif Designer, Hamzah Design, Hamzah Designer, Alif Hamzah, Hamzah Alifia, Hamzah Alif, Hamzah Alif Design, Hamzah Alif UI/UX Designer, Hamzah Alif Product Designer, Hamzah Alifia Hamzah, Alifia Hamzah Indonesia, Alifia Hamzah Bandung, Alifia Hamzah BWA, Alifia Hamzah Neuron, Alifia Hamzah Neuronworks, Hamzah Neuronworks, Hamzah Neuronworks Indonesia, Hamzah Catalyst Team, Hamzah The Catalyst Team, Hamzah CTC, Hamzah Upwork, Hamzah Contra, Hamzah Freelancer Upwork"
+        canonical="https://hamzah.design/about"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "Alifia Hamzah",
+          "givenName": "Alifia",
+          "familyName": "Hamzah",
+          "additionalName": "Hamzah",
+          "alternateName": [
+            "Alifia Hamzah",
+            "Alif Designer",
+            "Hamzah Design",
+            "Hamzah Designer",
+            "Alif Hamzah",
+            "Hamzah Alifia",
+            "Hamzah Alif",
+            "Hamzah Alif Design",
+            "Hamzah Alifia Hamzah",
+            "Hamzah Neuronworks"
+          ],
+          "jobTitle": "Product Designer",
+          "url": "https://hamzah.design",
+          "image": "https://hamzah.design/images/general/profilephoto.webp",
+          "description": "Product Designer specializing in data-driven enterprise tools and story-data approach.",
+          "knowsLanguage": [
+            { "@type": "Language", "name": "Indonesian", "alternateName": "id" },
+            { "@type": "Language", "name": "Sundanese", "alternateName": "su" },
+            { "@type": "Language", "name": "English", "alternateName": "en" },
+            { "@type": "Language", "name": "Japanese", "alternateName": "ja" }
+          ],
+          "sameAs": [
+            "https://www.linkedin.com/in/alifiahamzah/",
+            "https://www.instagram.com/hamzahalifia",
+            "https://github.com/hamzahalifia",
+            "https://x.com/hamzahalifia",
+            "https://dribbble.com/hamzahalifia",
+            "https://layers.to/hamzahalifia",
+            "https://www.behance.net/alifiahamzah",
+            "https://www.upwork.com/freelancers/~01c75d8b7b914aa93d?mp_source=share",
+            "https://contra.com/alifiahamzah?referralExperimentNid=SOCIAL_REFERRAL_PROGRAM&referrerUsername=alifiahamzah"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Bandung",
+            "addressRegion": "West Java",
+            "addressCountry": "ID"
+          }
+        }}
+      />
       <Navbar />
 
       <main className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">
@@ -243,124 +346,31 @@ export default function About() {
               {/* 2-Column Responsive Layout — wider right column */}
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] w-full">
 
-                {/* Column 2: Right Sidebar (swaps to top on mobile) */}
-                <div className="lg:border-l border-attio-border-light dark:border-attio-border-dark lg:order-2">
-                  <div className="sticky top-[60px] divide-y divide-attio-border-light dark:divide-attio-border-dark">
-
-                    {/* Ask AI Section */}
-                    <div className="p-5 space-y-4">
-                      <div className="p-3.5 bg-neutral-50 dark:bg-zinc-900/50 border border-attio-border-light dark:border-attio-border-dark rounded-2xl space-y-3 font-sans shadow-sm">
-                        {/* Prompt Input Bubble — clicking opens external link */}
-                        <a
-                          href={selectedAI.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-3 py-2.5 bg-white dark:bg-zinc-950 border border-attio-border-light dark:border-attio-border-dark rounded-xl shadow-sm hover:border-neutral-350 dark:hover:border-neutral-700 transition-all group cursor-pointer"
-                        >
-                          <Icon icon="ri:quill-pen-ai-fill" className="w-4 h-4 text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
-                          <span className="text-sm text-neutral-800 dark:text-zinc-200 font-normal leading-normal">
-                            Ask <span className="font-medium">{selectedAI.label}</span> if Hamzah is worth hiring
-                          </span>
-                        </a>
-
-                        {/* Bottom Actions Bar */}
-                        <div className="flex items-center justify-between relative">
-                          {/* Dropdown Selector — opens downward */}
-                          <div className="relative">
-                            <button
-                              type="button"
-                              onClick={() => setDropdownOpen(!dropdownOpen)}
-                              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-neutral-200/60 dark:bg-zinc-800 text-neutral-700 dark:text-zinc-300 rounded-lg text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer select-none border border-neutral-300/30 dark:border-neutral-700/50"
-                            >
-                              <Icon icon={selectedAI.icon} className="w-3.5 h-3.5 shrink-0" />
-                              <span>{selectedAI.label}</span>
-                              <Icon icon="lucide:chevron-down" className="w-3 h-3 text-neutral-400 dark:text-neutral-500" />
-                            </button>
-                            
-                            {dropdownOpen && (
-                              <>
-                                <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-                                <div className="absolute top-full left-0 mt-1.5 z-50 min-w-[130px] bg-white dark:bg-zinc-950 border border-attio-border-light dark:border-attio-border-dark rounded-xl shadow-xl p-1 animate-in fade-in slide-in-from-top-1 duration-150">
-                                  {AI_OPTIONS.map((opt) => (
-                                    <button
-                                      key={opt.id}
-                                      type="button"
-                                      onClick={() => {
-                                        setSelectedAI(opt);
-                                        setDropdownOpen(false);
-                                      }}
-                                      className={`w-full flex items-center gap-2 px-2.5 py-2 text-left text-sm rounded-lg transition-colors cursor-pointer ${
-                                        selectedAI.id === opt.id
-                                          ? 'bg-neutral-100 dark:bg-zinc-800 text-neutral-900 dark:text-white font-semibold'
-                                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-zinc-900'
-                                      }`}
-                                    >
-                                      <Icon icon={opt.icon} className="w-3.5 h-3.5 shrink-0" />
-                                      <span>{opt.label}</span>
-                                    </button>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-                          </div>
-
-                          {/* Send Button */}
-                          <a
-                            href={selectedAI.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-8 h-8 rounded-full bg-neutral-950 dark:bg-zinc-100 hover:bg-neutral-900 dark:hover:bg-white text-white dark:text-zinc-950 flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-90"
-                          >
-                            <Icon icon="ion:send" className="w-3.5 h-3.5" />
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Testimonials Section — rolling */}
-                    <div className="p-5 space-y-5">
-                      <p className="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-normal">
-                        Here's what working together has been like for some of my clients.
-                      </p>
-
-                      <RollingTestimonials testimonials={TESTIMONIALS} />
-                    </div>
-                  </div>
-                </div>
-
                 {/* Column 1: Main Content Area */}
-                <div className="p-5 space-y-10 lg:order-1 pb-16">
+                <div className="p-5 space-y-10 pb-16">
 
                   {/* Profile Header — photo → name → role → desc as one block */}
                   <div className="space-y-6">
-                    <div className="w-[50px] h-[50px] flex items-center justify-center">
-                      <div className="w-[42.31px] h-[42.31px] overflow-hidden border-[1.24px] border-white dark:border-neutral-700 shadow-[0px_2.49px_3.73px_-0.62px_rgba(0,0,0,0.1),0px_1.24px_2.49px_-1.24px_rgba(0,0,0,0.1)]">
-                        <img
-                          src="/images/general/profilephoto.webp"
-                          alt="Alifia Hamzah"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
+                    <div className="w-[50px] h-[50px] flex items-center justify-center"><div className="w-[42.31px] h-[42.31px] rounded-[5px] overflow-hidden border-[1.24px] border-white dark:border-neutral-700 shadow-[0px_2.49px_3.73px_-0.62px_rgba(0,0,0,0.1),0px_1.24px_2.49px_-1.24px_rgba(0,0,0,0.1)] relative group"><img alt="Alifia Hamzah" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="/images/general/profilephoto.webp" /></div></div>
 
                     <div className="space-y-1.5">
                       <h1 className="font-serif-attio text-[30px] sm:text-[36px] lg:text-[46px] leading-tight text-[#111827] dark:text-white">
                         Alifia Hamzah
                       </h1>
                       <p className="text-base sm:text-lg text-neutral-500 dark:text-neutral-400 font-light">
-                        Product Designer
+                        Enterprise Product Designer
                       </p>
                     </div>
 
                     <p className="text-base leading-6 text-[#111827] dark:text-[#E5E7EB] font-normal">
-                      I'm a product designer working across web, mobile, and apps. I collaborate with SaaS founders, startup teams, and indie makers to turn vague ideas into clear, thoughtful products. My approach is simple: fast iteration, async collaboration, and a focus on clarity in every design decision.
+                      I partner with companies to build and scale their data-driven enterprise tools with a story-data approach. My designs translate complex workflows and technical datasets into highly functional, clear user experiences that team members actually love using. I focus on bridging product requirements, operations, and visual clarity to build dashboard and analytics systems that scale.
                     </p>
                   </div>
 
                   {/* Social Links — icon only, no labels, no borders */}
                   <div className="space-y-4">
                     <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed font-normal">
-                      Outside of client work, I also enjoy sharing ideas and design explorations online:
+                      Outside of client work, I enjoy sharing interface explorations and workflow insights online:
                     </p>
                     <div className="flex flex-wrap gap-4">
                       {SOCIAL_LINKS.map((link) => (
@@ -466,10 +476,10 @@ export default function About() {
 
                   {/* Community Section */}
                   <div className="space-y-5 w-full">
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed font-normal">
-                      I also enjoy discussing and growing together with the support of the community, because in the end we will gain something from them and we also have to give back to the community.
+                    <p className="text-sm leading-relaxed font-normal">
+                      I enjoy engaging with the wider design and developer community, discussing workflow solutions, and sharing insights about enterprise product design.
                     </p>
-                    <div className="grid grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {COMMUNITY_PHOTOS.map((photo) => (
                         <div
                           key={photo.id}
@@ -485,26 +495,36 @@ export default function About() {
                     </div>
                   </div>
 
-                  {/* Quote Block */}
-                  <div className="p-5 bg-neutral-50 dark:bg-zinc-900/50 border border-attio-border-light dark:border-attio-border-dark rounded-2xl w-full shadow-sm">
-                    <blockquote className="space-y-5">
-                      <p className="text-lg sm:text-xl text-neutral-700 dark:text-neutral-200 leading-relaxed font-normal italic">
-                        "Building something meaningful takes clarity, iteration, and the right people along the way. That's what I aim to bring into every project I'm part of."
-                      </p>
-                      <p className="text-base text-neutral-600 dark:text-neutral-300 leading-relaxed font-normal">
-                        If you're looking for a design partner to help shape your ideas, let's build something great together.
-                      </p>
-                      <footer>
-                        <cite className="not-italic text-2xl sm:text-3xl text-neutral-900 dark:text-white tracking-wide" style={{ fontFamily: '"Caveat", cursive' }}>
-                          Alifia Hamzah
-                        </cite>
-                      </footer>
-                    </blockquote>
-                  </div>
+                   {/* Quote Block */}
+                   <Tilt rotationFactor={8} isRevese>
+                     <div className="relative p-5 bg-neutral-50 dark:bg-zinc-900/50 border border-attio-border-light dark:border-attio-border-dark rounded-2xl w-full shadow-sm">
+                       <BorderTrail
+                         style={{
+                           boxShadow:
+                             '0px 0px 60px 30px rgb(255 255 255 / 25%), 0 0 100px 60px rgb(0 0 0 / 25%), 0 0 140px 90px rgb(0 0 0 / 25%)',
+                         }}
+                         size={100}
+                         duration={4}
+                       />
+                       <blockquote className="space-y-5 relative z-10">
+                         <p className="text-lg sm:text-xl text-neutral-700 dark:text-neutral-200 leading-relaxed font-normal pb-8">
+                           "Complex data shouldn't mean complex design. I specialize in stripping away the clutter to build enterprise tools that are intuitive, scalable, and genuinely helpful."
+                         </p>
+                         <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed font-normal">
+                           If you're looking for a design partner to simplify complex workflows and build tools that scale, let's collaborate.
+                         </p>
+                         <footer>
+                           <cite className="not-italic text-2xl sm:text-3xl text-neutral-900 dark:text-white tracking-wide" style={{ fontFamily: '"Caveat", cursive' }}>
+                             Alifia Hamzah
+                           </cite>
+                         </footer>
+                       </blockquote>
+                     </div>
+                   </Tilt>
 
                   {/* Download buttons */}
                   <div className="space-y-4 w-full">
-                    <p className="text-[13px] text-neutral-400 dark:text-neutral-500">
+                    <p className="text-[13px] text-neutral-700 dark:text-zinc-200">
                       For a more detailed look at my experience, work history, and achievements:
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
@@ -529,6 +549,129 @@ export default function About() {
                     </div>
                   </div>
 
+                </div>
+
+                {/* Column 2: Right Sidebar (below intro on mobile) */}
+                <div className="border-t lg:border-t-0 lg:border-l border-attio-border-light dark:border-attio-border-dark">
+                  <div className="sticky top-[60px] divide-y divide-attio-border-light dark:divide-attio-border-dark">
+
+                    {/* Ask AI Section */}
+                    <div className="p-5">
+                      <div className="p-5 bg-neutral-50 dark:bg-zinc-900/50 border border-attio-border-light dark:border-attio-border-dark rounded-2xl space-y-5 font-sans shadow-sm">
+                        
+                        {/* Header */}
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Icon icon="ri:quill-pen-ai-fill" className="w-4 h-4 text-blue-500" />
+                            <h3 className="text-sm font-semibold text-[#111827] dark:text-white">
+                              Ask your AI Partner
+                            </h3>
+                          </div>
+                        </div>
+
+                        {/* Interactive prompt area */}
+                        <div className="relative rounded-xl bg-white dark:bg-zinc-950 border border-attio-border-light dark:border-attio-border-dark p-3 shadow-inner">
+                          <textarea
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            className="w-full h-24 bg-transparent text-sm text-neutral-800 dark:text-zinc-200 outline-none resize-none border-0 p-0 font-sans leading-relaxed focus:outline-none focus:ring-0"
+                            placeholder="Type your question about Hamzah's work..."
+                          />
+                        </div>
+
+                        {/* Suggestion Chips */}
+                        <div className="space-y-2">
+                          <span className="text-sm font-semibold text-[#111827] dark:text-white block">
+                            Suggested Questions
+                          </span>
+                          <div className="flex flex-col gap-2">
+                            {SUGGESTED_QUESTIONS.map((q) => {
+                              const isActive = prompt === q.query;
+                              return (
+                                <button
+                                  key={q.id}
+                                  type="button"
+                                  onClick={() => setPrompt(q.query)}
+                                  className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm text-left border transition-all duration-200 cursor-pointer ${
+                                    isActive
+                                      ? 'bg-neutral-200 dark:bg-zinc-800 border-neutral-300 dark:border-zinc-700 text-neutral-900 dark:text-white font-medium shadow-sm'
+                                      : 'bg-white dark:bg-zinc-950 border-attio-border-light dark:border-attio-border-dark text-neutral-500 dark:text-zinc-400 hover:bg-neutral-100 dark:hover:bg-zinc-900'
+                                  }`}
+                                >
+                                  <Icon icon={q.icon} className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-500' : 'text-neutral-400'}`} />
+                                  <span className="truncate">{q.label}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Bottom Actions Row */}
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between pt-3 border-t border-attio-border-light dark:border-attio-border-dark gap-3">
+                          {/* Dropdown Selector */}
+                          <div className="relative w-full md:w-auto">
+                            <button
+                              type="button"
+                              onClick={() => setDropdownOpen(!dropdownOpen)}
+                              className="flex items-center justify-between md:justify-start gap-1.5 w-full md:w-auto px-3 py-2 bg-[#F2F2F2] dark:bg-neutral-800 border border-attio-border-light dark:border-attio-border-dark text-[#545454] dark:text-neutral-300 rounded-lg text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer select-none"
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <Icon icon={selectedAI.icon} className="w-3.5 h-3.5 shrink-0" />
+                                <span>{selectedAI.label}</span>
+                              </div>
+                              <Icon icon="lucide:chevron-down" className="w-3 h-3 text-neutral-400 dark:text-neutral-500" />
+                            </button>
+                            
+                            {dropdownOpen && (
+                              <>
+                                <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
+                                <div className="absolute bottom-full left-0 mb-1.5 z-50 w-full md:min-w-[130px] bg-white dark:bg-zinc-950 border border-attio-border-light dark:border-attio-border-dark rounded-xl shadow-xl p-1 animate-in fade-in slide-in-from-bottom-1 duration-150">
+                                  {AI_OPTIONS.map((opt) => (
+                                    <button
+                                      key={opt.id}
+                                      type="button"
+                                      onClick={() => {
+                                        setSelectedAI(opt);
+                                        setDropdownOpen(false);
+                                      }}
+                                      className={`w-full flex items-center gap-2 px-2.5 py-2 text-left text-sm rounded-lg transition-colors cursor-pointer ${
+                                        selectedAI.id === opt.id
+                                          ? 'bg-neutral-100 dark:bg-zinc-800 text-neutral-900 dark:text-white font-semibold'
+                                          : 'text-[#545454] dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-zinc-900'
+                                      }`}
+                                    >
+                                      <Icon icon={opt.icon} className="w-3.5 h-3.5 shrink-0" />
+                                      <span>{opt.label}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Execute Button */}
+                          <a
+                            href={getQueryUrl(selectedAI.id, prompt)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center w-full md:w-auto px-4 py-2 rounded-lg text-sm font-semibold bg-neutral-950 dark:bg-zinc-100 hover:bg-neutral-900 dark:hover:bg-white text-white dark:text-zinc-950 transition-all cursor-pointer shadow-sm active:scale-95 hover:scale-[1.02]"
+                          >
+                            Ask AI
+                          </a>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    {/* Testimonials Section — rolling */}
+                    <div className="p-5 space-y-5">
+                      <p className="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-normal">
+                        Here's what working together has been like for some of my clients.
+                      </p>
+
+                      <RollingTestimonials testimonials={TESTIMONIALS} />
+                    </div>
+                  </div>
                 </div>
 
               </div>

@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import Navbar from './Navbar';
 import FooterReveal from './FooterReveal';
 import { RollingText } from './magicui/RollingText';
+import PageMeta from './SEO/PageMeta';
 
 export const CASE_STUDIES = {};
 
@@ -124,6 +125,34 @@ export default function WorkDetail() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0A0A0B] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
+      {data && (
+        <PageMeta
+          title={`${data.title} — Alifia Hamzah`}
+          description={data.desc || `Case study: ${data.title} by Alifia Hamzah, Product Designer.`}
+          keywords={`${data.category || 'case study'}, product design, UI/UX, ${data.company || ''}, Alifia Hamzah`}
+          ogImage={data.heroImage || '/images/general/profilephoto.webp'}
+          canonical={`https://hamzah.design/work/${data.slug}`}
+          schema={data ? {
+            "@context": "https://schema.org",
+            "@type": "TechArticle",
+            "headline": data.title,
+            "description": data.desc,
+            "image": data.heroImage ? (data.heroImage.startsWith('http') ? data.heroImage : `https://hamzah.design${data.heroImage.startsWith('/') ? '' : '/'}${data.heroImage}`) : undefined,
+            "datePublished": data.year ? `${data.year}-01-01` : undefined,
+            "author": {
+              "@type": "Person",
+              "name": "Alifia Hamzah",
+              "url": "https://hamzah.design"
+            },
+            "publisher": {
+              "@type": "Person",
+              "name": "Alifia Hamzah",
+              "url": "https://hamzah.design"
+            },
+            "mainEntityOfPage": `https://hamzah.design/work/${data.slug}`
+          } : undefined}
+        />
+      )}
       <Navbar />
 
       <main className="relative z-10 bg-white dark:bg-[#0A0A0B] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">

@@ -1,90 +1,385 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, useReducer } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
-import LexicalEditor from './LexicalEditor';
-import AnimatedThemeToggler from '../magicui/AnimatedThemeToggler';
+import RichTextEditor from './RichTextEditor';
 
+// ─────────────────────────────────────────────────────────────────────────────
+const INITIAL_FORM = {
+  title: '',
+  slug: '',
+  desc: '',
+  content: '',
+  company: '',
+  category: '',
+  readingTime: '',
+  year: '',
+  heroImage: '',
+  logo: '',
+  liveUrl: '',
+  industryInput: '',
+  isHighlighted: false,
+  designStack: [],
+  sections: [],
+  status: 'draft',
+  scheduledAt: '',
+  contributors: [],
+};
+
+function formReducer(state, action) {
+  switch (action.type) {
+    case 'SET_FIELD':
+      return { ...state, [action.field]: action.value };
+    case 'LOAD':
+      return { ...state, ...action.payload };
+    case 'RESET':
+      return INITIAL_FORM;
+    default:
+      return state;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ImageAssetField
+// ─────────────────────────────────────────────────────────────────────────────
+function ImageAssetField({ label, value, onChange, placeholder }) {
+  const fileInputRef = useRef(null);
+  const [showLinkInput, setShowLinkInput] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState(value || '');
+
+  const handleFileChange = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const objectUrl = URL.createObjectURL(file);
+      const mockPath = `/images/work/${file.name}`;
+      setPreview(objectUrl);
+      onChange(mockPath);
+    } catch (err) {
+      console.error('Upload failed:', err);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }, [onChange]);
+
+  const handleLinkSubmit = useCallback(() => {
+    if (linkUrl.trim()) {
+      onChange(linkUrl.trim());
+      setPreview(linkUrl.trim());
+      setLinkUrl('');
+      setShowLinkInput(false);
+    }
+  }, [linkUrl, onChange]);
+
+  const clearAsset = useCallback(() => {
+    onChange('');
+    setPreview('');
+  }, [onChange]);
+
+  useEffect(() => {
+    if (value && value !== preview && !preview.startsWith('blob:')) {
+      setPreview(value);
+    }
+  }, [value, preview]);
+
+  return (
+    <div className="space-y-1.5">
+      <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+        {label}
+      </label>
+
+      {preview ? (
+        <div className="relative group rounded-lg border overflow-hidden bg-muted/30">
+          <img
+            src={preview}
+            alt={label}
+            className="w-full h-28 object-cover"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-all cursor-pointer"
+              title="Replace image"
+              aria-label={`Replace ${label}`}
+            >
+              <Icon icon="lucide:image-up" className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={clearAsset}
+              className="p-1.5 rounded-lg bg-white/20 text-red-300 hover:bg-red-500/60 hover:text-white transition-all cursor-pointer"
+              title="Remove image"
+              aria-label={`Remove ${label}`}
+            >
+              <Icon icon="lucide:trash-2" className="w-4 h-4" />
+            </button>
+          </div>
+          {uploading && (
+            <div className="absolute inset-0 bg-background/70 flex items-center justify-center">
+              <Icon icon="svg-spinners:180-ring" className="w-5 h-5 text-primary" />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div
+          className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center justify-center gap-1.5 bg-muted/20 hover:bg-muted/40 transition-all cursor-pointer min-h-[80px]"
+          onClick={() => fileInputRef.current?.click()}
+          role="button"
+          tabIndex={0}
+          aria-label={`Upload ${label}`}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click(); }}
+        >
+          <Icon icon="lucide:image-up" className="w-6 h-6 text-muted-foreground/60" />
+          <span className="text-[10px] text-muted-foreground text-center leading-tight">
+            Drop image or click<br />to upload
+          </span>
+        </div>
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+        aria-hidden="true"
+      />
+
+      <div className="flex items-center gap-2">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className="flex-1 px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all font-mono text-xs"
+        />
+        <button
+          type="button"
+          onClick={() => setShowLinkInput(!showLinkInput)}
+          className={`shrink-0 p-2 rounded-lg border transition-all cursor-pointer ${showLinkInput ? 'bg-primary/10 border-primary/20 text-primary' : 'hover:bg-muted text-muted-foreground'}`}
+          title="Insert from URL"
+          aria-label="Insert image from URL"
+        >
+          <Icon icon="lucide:link" className="w-4 h-4" />
+        </button>
+      </div>
+
+      {showLinkInput && (
+        <div className="flex items-center gap-1.5 bg-muted/30 p-2 rounded-lg border">
+          <input
+            type="text"
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+            placeholder="https://..."
+            className="flex-1 px-2.5 py-1.5 rounded-md border bg-background text-xs focus:outline-none text-foreground"
+            onKeyDown={(e) => { if (e.key === 'Enter') handleLinkSubmit(); }}
+            autoFocus
+          />
+          <button
+            type="button"
+            onClick={handleLinkSubmit}
+            className="px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold text-xs cursor-pointer hover:bg-primary/90 shrink-0"
+          >
+            Insert
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TagChipInput
+// ─────────────────────────────────────────────────────────────────────────────
+function TagChipInput({ label, tags, onChange, placeholder }) {
+  const [inputValue, setInputValue] = useState('');
+
+  const addTag = useCallback(() => {
+    const trimmed = inputValue.trim();
+    if (!trimmed || tags.includes(trimmed)) return;
+    onChange([...tags, trimmed]);
+    setInputValue('');
+  }, [inputValue, tags, onChange]);
+
+  const removeTag = useCallback((idx) => {
+    onChange(tags.filter((_, i) => i !== idx));
+  }, [tags, onChange]);
+
+  return (
+    <div className="space-y-1.5">
+      <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+        {label}
+      </label>
+      <div className="flex flex-wrap gap-1.5 min-h-[32px] p-2 rounded-lg border bg-background focus-within:ring-2 focus-within:ring-ring transition-all">
+        {tags.map((tag, idx) => (
+          <span
+            key={idx}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted border text-xs font-medium text-foreground"
+          >
+            {tag}
+            <button
+              type="button"
+              onClick={() => removeTag(idx)}
+              className="text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+              aria-label={`Remove tag ${tag}`}
+            >
+              <Icon icon="lucide:x" className="w-3 h-3" />
+            </button>
+          </span>
+        ))}
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+            if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
+              onChange(tags.slice(0, -1));
+            }
+          }}
+          placeholder={tags.length === 0 ? placeholder : 'Add more...'}
+          className="flex-1 min-w-[80px] bg-transparent outline-none text-xs text-foreground placeholder:text-muted-foreground/50"
+        />
+      </div>
+      <p className="text-[10px] text-muted-foreground">Press Enter to add each tag</p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WorkEditor — Main Component
+// ─────────────────────────────────────────────────────────────────────────────
 export default function WorkEditor() {
-  const { id } = useParams(); // undefined for 'new'
+  const { id } = useParams();
   const isEdit = !!id;
   const navigate = useNavigate();
-  const token = localStorage.getItem('admin_token');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Form states
-  const [title, setTitle] = useState('');
-  const [slug, setSlug] = useState('');
-  const [desc, setDesc] = useState('');
-  const [content, setContent] = useState('');
-  const [company, setCompany] = useState('');
-  const [category, setCategory] = useState('');
-  const [readingTime, setReadingTime] = useState('');
-  const [year, setYear] = useState('');
-  const [heroImage, setHeroImage] = useState('');
-  const [logo, setLogo] = useState('');
-  const [liveUrl, setLiveUrl] = useState('');
-  const [industryInput, setIndustryInput] = useState('');
+  const tokenRef = useRef(localStorage.getItem('admin_token'));
+  const token = tokenRef.current;
 
-  // Complex array states
-  const [designStack, setDesignStack] = useState([]);
-  const [sections, setSections] = useState([]);
+  const [form, dispatch] = useReducer(formReducer, INITIAL_FORM);
 
-  // Temp states for adding items
   const [newStackName, setNewStackName] = useState('');
   const [newStackIcon, setNewStackIcon] = useState('');
   const [newStackColor, setNewStackColor] = useState('');
+
   const [newSectionId, setNewSectionId] = useState('');
   const [newSectionTitle, setNewSectionTitle] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(isEdit);
   const [error, setError] = useState('');
+  const [previewMode, setPreviewMode] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Contributor input
+  const [contributorInput, setContributorInput] = useState('');
+
+  const hasChanges = useRef(false);
+  const savedRef = useRef(false);
+
+  const setField = useCallback((field, value) => {
+    hasChanges.current = true;
+    dispatch({ type: 'SET_FIELD', field, value });
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasChanges.current && !savedRef.current) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  const handleSaveRef = useRef(null);
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleSaveRef.current?.();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   useEffect(() => {
     if (!token) {
       navigate('/login');
       return;
     }
-
-    if (isEdit) {
-      fetchWorkDetail();
-    }
+    if (isEdit) fetchWorkDetail();
   }, [id, token]);
 
   const fetchWorkDetail = async () => {
     setFetching(true);
     setError('');
-
     try {
-      const response = await fetch('/api/works');
+      const response = await fetch(`/api/admin/works?id=${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
       if (!response.ok) throw new Error('Failed to fetch data.');
 
-      const data = await response.json();
-      const work = data.find((w) => w.id === parseInt(id));
+      const work = await response.json();
+      if (!work) throw new Error('Case study not found.');
 
-      if (!work) {
-        throw new Error('Case study not found.');
+      let industryTags = [];
+      if (work.industry) {
+        try {
+          const arr = typeof work.industry === 'string' ? JSON.parse(work.industry) : work.industry;
+          industryTags = Array.isArray(arr) ? arr : [];
+        } catch { industryTags = []; }
       }
 
-      setTitle(work.title);
-      setSlug(work.slug);
-      setDesc(work.description);
-      setContent(work.content || '');
-      setCompany(work.company);
-      setCategory(work.category);
-      setReadingTime(work.readingTime);
-      setYear(work.year);
-      setHeroImage(work.heroImage);
-      setLogo(work.logo || '');
-      setLiveUrl(work.liveUrl || '');
-      setIndustryInput(work.industry ? work.industry.join(', ') : '');
-
-      if (work.designStack) {
-        setDesignStack(work.designStack);
+      let designStack = [];
+      if (work.design_stack) {
+        try { designStack = typeof work.design_stack === 'string' ? JSON.parse(work.design_stack) : work.design_stack; }
+        catch { designStack = []; }
       }
+
+      let sections = [];
       if (work.sections) {
-        setSections(work.sections);
+        try { sections = typeof work.sections === 'string' ? JSON.parse(work.sections) : work.sections; }
+        catch { sections = []; }
       }
+
+      let contributors = [];
+      if (work.contributors) {
+        try { contributors = typeof work.contributors === 'string' ? JSON.parse(work.contributors) : work.contributors; }
+        catch { contributors = []; }
+      }
+
+      dispatch({
+        type: 'LOAD',
+        payload: {
+          title: work.title || '',
+          slug: work.slug || '',
+          desc: work.description || work.desc || '',
+          content: work.content || '',
+          company: work.company || '',
+          category: work.category || '',
+          readingTime: work.reading_time || work.readingTime || '',
+          year: work.year || '',
+          heroImage: work.hero_image || work.heroImage || '',
+          logo: work.logo || '',
+          liveUrl: work.live_url || work.liveUrl || '',
+          industryInput: industryTags,
+          isHighlighted: !!work.is_highlighted,
+          designStack,
+          sections,
+          status: work.status || 'draft',
+          scheduledAt: work.scheduled_at || '',
+          contributors,
+        },
+      });
     } catch (err) {
       setError(err.message || 'An error occurred while loading data.');
     } finally {
@@ -92,35 +387,32 @@ export default function WorkEditor() {
     }
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const handleSave = useCallback(async (e) => {
+    if (e?.preventDefault) e.preventDefault();
     setError('');
     setLoading(true);
 
-    const industries = industryInput
-      ? industryInput.split(',').map((item) => item.trim()).filter(Boolean)
-      : [];
-
     const payload = {
-      title,
-      slug,
-      description: desc,
-      content,
-      company,
-      category,
-      reading_time: readingTime,
-      year,
-      hero_image: heroImage,
-      logo: logo || null,
-      live_url: liveUrl || null,
-      industry: industries,
-      design_stack: designStack,
-      sections: sections,
+      title: form.title,
+      slug: form.slug,
+      desc: form.desc,
+      content: form.content,
+      company: form.company,
+      category: form.category,
+      readingTime: form.readingTime,
+      year: form.year,
+      heroImage: form.heroImage,
+      logo: form.logo || null,
+      liveUrl: form.liveUrl || null,
+      industry: Array.isArray(form.industryInput) ? form.industryInput : [],
+      designStack: form.designStack,
+      sections: form.sections,
+      is_highlighted: form.isHighlighted,
+      status: form.status,
+      scheduled_at: form.status === 'scheduled' ? form.scheduledAt : null,
+      contributors: form.contributors,
     };
-
-    if (isEdit) {
-      payload.id = parseInt(id);
-    }
+    if (isEdit) payload.id = parseInt(id);
 
     try {
       const response = await fetch('/api/admin/works', {
@@ -131,499 +423,576 @@ export default function WorkEditor() {
         },
         body: JSON.stringify(payload),
       });
-
       const resData = await response.json();
-
       if (response.ok && resData.success) {
-        navigate('/admin', { state: { tab: 'works' } });
+        savedRef.current = true;
+        hasChanges.current = false;
+        navigate('/admin/works');
       } else {
         setError(resData.error || 'Failed to save data.');
       }
-    } catch (err) {
-      setError('A network error occurred.');
+    } catch {
+      setError('A network error occurred. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [form, id, isEdit, token, navigate]);
 
-  const addStack = () => {
+  useEffect(() => {
+    handleSaveRef.current = handleSave;
+  }, [handleSave]);
+
+  const addStack = useCallback(() => {
     if (!newStackName || !newStackIcon) return;
-    setDesignStack([
-      ...designStack,
-      {
-        name: newStackName,
-        icon: newStackIcon,
-        color: newStackColor || null,
-      },
+    setField('designStack', [
+      ...form.designStack,
+      { name: newStackName, icon: newStackIcon, color: newStackColor || null },
     ]);
-    setNewStackName('');
-    setNewStackIcon('');
-    setNewStackColor('');
-  };
+    setNewStackName(''); setNewStackIcon(''); setNewStackColor('');
+  }, [newStackName, newStackIcon, newStackColor, form.designStack, setField]);
 
-  const removeStack = (index) => {
-    setDesignStack(designStack.filter((_, idx) => idx !== index));
-  };
+  const removeStack = useCallback((i) => {
+    setField('designStack', form.designStack.filter((_, idx) => idx !== i));
+  }, [form.designStack, setField]);
 
-  const addSection = () => {
+  const addSection = useCallback(() => {
     if (!newSectionId || !newSectionTitle) return;
-    setSections([
-      ...sections,
-      {
-        id: newSectionId,
-        title: newSectionTitle,
-      },
-    ]);
-    setNewSectionId('');
-    setNewSectionTitle('');
-  };
+    setField('sections', [...form.sections, { id: newSectionId, title: newSectionTitle }]);
+    setNewSectionId(''); setNewSectionTitle('');
+  }, [newSectionId, newSectionTitle, form.sections, setField]);
 
-  const removeSection = (index) => {
-    setSections(sections.filter((_, idx) => idx !== index));
-  };
+  const removeSection = useCallback((i) => {
+    setField('sections', form.sections.filter((_, idx) => idx !== i));
+  }, [form.sections, setField]);
 
-  const autoGenerateTOC = () => {
-    if (!content) return;
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(content, 'text/html');
-    const h2Elements = doc.querySelectorAll('h2');
-    
-    const newSections = Array.from(h2Elements).map((h2) => {
-      const title = h2.textContent || '';
-      const id = h2.getAttribute('id') || title
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/&/g, '-and-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-');
-      return { id, title };
-    });
+  const addContributor = useCallback(() => {
+    const url = contributorInput.trim();
+    if (!url) return;
+    const username = url.replace(/\/$/, '').split('/').pop();
+    setField('contributors', [...form.contributors, { linkedin: url, username }]);
+    setContributorInput('');
+  }, [contributorInput, form.contributors, setField]);
 
-    if (newSections.length > 0) {
-      setSections(newSections);
-    }
-  };
+  const removeContributor = useCallback((i) => {
+    setField('contributors', form.contributors.filter((_, idx) => idx !== i));
+  }, [form.contributors, setField]);
+
+  const autoGenerateTOC = useCallback(() => {
+    if (!form.content) return;
+    setTimeout(() => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(form.content, 'text/html');
+      const h2Elements = doc.querySelectorAll('h2');
+      const newSections = Array.from(h2Elements).map((h2) => {
+        const t = h2.textContent || '';
+        const sectionId = h2.getAttribute('id') ||
+          t.toLowerCase().trim()
+            .replace(/\s+/g, '-')
+            .replace(/&/g, '-and-')
+            .replace(/[^\w-]+/g, '')
+            .replace(/--+/g, '-');
+        return { id: sectionId, title: t };
+      });
+      if (newSections.length > 0) setField('sections', newSections);
+    }, 0);
+  }, [form.content, setField]);
+
+  const charCount = useMemo(
+    () => form.content.replace(/<[^>]*>/g, '').length,
+    [form.content]
+  );
+
+  const statusOptions = [
+    { value: 'draft', label: 'Draft', color: 'bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300' },
+    { value: 'published', label: 'Published', color: 'bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400' },
+    { value: 'scheduled', label: 'Scheduled', color: 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400' },
+  ];
 
   if (fetching) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-        <div className="flex flex-col items-center justify-center gap-3 text-neutral-450 dark:text-zinc-500 font-sans">
-          <Icon icon="svg-spinners:180-ring" className="w-8 h-8 text-neutral-500" />
-          <span className="text-sm font-medium font-sans">Loading data...</span>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
+          <Icon icon="svg-spinners:180-ring" className="w-8 h-8" />
+          <span className="text-sm font-medium">Loading case study data...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen bg-zinc-50 dark:bg-zinc-950 text-neutral-800 dark:text-zinc-200 theme-transition flex flex-col md:flex-row overflow-hidden">
-      
-      {/* Mobile Top Header */}
-      <header className="md:hidden flex items-center justify-between px-6 py-4 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-35">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-neutral-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center font-bold text-sm">
-            H
-          </div>
-          <span className="font-bold tracking-tight text-neutral-900 dark:text-zinc-100">Hamzah Admin</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <AnimatedThemeToggler />
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-1.5 rounded-lg border border-neutral-200 dark:border-zinc-800 text-neutral-600 dark:text-neutral-400 cursor-pointer"
-          >
-            <Icon icon="solar:hamburger-menu-linear" className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background flex flex-col">
+      <form onSubmit={handleSave} className="h-screen flex flex-col">
 
-      {/* Sidebar - Overlay drawer on mobile, sticky on desktop */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col justify-between transition-transform duration-300 md:translate-x-0 md:static md:h-screen sticky top-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-      `}>
-        <div className="flex flex-col flex-1 py-6 px-4 space-y-7">
-          {/* Sidebar Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 px-2">
-              <div className="w-8 h-8 rounded-lg bg-neutral-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center font-bold text-sm">
-                H
-              </div>
-              <div>
-                <span className="font-bold tracking-tight text-neutral-900 dark:text-zinc-100 text-sm block font-sans">Hamzah Alifia</span>
-                <span className="text-[10px] text-neutral-450 dark:text-zinc-500 font-medium">Administrator</span>
-              </div>
-            </div>
-            
-            {/* Close button on mobile */}
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="md:hidden p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 text-neutral-500 cursor-pointer"
+        {/* ─── TOP HEADER BAR ─── */}
+        <header className="flex flex-wrap items-center justify-between px-4 sm:px-6 py-3 border-b bg-card/80 backdrop-blur shrink-0 gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <Link
+              to="/admin/works"
+              className="flex items-center justify-center w-8 h-8 rounded-lg border hover:bg-muted transition-all cursor-pointer shrink-0 text-muted-foreground"
+              aria-label="Back to Work Management"
             >
-              <Icon icon="solar:close-square-linear" className="w-5 h-5" />
+              <Icon icon="lucide:arrow-left" className="w-5 h-5" />
+            </Link>
+            <span className="text-xs text-muted-foreground font-medium">
+              {isEdit ? 'Edit Case Study' : 'New Case Study'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Sidebar toggle — visible on < lg */}
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden flex items-center justify-center w-8 h-8 rounded-lg border hover:bg-muted transition-colors cursor-pointer text-muted-foreground"
+              aria-label="Toggle panel"
+            >
+              <Icon icon={sidebarOpen ? 'lucide:panel-right-close' : 'lucide:panel-right-open'} className="w-4 h-4" />
             </button>
-          </div>
-
-          {/* Navigation Links */}
-          <div className="space-y-6">
-            <div>
-              <span className="px-3 text-[10px] font-bold text-neutral-400 dark:text-zinc-500 uppercase tracking-widest block mb-2 select-none font-sans">
-                Showcase Management
-              </span>
-              <nav className="space-y-1">
-                <Link
-                  to="/admin"
-                  state={{ tab: 'works' }}
-                  onClick={() => setSidebarOpen(false)}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all bg-neutral-950 dark:bg-zinc-100 text-white dark:text-zinc-950 shadow-sm"
-                >
-                  <Icon icon="solar:folder-with-files-linear" className="w-4.5 h-4.5" />
-                  <span>Case Studies</span>
-                </Link>
-
-                <Link
-                  to="/admin"
-                  state={{ tab: 'explorations' }}
-                  onClick={() => setSidebarOpen(false)}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-zinc-800/50"
-                >
-                  <Icon icon="solar:compass-linear" className="w-4.5 h-4.5" />
-                  <span>Explorations</span>
-                </Link>
-              </nav>
-            </div>
-          </div>
-        </div>
-
-        {/* Sidebar Footer */}
-        <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 space-y-4 font-sans">
-          <div className="hidden md:flex items-center justify-between px-2">
-            <span className="text-xs text-neutral-455 dark:text-zinc-450 font-medium">Toggle Theme</span>
-            <AnimatedThemeToggler />
-          </div>
-
-          <button
-            onClick={() => {
-              localStorage.removeItem('admin_token');
-              navigate('/login');
-            }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-red-200 dark:border-red-950/20 text-red-650 dark:text-red-400 bg-red-50/50 dark:bg-red-950/10 hover:bg-red-100 dark:hover:bg-red-950/20 text-xs font-semibold cursor-pointer transition-all shadow-sm"
-          >
-            <Icon icon="solar:logout-linear" className="w-4 h-4" />
-            <span>Sign Out</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Backdrop for mobile drawer */}
-      {sidebarOpen && (
-        <div
-          onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-black/40 z-30 md:hidden transition-opacity"
-        />
-      )}
-
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden font-sans">
-        {/* Top Header - Desktop Only */}
-        <header className="hidden md:flex items-center justify-between px-8 py-5 border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 backdrop-blur sticky top-0 z-20">
-          <div className="flex items-center gap-2 text-xs text-neutral-455 dark:text-zinc-500 font-semibold uppercase tracking-wider">
-            <Link to="/admin" className="hover:text-neutral-900 dark:hover:text-white transition-colors">Admin Dashboard</Link>
-            <span>/</span>
-            <Link to="/admin" state={{ tab: 'works' }} className="hover:text-neutral-900 dark:hover:text-white transition-colors">Case Studies</Link>
-            <span>/</span>
-            <span className="text-neutral-900 dark:text-zinc-300">{isEdit ? 'Edit Case Study' : 'Add New'}</span>
+            <Link
+              to="/admin/works"
+              className="px-3 sm:px-4 py-2 rounded-xl border text-xs sm:text-sm font-medium text-foreground hover:bg-muted transition-all"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 sm:px-5 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-xs sm:text-sm transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50"
+            >
+              {loading && <Icon icon="svg-spinners:180-ring" className="w-4 h-4" />}
+              {isEdit ? 'Update' : 'Publish'}
+            </button>
           </div>
         </header>
 
-        {/* Content Container (Scrollable) */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-6 md:p-8 max-w-[1200px] w-full mx-auto space-y-8">
-            {/* Header Row */}
-          <div className="flex items-center gap-3 border-b border-dashed border-zinc-200 dark:border-zinc-800 pb-6">
-            <Link
-              to="/admin"
-              state={{ tab: 'works' }}
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-zinc-900 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-all border border-zinc-200 dark:border-zinc-800 cursor-pointer shadow-sm"
-            >
-              <Icon icon="solar:alt-arrow-left-linear" className="w-4.5 h-4.5" />
-            </Link>
-            <div>
-              <span className="text-[10px] font-bold tracking-widest text-neutral-400 dark:text-zinc-500 uppercase select-none block mb-1">
-                Case Study Editor
-              </span>
-              <h1 className="font-serif-attio text-xl sm:text-2xl font-semibold tracking-tight text-neutral-900 dark:text-zinc-100">
-                {isEdit ? 'Edit Case Study' : 'Add New Case Study'}
-              </h1>
+        {error && (
+          <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl border border-destructive/20 bg-destructive/10 text-destructive flex items-center gap-2 text-sm shrink-0">
+            <Icon icon="lucide:triangle-alert" className="w-5 h-5 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* ─── MAIN CONTENT: Editor + Sidebar ─── */}
+        <div className="flex-1 flex overflow-hidden relative">
+
+          {/* ── LEFT: Editor Area ── */}
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden lg:border-r">
+
+            <div className="flex items-center gap-1 px-4 pt-3 pb-0 shrink-0">
+              <button
+                type="button"
+                onClick={() => setPreviewMode(false)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-t-xl text-sm font-medium transition-all border-b-2 ${
+                  !previewMode
+                    ? 'text-foreground border-primary bg-card'
+                    : 'text-muted-foreground border-transparent hover:text-foreground'
+                }`}
+              >
+                <Icon icon="lucide:pen-line" className="w-4 h-4" />
+                <span>Edit</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewMode(true)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-t-xl text-sm font-medium transition-all border-b-2 ${
+                  previewMode
+                    ? 'text-foreground border-primary bg-card'
+                    : 'text-muted-foreground border-transparent hover:text-foreground'
+                }`}
+              >
+                <Icon icon="lucide:eye" className="w-4 h-4" />
+                <span>Preview</span>
+              </button>
+
+              <div className="ml-auto text-xs text-muted-foreground mr-2">
+                {charCount.toLocaleString()} chars
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-hidden rounded-tr-xl border-t bg-card mx-0">
+              {previewMode ? (
+                <div className="h-full overflow-y-auto p-6 sm:p-10">
+                  <div className="max-w-[740px] mx-auto case-study-content">
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: form.content || '<p class="text-muted-foreground italic text-center py-20">No content yet. Switch to Edit mode to start writing.</p>',
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="h-full overflow-hidden">
+                  <RichTextEditor
+                    value={form.content}
+                    onChange={(val) => setField('content', val)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
-          {error && (
-            <div className="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30 flex items-center gap-2 text-sm">
-              <Icon icon="solar:danger-triangle-linear" className="w-5 h-5 flex-shrink-0" />
-              <span>{error}</span>
+          {/* ── RIGHT: Metadata Sidebar ── */}
+          {/* Desktop: always visible, Mobile: overlay when toggled */}
+          {sidebarOpen && <div className="lg:hidden fixed inset-0 z-10 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />}
+          <aside className={`flex-shrink-0 overflow-y-auto bg-card transition-all duration-300
+            ${sidebarOpen ? 'fixed inset-y-0 right-0 z-20 w-full sm:w-[380px] shadow-2xl border-l' : 'hidden lg:block lg:relative lg:w-[380px]'}`}
+          >
+            {/* Close button on mobile overlay */}
+            <div className="lg:hidden flex justify-end p-2">
+              <button type="button" onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg hover:bg-muted cursor-pointer text-muted-foreground">
+                <Icon icon="lucide:x" className="w-4 h-4" />
+              </button>
             </div>
-          )}
 
-          <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            {/* Left Side: Main content editors (col-span-2) */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white dark:bg-zinc-900/50 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-6">
-                <h3 className="font-bold text-neutral-900 dark:text-zinc-200 text-xs pb-3 border-b border-zinc-100 dark:border-zinc-800/80 uppercase tracking-wider select-none">Main Content</h3>
-                
-                {/* Title */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Case Study Title</label>
-                  <input
-                    type="text" required value={title} onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Resolving a 40% Efficiency Loss..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
-                  />
-                </div>
+            <div className="p-5 space-y-5">
 
-                {/* Slug */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Slug URL (Unique)</label>
-                  <input
-                    type="text" required value={slug} onChange={(e) => setSlug(e.target.value)}
-                    placeholder="resolving-40-percent"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
-                  />
-                </div>
+              {/* Post Settings */}
+              <div className="bg-card rounded-xl border p-4 space-y-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Post Settings</h3>
 
-                {/* Description */}
+                {/* Title — moved from navbar */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Short Description (Summary)</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Title</label>
                   <textarea
-                    required rows={3} value={desc} onChange={(e) => setDesc(e.target.value)}
-                    placeholder="Short description of the case study shown on portfolio list cards..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
+                    required
+                    value={form.title}
+                    onChange={(e) => setField('title', e.target.value)}
+                    placeholder="Case Study Title..."
+                    rows={2}
+                    className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all resize-y"
+                    style={{ minHeight: '2.5rem', maxHeight: '6rem' }}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Slug</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.slug}
+                    onChange={(e) => setField('slug', e.target.value)}
+                    placeholder="case-study-slug"
+                    className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all font-mono text-xs"
+                  />
+                </div>
+
+                {/* Status */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</label>
+                  <div className="flex gap-1.5">
+                    {statusOptions.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setField('status', opt.value)}
+                        className={`flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
+                          form.status === opt.value
+                            ? `${opt.color} border-current/30`
+                            : 'bg-background border text-muted-foreground hover:border-foreground/20'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                  {form.status === 'scheduled' && (
+                    <input
+                      type="datetime-local"
+                      value={form.scheduledAt}
+                      onChange={(e) => setField('scheduledAt', e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                    />
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Summary</label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={form.desc}
+                    onChange={(e) => setField('desc', e.target.value)}
+                    placeholder="Brief description shown on cards..."
+                    className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all resize-y"
+                    style={{ minHeight: '4.5rem', maxHeight: '10rem' }}
                   />
                 </div>
               </div>
 
-              {/* Lexical Rich Content Editor */}
-              <div className="bg-white dark:bg-zinc-900/50 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-4">
-                <label className="text-sm font-bold text-neutral-900 dark:text-zinc-200 uppercase tracking-wider block">Detailed Content (Rich HTML)</label>
-                <LexicalEditor value={content} onChange={setContent} />
-              </div>
-            </div>
+              {/* Metadata */}
+              <div className="bg-card rounded-xl border p-4 space-y-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Metadata</h3>
 
-            {/* Right Side: Meta and side assets (col-span-1) */}
-            <div className="space-y-6">
-              <div className="bg-white dark:bg-zinc-900/50 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-6">
-                 <h3 className="font-bold text-neutral-900 dark:text-zinc-200 text-xs pb-3 border-b border-zinc-100 dark:border-zinc-800/80 uppercase tracking-wider select-none">Metadata</h3>
-                
-                {/* Company */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Company / Client</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Company</label>
                   <input
-                    type="text" required value={company} onChange={(e) => setCompany(e.target.value)}
-                    placeholder="PT Neuronworks Indonesia"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
+                    type="text"
+                    required
+                    value={form.company}
+                    onChange={(e) => setField('company', e.target.value)}
+                    placeholder="Client name"
+                    className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
                   />
                 </div>
 
-                {/* Category */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Category</label>
-                  <input
-                    type="text" required value={category} onChange={(e) => setCategory(e.target.value)}
-                    placeholder="DOOR V3 / Enterprise Dashboard"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Category</label>
+                    <input
+                      type="text"
+                      required
+                      value={form.category}
+                      onChange={(e) => setField('category', e.target.value)}
+                      placeholder="Enterprise / SaaS"
+                      className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Year</label>
+                    <input
+                      type="text"
+                      required
+                      value={form.year}
+                      onChange={(e) => setField('year', e.target.value)}
+                      placeholder="2025"
+                      className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                    />
+                  </div>
                 </div>
 
-                {/* Reading Time */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Reading Time</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Read Time</label>
                   <input
-                    type="text" required value={readingTime} onChange={(e) => setReadingTime(e.target.value)}
+                    type="text"
+                    required
+                    value={form.readingTime}
+                    onChange={(e) => setField('readingTime', e.target.value)}
                     placeholder="10 min read"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
+                    className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
                   />
                 </div>
 
-                {/* Year */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Year</label>
-                  <input
-                    type="text" required value={year} onChange={(e) => setYear(e.target.value)}
-                    placeholder="2025"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
-                  />
-                </div>
+                <TagChipInput
+                  label="Industry"
+                  tags={Array.isArray(form.industryInput) ? form.industryInput : []}
+                  onChange={(tags) => setField('industryInput', tags)}
+                  placeholder="HRMIS, B2B, Enterprise..."
+                />
               </div>
 
-              <div className="bg-white dark:bg-zinc-900/50 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-6">
-                <h3 className="font-bold text-neutral-900 dark:text-zinc-200 text-xs pb-3 border-b border-zinc-100 dark:border-zinc-800/80 uppercase tracking-wider select-none">Assets & Links</h3>
-
-                {/* Hero Image */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Hero Image URL</label>
-                  <input
-                    type="text" required value={heroImage} onChange={(e) => setHeroImage(e.target.value)}
-                    placeholder="/images/work/thumbnail.webp"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
-                  />
-                </div>
-
-                {/* Logo */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Logo URL (Optional)</label>
-                  <input
-                    type="text" value={logo} onChange={(e) => setLogo(e.target.value)}
-                    placeholder="/images/client_logo/logo.svg"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
-                  />
-                </div>
-
-                {/* Live URL */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Live URL (Optional)</label>
-                  <input
-                    type="text" value={liveUrl} onChange={(e) => setLiveUrl(e.target.value)}
-                    placeholder="https://live-site.com"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
-                  />
-                </div>
-
-                {/* Industry */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 dark:text-zinc-400 uppercase tracking-wider">Industry (Separate with commas)</label>
-                  <input
-                    type="text" value={industryInput} onChange={(e) => setIndustryInput(e.target.value)}
-                    placeholder="HRMIS, B2B SaaS, Enterprise"
-                    className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-neutral-900 dark:text-zinc-200 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-650 transition-all font-sans"
-                  />
-                </div>
-              </div>
-
-              {/* Design Stack Section */}
-              <div className="bg-white dark:bg-zinc-900/50 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-4">
-                <h3 className="font-bold text-neutral-900 dark:text-zinc-200 text-xs pb-3 border-b border-zinc-100 dark:border-zinc-800/80 uppercase tracking-wider select-none">Design Stack</h3>
-                
-                <div className="flex flex-wrap gap-2 min-h-8">
-                  {designStack.length === 0 ? (
-                    <span className="text-xs text-neutral-400 italic font-sans">No tech stack added.</span>
+              {/* Contributors */}
+              <div className="bg-card rounded-xl border p-4 space-y-3">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Contributors</h3>
+                <div className="flex flex-wrap gap-1.5 min-h-[28px]">
+                  {form.contributors.length === 0 ? (
+                    <span className="text-xs text-muted-foreground italic">No contributors</span>
                   ) : (
-                    designStack.map((tech, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-sans">
-                        <Icon icon={tech.icon} style={tech.color ? { color: tech.color } : undefined} className="w-4 h-4" />
-                        <span className="font-medium">{tech.name}</span>
-                        <button type="button" onClick={() => removeStack(idx)} className="text-red-500 hover:text-red-700 ml-1 cursor-pointer">
-                          <Icon icon="solar:close-circle-bold" className="w-4.5 h-4.5" />
+                    form.contributors.map((c, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted border text-xs">
+                        <Icon icon="lucide:linkedin" className="w-3 h-3 text-blue-600" />
+                        <span className="text-foreground">{c.username}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeContributor(idx)}
+                          className="text-muted-foreground hover:text-destructive cursor-pointer"
+                        >
+                          <Icon icon="lucide:x" className="w-3 h-3" />
                         </button>
                       </div>
                     ))
                   )}
                 </div>
-
-                <div className="grid grid-cols-1 gap-2.5 bg-neutral-50/50 dark:bg-zinc-900/30 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <div className="flex gap-1.5">
                   <input
-                    type="text" value={newStackName} onChange={(e) => setNewStackName(e.target.value)}
-                    placeholder="Name (Figma, React)"
-                    className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-xs font-sans focus:outline-none dark:text-zinc-200"
+                    type="text"
+                    value={contributorInput}
+                    onChange={(e) => setContributorInput(e.target.value)}
+                    placeholder="LinkedIn URL (e.g. linkedin.com/in/username)"
+                    className="flex-1 px-2.5 py-1.5 rounded-md border bg-background text-xs focus:outline-none text-foreground"
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addContributor(); } }}
                   />
-                  <input
-                    type="text" value={newStackIcon} onChange={(e) => setNewStackIcon(e.target.value)}
-                    placeholder="Iconify ID (devicon:figma)"
-                    className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-xs font-sans focus:outline-none dark:text-zinc-200"
-                  />
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="text" value={newStackColor} onChange={(e) => setNewStackColor(e.target.value)}
-                      placeholder="Hex color (#FF0000)"
-                      className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-xs font-sans focus:outline-none dark:text-zinc-200"
-                    />
-                    <button
-                      type="button" onClick={addStack}
-                      className="px-3 py-2 rounded-lg bg-neutral-950 dark:bg-zinc-100 text-white dark:text-zinc-950 font-semibold text-xs cursor-pointer flex-shrink-0 hover:bg-neutral-850 dark:hover:bg-zinc-200 font-sans"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-zinc-900/50 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-4">
-                <div className="flex justify-between items-center pb-3 border-b border-zinc-100 dark:border-zinc-800/80 select-none">
-                  <h3 className="font-bold text-neutral-900 dark:text-zinc-200 text-xs uppercase tracking-wider">Sections (TOC)</h3>
                   <button
                     type="button"
-                    onClick={autoGenerateTOC}
-                    className="text-[10px] font-bold text-neutral-500 hover:text-neutral-900 dark:text-zinc-400 dark:hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
-                    title="Automatically detect H2 from editor"
+                    onClick={addContributor}
+                    className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold text-xs cursor-pointer hover:bg-primary/90"
                   >
-                    <Icon icon="lucide:refresh-cw" className="w-3 h-3" />
-                    <span>Auto-Detect</span>
+                    Add
                   </button>
                 </div>
-                
-                <div className="flex flex-wrap gap-2 min-h-8">
-                  {sections.length === 0 ? (
-                    <span className="text-xs text-neutral-400 italic font-sans">No TOC sections.</span>
-                  ) : (
-                    sections.map((sec, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-sans">
-                        <span className="font-mono font-bold text-neutral-400">#{sec.id}</span>
-                        <span className="font-medium">{sec.title}</span>
-                        <button type="button" onClick={() => removeSection(idx)} className="text-red-500 hover:text-red-700 ml-1 cursor-pointer">
-                          <Icon icon="solar:close-circle-bold" className="w-4.5 h-4.5" />
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
+                <p className="text-[10px] text-muted-foreground">Paste full LinkedIn profile URL</p>
+              </div>
 
-                <div className="grid grid-cols-1 gap-2.5 bg-neutral-50/50 dark:bg-zinc-900/30 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                  <input
-                    type="text" value={newSectionId} onChange={(e) => setNewSectionId(e.target.value)}
-                    placeholder="ID (it-started-here)"
-                    className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-xs font-sans focus:outline-none dark:text-zinc-200"
+              {/* Assets */}
+              <div className="bg-card rounded-xl border p-4 space-y-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Assets</h3>
+                <div className="space-y-4">
+                  <ImageAssetField
+                    label="Hero Image"
+                    value={form.heroImage}
+                    onChange={(val) => setField('heroImage', val)}
+                    placeholder="/images/work/thumbnail.webp"
                   />
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="text" value={newSectionTitle} onChange={(e) => setNewSectionTitle(e.target.value)}
-                      placeholder="Section Title (It Started Here...)"
-                      className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF9] dark:bg-zinc-950 text-xs font-sans focus:outline-none dark:text-zinc-200"
-                    />
-                    <button
-                      type="button" onClick={addSection}
-                      className="px-3 py-2 rounded-lg bg-neutral-950 dark:bg-zinc-100 text-white dark:text-zinc-950 font-semibold text-xs cursor-pointer flex-shrink-0 hover:bg-neutral-850 dark:hover:bg-zinc-200 font-sans"
-                    >
-                      Add
-                    </button>
-                  </div>
+                  <ImageAssetField
+                    label="Logo (Optional)"
+                    value={form.logo}
+                    onChange={(val) => setField('logo', val)}
+                    placeholder="/images/client_logo/logo.svg"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Live URL (Optional)</label>
+                  <input
+                    type="text"
+                    value={form.liveUrl}
+                    onChange={(e) => setField('liveUrl', e.target.value)}
+                    placeholder="https://example.com"
+                    className="w-full px-3 py-2 rounded-lg border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                  />
                 </div>
               </div>
 
-              {/* Form Actions Card */}
-              <div className="bg-white dark:bg-zinc-900/50 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-between gap-4">
-                <Link
-                  to="/admin"
-                  state={{ tab: 'works' }}
-                  className="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-neutral-600 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-800 text-xs font-semibold transition-all font-sans"
-                >
-                  Cancel
-                </Link>
-                
+              {/* Highlight Toggle */}
+              <div className="bg-card rounded-xl border p-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Highlight</h3>
                 <button
-                  type="submit" disabled={loading}
-                  className="px-5 py-2 rounded-lg bg-neutral-950 dark:bg-zinc-100 text-white dark:text-zinc-950 font-semibold text-xs transition-all active:scale-98 flex items-center gap-1.5 cursor-pointer shadow-md disabled:opacity-50 hover:bg-neutral-850 dark:hover:bg-zinc-200 font-sans"
+                  type="button"
+                  onClick={() => setField('isHighlighted', !form.isHighlighted)}
+                  className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-all cursor-pointer ${
+                    form.isHighlighted
+                      ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/50 text-amber-700 dark:text-amber-400'
+                      : 'bg-card border text-muted-foreground hover:border-amber-200 dark:hover:border-amber-800/50'
+                  }`}
                 >
-                  {loading && <Icon icon="svg-spinners:180-ring" className="w-4 h-4" />}
-                  <span>Save Case Study</span>
+                  <Icon icon={form.isHighlighted ? 'lucide:star' : 'lucide:star'} className={`w-4 h-4 ${form.isHighlighted ? 'fill-amber-500' : ''}`} />
+                  {form.isHighlighted ? 'Featured (max 3)' : 'Feature on homepage'}
                 </button>
               </div>
 
+              {/* Design Stack */}
+              <div className="bg-card rounded-xl border p-4 space-y-3">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Design Stack</h3>
+                <div className="flex flex-wrap gap-1.5 min-h-[28px]">
+                  {form.designStack.length === 0 ? (
+                    <span className="text-xs text-muted-foreground italic">No items</span>
+                  ) : (
+                    form.designStack.map((tech, idx) => (
+                      <div key={idx} className="flex items-center gap-1 px-2 py-1 rounded-md bg-muted border text-xs">
+                        <Icon icon={tech.icon} style={tech.color ? { color: tech.color } : undefined} className="w-3.5 h-3.5" />
+                        <span>{tech.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeStack(idx)}
+                          className="text-destructive hover:text-destructive/80 cursor-pointer"
+                        >
+                          <Icon icon="lucide:x" className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="grid grid-cols-1 gap-1.5 bg-muted/30 p-2.5 rounded-lg border">
+                  <input
+                    type="text"
+                    value={newStackName}
+                    onChange={(e) => setNewStackName(e.target.value)}
+                    placeholder="Name (e.g. Figma)"
+                    className="w-full px-2.5 py-1.5 rounded-md border bg-background text-xs focus:outline-none text-foreground"
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addStack(); } }}
+                  />
+                  <input
+                    type="text"
+                    value={newStackIcon}
+                    onChange={(e) => setNewStackIcon(e.target.value)}
+                    placeholder="Iconify ID (e.g. logos:figma)"
+                    className="w-full px-2.5 py-1.5 rounded-md border bg-background text-xs focus:outline-none text-foreground"
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addStack(); } }}
+                  />
+                  <div className="flex gap-1.5">
+                    <input
+                      type="text"
+                      value={newStackColor}
+                      onChange={(e) => setNewStackColor(e.target.value)}
+                      placeholder="Color (optional)"
+                      className="flex-1 px-2.5 py-1.5 rounded-md border bg-background text-xs focus:outline-none text-foreground"
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addStack(); } }}
+                    />
+                    <button
+                      type="button"
+                      onClick={addStack}
+                      className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold text-xs cursor-pointer hover:bg-primary/90"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sections / TOC */}
+              <div className="bg-card rounded-xl border p-4 space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sections (TOC)</h3>
+                  <button
+                    type="button"
+                    onClick={autoGenerateTOC}
+                    className="text-[10px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1 cursor-pointer"
+                    title="Auto-detect h2 headings from content"
+                  >
+                    <Icon icon="lucide:refresh-cw" className="w-3 h-3" />
+                    Auto-detect
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5 min-h-[28px]">
+                  {form.sections.length === 0 ? (
+                    <span className="text-xs text-muted-foreground italic">No sections</span>
+                  ) : (
+                    form.sections.map((sec, idx) => (
+                      <div key={idx} className="flex items-center gap-1 px-2 py-1 rounded-md bg-muted border text-xs">
+                        <span className="font-mono text-muted-foreground">#{sec.id}</span>
+                        <span className="text-foreground">{sec.title}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeSection(idx)}
+                          className="text-destructive cursor-pointer"
+                        >
+                          <Icon icon="lucide:x" className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="grid grid-cols-1 gap-1.5 bg-muted/30 p-2.5 rounded-lg border">
+                  <input
+                    type="text"
+                    value={newSectionId}
+                    onChange={(e) => setNewSectionId(e.target.value)}
+                    placeholder="ID (slug, e.g. the-problem)"
+                    className="w-full px-2.5 py-1.5 rounded-md border bg-background text-xs focus:outline-none text-foreground"
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSection(); } }}
+                  />
+                  <div className="flex gap-1.5">
+                    <input
+                      type="text"
+                      value={newSectionTitle}
+                      onChange={(e) => setNewSectionTitle(e.target.value)}
+                      placeholder="Title (e.g. The Problem)"
+                      className="flex-1 px-2.5 py-1.5 rounded-md border bg-background text-xs focus:outline-none text-foreground"
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSection(); } }}
+                    />
+                    <button
+                      type="button"
+                      onClick={addSection}
+                      className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold text-xs cursor-pointer hover:bg-primary/90"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
             </div>
-          </form>
-          </div>
+          </aside>
         </div>
-      </main>
+      </form>
     </div>
   );
 }

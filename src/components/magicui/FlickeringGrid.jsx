@@ -10,6 +10,7 @@ export const FlickeringGrid = ({
   height,
   className,
   maxOpacity = 0.3,
+  speed = 0.05,
 }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -49,9 +50,12 @@ export const FlickeringGrid = ({
     const cols = Math.floor(widthToUse / (squareSize + gridGap));
     const rows = Math.floor(heightToUse / (squareSize + gridGap));
 
-    const opacities = new Float32Array(cols * rows);
-    for (let i = 0; i < opacities.length; i++) {
-      opacities[i] = Math.random() * maxOpacity;
+    const currentOpacities = new Float32Array(cols * rows);
+    const targetOpacities = new Float32Array(cols * rows);
+    for (let i = 0; i < currentOpacities.length; i++) {
+      const initialOpacity = Math.random() * maxOpacity;
+      currentOpacities[i] = initialOpacity;
+      targetOpacities[i] = initialOpacity;
     }
 
     const draw = () => {
@@ -61,11 +65,14 @@ export const FlickeringGrid = ({
         for (let j = 0; j < rows; j++) {
           const idx = i * rows + j;
           if (Math.random() < flickerChance) {
-            opacities[idx] = Math.random() * maxOpacity;
+            targetOpacities[idx] = Math.random() * maxOpacity;
           }
 
+          // Smoothly interpolate current opacity towards target opacity
+          currentOpacities[idx] += (targetOpacities[idx] - currentOpacities[idx]) * speed;
+
           ctx.fillStyle = memoizedColor;
-          ctx.globalAlpha = opacities[idx];
+          ctx.globalAlpha = currentOpacities[idx];
           ctx.fillRect(
             i * (squareSize + gridGap),
             j * (squareSize + gridGap),
@@ -92,7 +99,7 @@ export const FlickeringGrid = ({
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", handleResize);
     };
-  }, [squareSize, gridGap, flickerChance, memoizedColor, maxOpacity, setupCanvas, width, height]);
+  }, [squareSize, gridGap, flickerChance, memoizedColor, maxOpacity, speed, setupCanvas, width, height]);
 
   return (
     <div ref={containerRef} className={cn("h-full w-full pointer-events-none", className)}>

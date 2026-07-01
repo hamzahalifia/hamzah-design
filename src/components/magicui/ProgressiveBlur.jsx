@@ -12,17 +12,17 @@ export function ProgressiveBlur({
   ...props
 }) {
   const isVertical = direction === "top" || direction === "bottom";
-  const gradientDirection = {
-    top: "to top",
-    bottom: "to bottom",
-    left: "to left",
-    right: "to right",
-  }[direction];
 
   return (
     <div
       className={cn(
         "pointer-events-none absolute z-10 from-transparent to-white dark:to-[#0A0A0B]",
+        {
+          "bg-gradient-to-t": direction === "top",
+          "bg-gradient-to-b": direction === "bottom",
+          "bg-gradient-to-l": direction === "left",
+          "bg-gradient-to-r": direction === "right",
+        },
         isVertical ? "left-0 right-0 h-24" : "top-0 bottom-0 w-24",
         {
           "top-0": direction === "top",
@@ -32,9 +32,6 @@ export function ProgressiveBlur({
         },
         className
       )}
-      style={{
-        background: `linear-gradient(${gradientDirection}, transparent 0%, var(--tw-gradient-to) 100%)`,
-      }}
       {...props}
     />
   );

@@ -3,10 +3,10 @@ import Cal, { getCalApi } from "@calcom/embed-react";
 import { useTheme } from '../context/ThemeContext';
 import { DotPattern } from './magicui/DotPattern';
 import { RollingText } from './magicui/RollingText';
+import { SlidingNumber } from './core/sliding-number';
 
 export default function FooterReveal() {
   const { theme } = useTheme();
-  const [timeString, setTimeString] = useState('');
 
   // Dynamically re-initialize Cal.com UI when theme changes
   useEffect(() => {
@@ -20,7 +20,12 @@ export default function FooterReveal() {
     })();
   }, [theme]);
 
-  // Realtime Bandung Clock
+  // Realtime Bandung Clock — separate parts for SlidingNumber
+  const [clockHours, setClockHours] = useState(0);
+  const [clockMinutes, setClockMinutes] = useState(0);
+  const [clockSeconds, setClockSeconds] = useState(0);
+  const [clockLabel, setClockLabel] = useState('');
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -32,11 +37,10 @@ export default function FooterReveal() {
       if (hour >= 5 && hour < 12) period = 'morning';
       else if (hour >= 12 && hour < 18) period = 'afternoon';
 
-      const hh = String(now.getHours()).padStart(2, '0');
-      const mm = String(now.getMinutes()).padStart(2, '0');
-      const ss = String(now.getSeconds()).padStart(2, '0');
-
-      setTimeString(`${dayName} ${period}, ${hh}:${mm}:${ss} (GMT+7)`);
+      setClockHours(now.getHours());
+      setClockMinutes(now.getMinutes());
+      setClockSeconds(now.getSeconds());
+      setClockLabel(`${dayName} ${period}`);
     };
 
     updateTime();
@@ -66,7 +70,7 @@ export default function FooterReveal() {
             <h2 className="font-sans text-2xl sm:text-4xl lg:text-4xl font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
               Ready for the next challenge!
             </h2>
-            <p className="text-xs sm:text-sm text-attio-text-secondary-light dark:text-attio-text-secondary-dark leading-relaxed font-normal">
+            <p className="text-sm text-attio-text-secondary-light dark:text-attio-text-secondary-dark leading-relaxed font-normal">
               I am open to new opportunities and ready to discuss how my data-driven approach can elevate your enterprise tools.
             </p>
           </div>
@@ -101,32 +105,38 @@ export default function FooterReveal() {
       {/* Bottom Information Bar Always Visible in 100vh Viewport */}
       <div className="relative z-10 border-t border-attio-border-light dark:border-attio-border-dark bg-[#FAFAFB] dark:bg-[#080809] transition-colors duration-300 flex-shrink-0">
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark py-4 px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark py-4 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
             {/* Stacked Location & Realtime Clock */}
-            <div className="flex flex-col items-start text-attio-text-secondary-light dark:text-attio-text-secondary-dark space-y-0.5">
+            <div className="flex flex-col items-center sm:items-start text-attio-text-secondary-light dark:text-attio-text-secondary-dark space-y-0.5">
               <span className="font-semibold text-attio-text-primary-light dark:text-attio-text-primary-dark">
                 Based in Bandung, Indonesia
               </span>
-              <span className="font-mono text-neutral-500 dark:text-neutral-400">
-                {timeString || 'Loading time...'}
+              <span className="font-mono text-neutral-500 dark:text-neutral-400 flex items-center gap-0.5">
+                {clockLabel || 'Loading...'},{' '}
+                <SlidingNumber value={clockHours} padStart={true} />
+                <span className="text-neutral-400 dark:text-neutral-500">:</span>
+                <SlidingNumber value={clockMinutes} padStart={true} />
+                <span className="text-neutral-400 dark:text-neutral-500">:</span>
+                <SlidingNumber value={clockSeconds} padStart={true} />
+                <span className="ml-1">(GMT+7)</span>
               </span>
             </div>
 
-            {/* Social Links with RollingText & Copyright */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-attio-text-secondary-light dark:text-attio-text-secondary-dark">
+            {/* Social Links with RollingText & Copyright — centered on mobile, right on sm */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 text-attio-text-secondary-light dark:text-attio-text-secondary-dark">
               <div className="flex items-center gap-4 font-medium">
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
+                <a href="https://www.instagram.com/hamzahalifia" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
                   <RollingText>Instagram</RollingText>
                 </a>
-                <a href="https://threads.net" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
+                <a href="https://www.threads.com/@hamzahalifia" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
                   <RollingText>Thread</RollingText>
                 </a>
-                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
+                <a href="https://www.linkedin.com/in/alifiahamzah/" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
                   <RollingText>LinkedIn</RollingText>
                 </a>
               </div>
               <span className="hidden sm:inline text-neutral-300 dark:text-neutral-700">•</span>
-              <span className="text-neutral-400 dark:text-neutral-500 font-medium">Hamzah Design © 2026</span>
+              <span className="text-attio-text-primary-light dark:text-attio-text-primary-dark font-medium">Hamzah Design © {new Date().getFullYear()}</span>
             </div>
           </div>
         </div>
