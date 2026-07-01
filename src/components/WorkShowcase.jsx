@@ -140,7 +140,7 @@ export default function WorkShowcase() {
         )}
 
         {/* Featured Work Flush Cards */}
-        {!loading && works.map((work) => (
+        {!loading && works.map((work, index) => (
           <Link key={work.id} to={`/work/${work.slug}`} className="block group">
             <motion.div
               initial={{ opacity: 0.9, y: 10 }}
@@ -168,7 +168,8 @@ export default function WorkShowcase() {
                   <motion.img
                     src={work.heroImage}
                     alt={work.title}
-                    loading="lazy"
+                    loading={index === 0 ? undefined : "lazy"}
+                    fetchPriority={index === 0 ? "high" : undefined}
                     whileHover={{ scale: 1.04 }}
                     transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
                     className="w-full h-full object-cover transform-gpu will-change-transform pointer-events-auto"

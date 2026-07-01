@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HelmetProvider } from 'react-helmet-async';
@@ -9,22 +9,25 @@ import Navbar from './components/Navbar';
 import ProfileSidebar from './components/ProfileSidebar';
 import WorkShowcase from './components/WorkShowcase';
 import FooterReveal from './components/FooterReveal';
-import WorkDetail from './components/WorkDetail';
-import About from './components/About';
-import WorkPage from './components/WorkPage';
-import ExplorationPage from './components/ExplorationPage';
 import NotFound from './components/NotFound';
 import ServerError from './components/ServerError';
 import ErrorBoundary from './components/ErrorBoundary';
 import PageMeta from './components/SEO/PageMeta';
 
-import LoginPage from './components/admin/LoginPage';
-import AdminDashboard from './components/admin/AdminDashboard';
-import WorksManagement from './components/admin/WorksManagement';
-import ExplorationsManagement from './components/admin/ExplorationsManagement';
-import SettingsPage from './components/admin/SettingsPage';
-import WorkEditor from './components/admin/WorkEditor';
-import ExplorationEditor from './components/admin/ExplorationEditor';
+// Lazy load public pages
+const About = lazy(() => import('./components/About'));
+const WorkPage = lazy(() => import('./components/WorkPage'));
+const WorkDetail = lazy(() => import('./components/WorkDetail'));
+const ExplorationPage = lazy(() => import('./components/ExplorationPage'));
+
+// Lazy load admin pages
+const LoginPage = lazy(() => import('./components/admin/LoginPage'));
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
+const WorksManagement = lazy(() => import('./components/admin/WorksManagement'));
+const ExplorationsManagement = lazy(() => import('./components/admin/ExplorationsManagement'));
+const SettingsPage = lazy(() => import('./components/admin/SettingsPage'));
+const WorkEditor = lazy(() => import('./components/admin/WorkEditor'));
+const ExplorationEditor = lazy(() => import('./components/admin/ExplorationEditor'));
 
 function HomePage() {
   const { theme } = useTheme();
@@ -125,37 +128,43 @@ export default function App() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, ease: [0.215, 0.610, 0.355, 1.000] }}
             >
-              <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/work" element={<WorkPage />} />
-              <Route path="/work/:workId" element={<WorkDetail />} />
-              <Route path="/exploration" element={<ExplorationPage />} />
-              
-              {/* Admin - Login */}
-              <Route path="/login" element={<LoginPage />} />
-              
-              {/* Admin - Dashboard */}
-              <Route path="/admin" element={<AdminDashboard />} />
-              
-              {/* Admin - Works Management */}
-              <Route path="/admin/works" element={<WorksManagement />} />
-              <Route path="/admin/work/new" element={<WorkEditor />} />
-              <Route path="/admin/work/edit/:id" element={<WorkEditor />} />
-              
-              {/* Admin - Explorations Management */}
-              <Route path="/admin/explorations" element={<ExplorationsManagement />} />
-              <Route path="/admin/exploration/new" element={<ExplorationEditor />} />
-              <Route path="/admin/exploration/edit/:id" element={<ExplorationEditor />} />
-              
-              {/* Admin - Settings */}
-              <Route path="/admin/settings" element={<SettingsPage />} />
+              <Suspense fallback={
+                <div className="h-screen w-screen flex items-center justify-center bg-white dark:bg-[#080809]">
+                  <div className="w-8 h-8 border-4 border-neutral-900 border-t-transparent dark:border-zinc-100 dark:border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              }>
+                <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/work" element={<WorkPage />} />
+                <Route path="/work/:workId" element={<WorkDetail />} />
+                <Route path="/exploration" element={<ExplorationPage />} />
+                
+                {/* Admin - Login */}
+                <Route path="/login" element={<LoginPage />} />
+                
+                {/* Admin - Dashboard */}
+                <Route path="/admin" element={<AdminDashboard />} />
+                
+                {/* Admin - Works Management */}
+                <Route path="/admin/works" element={<WorksManagement />} />
+                <Route path="/admin/work/new" element={<WorkEditor />} />
+                <Route path="/admin/work/edit/:id" element={<WorkEditor />} />
+                
+                {/* Admin - Explorations Management */}
+                <Route path="/admin/explorations" element={<ExplorationsManagement />} />
+                <Route path="/admin/exploration/new" element={<ExplorationEditor />} />
+                <Route path="/admin/exploration/edit/:id" element={<ExplorationEditor />} />
+                
+                {/* Admin - Settings */}
+                <Route path="/admin/settings" element={<SettingsPage />} />
 
-              {/* Error Pages */}
-              <Route path="/500" element={<ServerError />} />
-              <Route path="*" element={<NotFound />} />
-              </Routes>
+                {/* Error Pages */}
+                <Route path="/500" element={<ServerError />} />
+                <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
             </motion.div>
           </ErrorBoundary>
         </BrowserRouter>
