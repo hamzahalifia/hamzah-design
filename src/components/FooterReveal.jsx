@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import Cal, { getCalApi } from "@calcom/embed-react";
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { DotPattern } from './magicui/DotPattern';
 import { RollingText } from './magicui/RollingText';
@@ -7,18 +6,54 @@ import { SlidingNumber } from './core/sliding-number';
 
 export default function FooterReveal() {
   const { theme } = useTheme();
+  const [CalComponent, setCalComponent] = useState(null);
+  const [loadCalendar, setLoadCalendar] = useState(false);
+  const containerRef = useRef(null);
 
-  // Dynamically re-initialize Cal.com UI when theme changes
+  // Trigger calendar loading when scrolled into view
   useEffect(() => {
-    (async function () {
-      const cal = await getCalApi({ "namespace": "30min" });
-      cal("ui", {
-        "hideEventTypeDetails": false,
-        "layout": "month_view",
-        "theme": theme === 'dark' ? 'dark' : 'light'
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLoadCalendar(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' } // Pre-load when within 200px of viewport
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
+  // Dynamically load Cal.com SDK on demand
+  useEffect(() => {
+    if (!loadCalendar) return;
+
+    let active = true;
+    import("@calcom/embed-react")
+      .then((module) => {
+        if (!active) return;
+        setCalComponent(() => module.default);
+        
+        module.getCalApi({ "namespace": "30min" }).then((cal) => {
+          if (!active) return;
+          cal("ui", {
+            "hideEventTypeDetails": false,
+            "layout": "month_view",
+            "theme": theme === 'dark' ? 'dark' : 'light'
+          });
+        });
+      })
+      .catch((err) => {
+        console.error("Gagal memuat Cal.com SDK:", err);
       });
-    })();
-  }, [theme]);
+
+    return () => {
+      active = false;
+    };
+  }, [loadCalendar, theme]);
 
   // Realtime Bandung Clock — separate parts for SlidingNumber
   const [clockHours, setClockHours] = useState(0);
@@ -76,28 +111,37 @@ export default function FooterReveal() {
           </div>
 
           {/* Clean Seamless Cal.com Calendar Embed Container */}
-          <div className="relative z-10 w-full max-w-[1000px] h-[500px] sm:h-[430px] lg:h-[415px] overflow-hidden rounded-xl bg-transparent flex-shrink-0">
-            <div 
-              style={{ 
-                width: "117.65%", 
-                height: "117.65%", 
-                transform: "scale(0.85)", 
-                transformOrigin: "top left" 
-              }}
-            >
-              <Cal 
-                key={theme}
-                namespace="30min"
-                calLink="alifiahamzah/30min"
-                style={{ width: "100%", height: "100%", overflow: "auto" }}
-                config={{ 
-                  "layout": "month_view", 
-                  "useSlotsViewOnSmallScreen": "true", 
-                  "theme": theme === 'dark' ? 'dark' : 'light',
-                  "hideEventTypeDetails": false
+          <div ref={containerRef} className="relative z-10 w-full max-w-[1000px] h-[500px] sm:h-[430px] lg:h-[415px] overflow-hidden rounded-xl bg-transparent flex-shrink-0">
+            {loadCalendar && CalComponent ? (
+              <div 
+                style={{ 
+                  width: "117.65%", 
+                  height: "117.65%", 
+                  transform: "scale(0.85)", 
+                  transformOrigin: "top left" 
                 }}
-              />
-            </div>
+              >
+                <CalComponent 
+                  key={theme}
+                  namespace="30min"
+                  calLink="alifiahamzah/30min"
+                  style={{ width: "100%", height: "100%", overflow: "auto" }}
+                  config={{ 
+                    "layout": "month_view", 
+                    "useSlotsViewOnSmallScreen": "true", 
+                    "theme": theme === 'dark' ? 'dark' : 'light',
+                    "hideEventTypeDetails": false
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center border border-dashed border-attio-border-light/20 dark:border-attio-border-dark/20 rounded-xl bg-[#FAFAFB]/50 dark:bg-zinc-950/10 min-h-[300px]">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-6 h-6 border-2 border-neutral-400 border-t-transparent dark:border-neutral-600 dark:border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-xs text-neutral-500 font-sans">Loading Calendar...</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
