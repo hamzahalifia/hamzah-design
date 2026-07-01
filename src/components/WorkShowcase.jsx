@@ -15,6 +15,40 @@ export default function WorkShowcase() {
   const [loading, setLoading] = useState(true);
   const [isCursorHovering, setIsCursorHovering] = useState(false);
   const [cursorText, setCursorText] = useState('View Detail');
+  const [showInfo, setShowInfo] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  const handlePrev = (e) => {
+    e.stopPropagation();
+    if (!selectedExploration || explorations.length === 0) return;
+    const currentIndex = explorations.findIndex((exp) => exp.id === selectedExploration.id);
+    if (currentIndex !== -1) {
+      const prevIndex = (currentIndex - 1 + explorations.length) % explorations.length;
+      setSelectedExploration(explorations[prevIndex]);
+    }
+  };
+
+  const handleNext = (e) => {
+    e.stopPropagation();
+    if (!selectedExploration || explorations.length === 0) return;
+    const currentIndex = explorations.findIndex((exp) => exp.id === selectedExploration.id);
+    if (currentIndex !== -1) {
+      const nextIndex = (currentIndex + 1) % explorations.length;
+      setSelectedExploration(explorations[nextIndex]);
+    }
+  };
+
+  const handleShare = (e) => {
+    e.stopPropagation();
+    if (!selectedExploration) return;
+    const url = `${window.location.origin}/exploration?id=${selectedExploration.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    }).catch((err) => {
+      console.error('Failed to copy: ', err);
+    });
+  };
 
   useEffect(() => {
     async function loadShowcaseData() {
@@ -216,71 +250,192 @@ export default function WorkShowcase() {
         </div>
       </div>
 
-      {/* Large Detail Modal Popup for Exploration Items — portaled to body to avoid z-index issues */}
+      {/* Detail Popup — portaled to body */}
       {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
           {selectedExploration && (
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 lg:p-10">
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedExploration(null)}
-                className="fixed inset-0 bg-black/60 backdrop-blur-md"
-              />
-
-              {/* Card Wrapper (relative for ClosePopup sibling) */}
-              <div className="relative z-10 max-w-4xl w-full mx-auto">
-                <ClosePopup onClose={() => setSelectedExploration(null)} />
-
-                {/* Modal Card */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  className="bg-white dark:bg-[#0A0A0B] border border-[#CDD1CD] dark:border-attio-border-dark rounded-2xl shadow-2xl overflow-hidden"
-                >
-                  {/* Interactive Grid Pattern in top right with radial mask */}
-                  <div className="absolute top-0 right-0 w-64 h-64 z-0 overflow-hidden [mask-image:radial-gradient(220px_circle_at_top_right,white,transparent)] pointer-events-none">
-                    <GridPattern 
-                      width={32} 
-                      height={32} 
-                      squares={[[10, 10]]} 
-                      className="opacity-70 dark:opacity-40" 
-                    />
+            <motion.div
+              key="exploration-popup"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[9999] bg-[#09090b] flex flex-col justify-between text-white font-sans"
+              style={{ backgroundColor: 'rgba(9, 9, 11, 0.98)' }}
+            >
+              
+              {/* TOP BAR */}
+              <div className="relative flex items-center justify-between px-6 py-4 border-b border-white/10 z-20">
+                {/* Profile Pill */}
+                <div className="flex items-center gap-2 select-none">
+                  <img
+                    src="/images/general/profilephoto.webp"
+                    alt="Alifia Hamzah"
+                    className="w-8 h-8 rounded-full object-cover border border-white/20"
+                  />
+                  <div className="text-left">
+                    <span className="text-xs font-bold text-white block">Alifia Hamzah</span>
+                    <span className="text-[10px] text-neutral-400 block font-medium">Product Designer</span>
                   </div>
+                </div>
 
-                  {/* Scrollable Content Area */}
-                  <div className="relative z-10 max-h-[85vh] overflow-y-auto p-6 space-y-6">
-                    {/* Large Image Showcase */}
-                    <div className="w-full h-[300px] sm:h-[450px] rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 relative">
-                      <img
-                        src={selectedExploration.image}
-                        alt={selectedExploration.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                {/* Title */}
+                <h3 className="text-sm font-semibold tracking-tight text-neutral-200 hidden sm:block max-w-md truncate">
+                  {selectedExploration.title}
+                </h3>
 
-                    {/* Detail Content */}
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
-                          {selectedExploration.category}
-                        </span>
-                      </div>
-                      <h3 className="font-serif-attio text-3xl font-normal text-neutral-900 dark:text-white">
-                        {selectedExploration.title}
-                      </h3>
-                      <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                        {selectedExploration.description}
-                      </p>
-                    </div>
+                {/* Close Button */}
+                <div className="relative w-10 h-10 select-none">
+                  <div className="absolute top-12 right-0">
+                    <ClosePopup onClose={() => { setSelectedExploration(null); setShowInfo(false); }} />
                   </div>
-                </motion.div>
+                </div>
               </div>
-            </div>
+
+              {/* CENTER SECTION (Image + Navigation Arrows) */}
+              <div className="relative flex-1 flex items-center justify-center p-4 min-h-0">
+                {/* Prev Button */}
+                <button
+                  onClick={handlePrev}
+                  className="absolute left-4 md:left-6 p-3 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white cursor-pointer transition-all z-20 hover:scale-105 active:scale-95 flex items-center justify-center shadow-lg"
+                  title="Previous"
+                >
+                  <Icon icon="solar:alt-arrow-left-linear" className="w-6 h-6" />
+                </button>
+
+                 {/* Active Image Preview */}
+                 <div className="w-full h-full flex items-center justify-center select-none p-2 relative">
+                  <motion.img
+                    key={selectedExploration.id}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.25 }}
+                    src={selectedExploration.image}
+                    alt={selectedExploration.title}
+                    className="max-w-full max-h-full object-contain rounded-lg shadow-2xl border border-white/5"
+                  />
+                </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={handleNext}
+                  className="absolute right-4 md:right-6 p-3 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white cursor-pointer transition-all z-20 hover:scale-105 active:scale-95 flex items-center justify-center shadow-lg"
+                  title="Next"
+                >
+                  <Icon icon="solar:alt-arrow-right-linear" className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* BOTTOM BAR (Thumbnails + Actions Dock) */}
+              <div className="w-full flex flex-col items-center gap-4 py-6 border-t border-white/10 bg-[#09090b]/80 backdrop-blur z-20 relative">
+                
+                {/* Horizontal Scrollable Thumbnail Pagination */}
+                <div 
+                  className="w-full max-w-[85vw] md:max-w-[70vw] overflow-x-auto py-1"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                  <div className="flex justify-start md:justify-center items-center gap-2 mx-auto w-max px-4">
+                    {explorations.map((exp) => {
+                      const isActive = exp.id === selectedExploration.id;
+                      return (
+                        <button
+                          key={exp.id}
+                          onClick={(e) => { e.stopPropagation(); setSelectedExploration(exp); }}
+                          className={`w-14 h-10 rounded-md overflow-hidden bg-neutral-800 border-2 transition-all flex-shrink-0 cursor-pointer ${
+                            isActive ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-40 hover:opacity-80'
+                          }`}
+                        >
+                          <img src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Action Dock */}
+                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-2 select-none shadow-lg z-20">
+                  {/* Share button */}
+                  <button
+                    onClick={handleShare}
+                    className="p-2 rounded-full hover:bg-white/10 text-neutral-300 hover:text-white transition-all cursor-pointer flex items-center justify-center"
+                    title="Copy Share Link"
+                  >
+                    <Icon icon="solar:share-linear" className="w-5 h-5" />
+                  </button>
+
+                  <div className="w-[1px] h-5 bg-white/10" />
+
+                  {/* Info button */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setShowInfo(!showInfo); }}
+                    className={`p-2 rounded-full transition-all cursor-pointer flex items-center justify-center ${
+                      showInfo 
+                        ? 'bg-white text-[#09090b] hover:bg-neutral-200' 
+                        : 'hover:bg-white/10 text-neutral-300 hover:text-white'
+                    }`}
+                    title="Toggle Info"
+                  >
+                    <Icon icon="solar:info-circle-linear" className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Info Card - non-floating normal flex flow container */}
+                <AnimatePresence>
+                  {showInfo && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      className="w-[92%] max-w-md bg-[#121215]/95 border border-white/10 rounded-2xl text-left shadow-2xl z-30 overflow-hidden font-sans"
+                    >
+                      <div className="p-5 space-y-3">
+                        <div>
+                          <h4 className="text-base font-semibold text-white leading-snug">
+                            {selectedExploration.title}
+                          </h4>
+                          <p className="text-xs text-neutral-450 mt-2 leading-relaxed">
+                            {selectedExploration.description}
+                          </p>
+                        </div>
+
+                        {/* Keywords Tags */}
+                        {selectedExploration.keywords && (
+                          <div className="space-y-1.5 pt-1.5 border-t border-white/5">
+                            <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest block">Keywords</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {selectedExploration.keywords.split(',').map((kw, i) => (
+                                <span
+                                  key={i}
+                                  className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-medium text-neutral-300 border border-white/5 hover:bg-white/10 transition-colors"
+                                >
+                                  {kw.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Toast Notification */}
+              <AnimatePresence>
+                {showToast && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute bottom-20 px-4 py-2 bg-neutral-900/90 border border-white/10 rounded-full text-xs font-semibold text-white shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-200"
+                  >
+                    Copied link to clipboard!
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+            </motion.div>
           )}
         </AnimatePresence>,
         document.body
