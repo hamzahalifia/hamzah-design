@@ -11,14 +11,6 @@
 # Discovery files
 /.well-known/api-catalog
   Content-Type: application/linkset+json
-/.well-known/openid-configuration
-  Content-Type: application/json
-/.well-known/oauth-authorization-server
-  Content-Type: application/json
-/.well-known/oauth-protected-resource
-  Content-Type: application/json
-/auth.md
-  Content-Type: text/markdown
 /.well-known/mcp/server-card.json
   Content-Type: application/json
 /.well-known/agent-skills/index.json

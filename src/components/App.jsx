@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from '../context/ThemeContext';
 import ScrollToTop from './ScrollToTop';
@@ -39,6 +39,42 @@ function AppRoutes() {
   );
 }
 
+function AgentationWrapper() {
+  const navigate = useNavigate();
+
+  const tools = [
+    {
+      name: 'navigate',
+      description: 'Navigates to a specified path within the application.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          path: {
+            type: 'string',
+            description: 'The path to navigate to (e.g., "/about", "/work/my-case-study")',
+          },
+        },
+        required: ['path'],
+      },
+      execute: async ({ path }) => {
+        navigate(path);
+        return { success: true, message: `Navigated to ${path}` };
+      },
+    },
+    // Add other tools here as needed
+  ];
+
+  return (
+    <Agentation
+      endpoint="http://localhost:4747"
+      onSessionCreated={(sessionId) => {
+        console.log('Agentation session started:', sessionId);
+      }}
+      tools={tools} // Pass the defined tools
+    />
+  );
+}
+
 export default function App() {
   return (
     <HelmetProvider>
@@ -47,15 +83,7 @@ export default function App() {
         <BrowserRouter>
           <ErrorBoundary>
             <ScrollToTop />
-
-            {process.env.NODE_ENV === 'development' && (
-              <Agentation
-                endpoint="http://localhost:4747"
-                onSessionCreated={(sessionId) => {
-                  console.log('Agentation session started:', sessionId);
-                }}
-              />
-            )}
+            {process.env.NODE_ENV === 'development' && <AgentationWrapper />}
             <Suspense fallback={null}>
                 <AppRoutes />
               </Suspense>
