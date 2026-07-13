@@ -1,0 +1,16 @@
+{
+  "linkset": [
+    {
+      "anchor": "/",
+      "rel": "service-desc",
+      "href": "/openapi.json",
+      "type": "application/vnd.oai.openapi+json;version=3.0"
+    },
+    {
+      "anchor": "/",
+      "rel": "service-doc",
+      "href": "/docs",
+      "type": "text/html"
+    }
+  ]
+}

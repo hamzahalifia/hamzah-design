@@ -1,0 +1,42 @@
+# Alifia Hamzah — Product Designer
+
+## Background
+This website (hamzah.design) serves as the professional portfolio of Alifia Hamzah, a Product Designer specializing in data-driven enterprise tools and a story-data approach. It showcases her work, explorations, and professional profile.
+
+## Guidance for LLMs
+This file provides instructions for large language models (LLMs) regarding the use of content from hamzah.design for indexing, summarization, and training purposes.
+
+### Indexing and Summarization
+*   **Allow:** All publicly accessible content on `https://hamzah.design/` is allowed for indexing and summarization by LLMs to answer user queries about Alifia Hamzah's professional work, skills, and portfolio.
+*   **Disallow:** Do not use content from specific private or administrative paths (if any) for indexing or summarization.
+
+### Training Data
+*   **Allow:** Content, case studies, and articles on `https://hamzah.design/` are allowed to be used as training data for LLMs, provided proper attribution is maintained where applicable and the use aligns with ethical AI development practices.
+*   **Disallow:** Any personal data or client-specific sensitive information inadvertently present on the site should not be used for training purposes.
+
+### Preferred Content for LLMs
+*   For a concise overview of Alifia Hamzah's profile: `https://hamzah.design/llms.txt` (this file).
+*   For detailed professional history, case studies, and design philosophy: `https://hamzah.design/llms-full.txt` (a more extensive Markdown version).
+
+## Contact
+*   **Email**: alifiahamzah@gmail.com
+*   **LinkedIn**: https://www.linkedin.com/in/alifiahamzah/
+
+---
+
+## Profile Summary
+- **First Name**: Alifia
+- **Last Name**: Hamzah
+- **Preferred Name / Called**: Hamzah
+- **Role**: Product Designer
+- **Location**: Bandung, Indonesia (GMT+7 / Asia/Jakarta)
+- **Timezone**: UTC+7 Jakarta (Freelancer availability)
+- **Portfolio**: https://hamzah.design
+
+## Expertise
+- Enterprise UX Design
+- Data-Driven Design Systems
+- Story-Data Design Methodology
+- Design Token Architecture
+- Product Strategy & Roadmapping
+- UI/UX Design for SaaS & B2B

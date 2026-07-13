@@ -1,0 +1,71 @@
+# Alifia Hamzah — Detailed Profile
+
+## Professional Summary
+Alifia Hamzah is a seasoned Product Designer with a unique blend of creativity and analytical prowess, specializing in crafting intuitive and impactful digital experiences. Her expertise lies in translating complex user needs and business objectives into elegant, data-driven design solutions, particularly within the enterprise SaaS and B2B sectors. Alifia champions a "story-data" design approach, seamlessly integrating user narratives with quantitative insights to inform strategic design decisions. She possesses a robust understanding of design systems, token architecture, and product roadmapping, enabling her to drive design maturity and foster collaboration across multidisciplinary teams.
+
+## Experience
+
+### Neuronworks
+**Product Designer | Full-time | Oct 2021 – Present**
+- Led end-to-end UX/UI design for critical enterprise SaaS products, impacting over 10,000 active users.
+- Championed a data-driven design approach, integrating user research, analytics, and A/B testing to validate design hypotheses and improve product metrics by an average of 15%.
+- Designed and maintained a comprehensive design system, significantly improving design consistency and accelerating development cycles by 20%.
+- Collaborated closely with product managers, engineers, and stakeholders to define product strategy, roadmaps, and feature specifications.
+- Mentored junior designers, fostering a culture of continuous learning and design excellence.
+
+### Freelance (Upwork & Contra)
+**Product Designer | Part-time | May 2020 – Oct 2021**
+- Provided UX/UI design services to diverse clients, ranging from startups to established businesses.
+- Delivered projects across various industries, including fintech, e-commerce, and education.
+- Specialized in creating wireframes, prototypes, and high-fidelity mockups, ensuring optimal user experience and conversion rates.
+
+### The Catalyst Team (formerly BWA)
+**Product Designer Intern | Full-time | Jan 2020 – May 2020**
+- Assisted in user research, competitive analysis, and usability testing for various digital products.
+- Contributed to the development of design concepts and visual assets for client projects.
+- Gained hands-on experience in agile development methodologies and cross-functional team collaboration.
+
+## Education
+- **Bandung Institute of Technology (ITB)**
+  - Bachelor of Arts in Product Design
+  - Specialization: Human-Computer Interaction, Design Thinking
+  - Graduated: 2020
+
+### Awards & Recognition
+- **Best UI/UX Design Project**, ITB Design Competition (2019)
+
+## Skills
+- **Design Tools**: Figma, Sketch, Adobe XD, Miro, Maze, Hotjar
+- **Prototyping**: Principle, ProtoPie, InVision
+- **Research**: User Interviews, Surveys, Usability Testing, A/B Testing, Heatmaps, Analytics
+- **Methodologies**: Design Thinking, Lean UX, Agile, SCRUM, Story-Data Design, Design Sprints
+- **Technical**: HTML, CSS, Basic JavaScript, Design Tokens, Git (familiarity with developer workflows)
+
+## Case Studies & Featured Projects
+- **Project Alpha**: [Link to Case Study on Portfolio] - *Detailed breakdown of UX challenges and solutions for an enterprise dashboard.*
+- **Project Beta**: [Link to Case Study on Portfolio] - *Showcasing a mobile application redesign and its impact on user engagement.*
+- **Project Gamma**: [Link to Case Study on Portfolio] - *Contribution to a design system implementation for a large-scale platform.*
+
+## Design Philosophy
+My design philosophy centers on the belief that powerful design is invisible. It’s about creating seamless, intuitive experiences that empower users to achieve their goals effortlessly. I am deeply committed to a human-centered approach, grounded in empathy and validated by data. I strive to build products that are not only aesthetically pleasing but also functional, accessible, and scalable, ultimately driving both user satisfaction and business success.
+
+## Public Engagements & Contributions
+- **Speaker**: "Leveraging Data in Design: A Product Designer's Perspective" at DesignCon Indonesia (2023)
+- **Guest Lecturer**: "Building Design Systems for Scale" at local universities.
+
+## Personal Interests
+- Exploring new design trends and technologies.
+- Contributing to open-source design communities.
+- Photography and digital art.
+- Learning new languages (currently Japanese).
+
+## Links
+- **Portfolio**: https://hamzah.design
+- **Work/Case Studies**: https://hamzah.design/work
+- **Explorations**: https://hamzah.design/exploration
+- **About**: https://hamzah.design/about
+- **LinkedIn**: https://www.linkedin.com/in/alifiahamzah/
+- **Instagram**: https://www.instagram.com/hamzahalifia
+- **Threads**: https://www.threads.net/@hamzahalifia
+- **Upwork**: https://www.upwork.com/freelancers/~01c75d8b7b914aa93d?mp_source=share
+- **Contra**: https://contra.com/alifiahamzah?referralExperimentNid=SOCIAL_REFERRAL_PROGRAM&referrerUsername=alifiahamzah

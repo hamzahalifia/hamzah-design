@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+    <url>
+      <loc>https://hamzah.design/</loc>
+      <lastmod>2026-07-11T19:32:25.813Z</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>1.0</priority>
+    </url>
+    <url>
+      <loc>https://hamzah.design/about</loc>
+      <lastmod>2026-07-11T19:32:25.814Z</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
+    </url>
+    <url>
+      <loc>https://hamzah.design/work</loc>
+      <lastmod>2026-07-11T19:32:25.814Z</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
+    </url>
+    <url>
+      <loc>https://hamzah.design/exploration</loc>
+      <lastmod>2026-07-11T19:32:25.814Z</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
+    </url>
+        <url>
+          <loc>https://hamzah.design/work/welcome-payload-to-hamzah-design</loc>
+          <lastmod>2026-07-11T14:26:48.774Z</lastmod>
+          <changefreq>monthly</changefreq>
+          <priority>0.7</priority>
+        </url>
+        <url>
+          <loc>https://hamzah.design/exploration/super-ai-hero</loc>
+          <lastmod>2026-07-10T08:12:34.319Z</lastmod>
+          <changefreq>monthly</changefreq>
+          <priority>0.7</priority>
+        </url>
+</urlset>

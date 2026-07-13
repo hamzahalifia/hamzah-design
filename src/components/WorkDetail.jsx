@@ -1,0 +1,312 @@
+import React, { useState, useEffect, useRef, Suspense } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Icon } from '@iconify/react';
+import { cmsFetch, SINGLE_CASE_STUDY_QUERY, RELATED_CASE_STUDIES_QUERY } from '../lib/cmsendpoint';
+import PageMeta from './SEO/PageMeta';
+import LexicalRenderer from './LexicalRenderer';
+import { cn } from '../lib/utils';
+import { buttonVariants } from './ui/button';
+import ScrollProgress from './ScrollProgress';
+import RelatedStudies from './RelatedStudies';
+import VideoPopup from './VideoPopup'; // Import VideoPopup
+import ReactPlayer from 'react-player'; // For video embeds
+import SkeletonLoader from './ui/SkeletonLoader';
+
+// Lazy load heavy components
+const FooterReveal = React.lazy(() => import('./FooterReveal'));
+const NotFound = React.lazy(() => import('./NotFound'));
+
+export default function WorkDetail() {
+  const { slug } = useParams();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isNotFound, setIsNotFound] = useState(false);
+  const [related, setRelated] = useState([]);
+
+  // Refs for ScrollProgress (start=title, end=related section or body)
+  const titleRef = useRef(null);
+  const contentEndRef = useRef(null);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+  };
+
+  useEffect(() => {
+    async function getWork() {
+      if (!slug) return;
+      setLoading(true);
+      setIsNotFound(false);
+      setRelated([]);
+      try {
+        const match = await cmsFetch(SINGLE_CASE_STUDY_QUERY(slug));
+        if (!match) {
+          setIsNotFound(true);
+          setData(null);
+        } else {
+          setData(match);
+          // Fetch related studies
+          try {
+            const rel = await cmsFetch(RELATED_CASE_STUDIES_QUERY(match._id, match.slug));
+            setRelated(rel || []);
+          } catch {
+            setRelated([]);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch case study:', err);
+        setIsNotFound(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getWork();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809]">
+        <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
+          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-white dark:bg-[#0A0A0B]">
+            <div className="w-full py-8 md:py-12">
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pb-3 border-b border-dashed border-neutral-200 dark:border-neutral-800">
+                <SkeletonLoader className="w-1/4 h-4 mb-3" />
+              </div>
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-6 flex items-center gap-3">
+                <SkeletonLoader className="w-9 h-9 rounded-full" />
+                <SkeletonLoader className="w-24 h-7" />
+              </div>
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6">
+                <SkeletonLoader className="w-3/4 h-12 mb-2" />
+                <SkeletonLoader className="w-1/2 h-8" />
+              </div>
+              <SkeletonLoader className="aspect-video w-full h-auto mb-8" />
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20">
+                <SkeletonLoader className="w-full h-6 mb-2" />
+                <SkeletonLoader className="w-full h-6 mb-2" />
+                <SkeletonLoader className="w-3/4 h-6 mb-8" />
+                <div className="mb-10 grid grid-cols-2 md:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
+                  <div className="space-y-2">
+                    <SkeletonLoader className="w-1/3 h-4" />
+                    <SkeletonLoader className="w-2/3 h-5" />
+                  </div>
+                  <div className="space-y-2">
+                    <SkeletonLoader className="w-1/3 h-4" />
+                    <SkeletonLoader className="w-2/3 h-5" />
+                  </div>
+                  <div className="space-y-2">
+                    <SkeletonLoader className="w-1/3 h-4" />
+                    <SkeletonLoader className="w-2/3 h-5" />
+                  </div>
+                </div>
+                <SkeletonLoader className="w-full h-80 mb-8" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isNotFound || !data) {
+    return (
+      <Suspense
+        fallback={
+          <div className="h-screen w-full bg-background flex items-center justify-center">
+            <Icon icon="svg-spinners:180-ring" className="w-8 h-8 text-foreground/50" />
+          </div>
+        }
+      >
+        <NotFound />
+      </Suspense>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
+      <PageMeta
+        title={data.seoTitle || data.title}
+        description={data.seoDescription || data.description}
+        keywords={`case study, ${data.title}, ${data.company}, product design, UI/UX`}
+        canonical={`https://hamzah.design/work/${data.slug}`}
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: data.title,
+          description: data.description,
+          image: data.heroImage,
+          author: {
+            '@type': 'Person',
+            name: 'Alifia Hamzah',
+            url: 'https://hamzah.design',
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Alifia Hamzah Portfolio',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://hamzah.design/images/general/profilephoto.webp',
+            },
+          },
+          datePublished: data.publishedAt,
+          mainEntityOfPage: `https://hamzah.design/work/${data.slug}`,
+        }}
+      />
+
+      {/* ScrollProgress — anchored from title to end of content */}
+      <ScrollProgress startRef={titleRef} endRef={contentEndRef} />
+
+      <main aria-label="Work detail page content" className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">
+        <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
+          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-white dark:bg-[#0A0A0B]">
+            <div className="w-full py-8 md:py-12">
+              {/* Breadcrumb */}
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pb-3 border-b border-dashed border-neutral-200 dark:border-neutral-800">
+                <nav className="text-sm text-neutral-500 dark:text-neutral-400" aria-label="Breadcrumb">
+                  <ol className="flex items-center gap-1.5">
+                    <li>
+                      <Link to="/work" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Work</Link>
+                    </li>
+                    <li className="text-neutral-300 dark:text-neutral-600" aria-hidden="true">/</li>
+                    <li className="text-neutral-900 dark:text-neutral-100 font-medium truncate max-w-[300px] sm:max-w-[500px]">
+                      {data.title}
+                    </li>
+                  </ol>
+                </nav>
+              </div>
+
+              {/* Back + logo */}
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-6 flex items-center gap-3">
+                <Link
+                  to="/work"
+                  className={cn(
+                    buttonVariants({ variant: 'outline', size: 'icon' }),
+                    'rounded-full shrink-0'
+                  )}
+                  aria-label="Back to Work"
+                >
+                  <Icon icon="solar:alt-arrow-left-linear" className="w-4 h-4" />
+                </Link>
+                {data.logo && (
+                  <div className="h-9 w-auto flex items-center justify-center">
+                    <img
+                      src={data.logo}
+                      alt={`${data.company || 'Company'} logo`}
+                      className="h-7 w-auto object-contain dark:grayscale dark:invert"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Title — scroll start anchor */}
+              <div ref={titleRef} className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6">
+                <h1 className="font-serif-attio text-4xl md:text-5xl lg:text-6xl font-medium text-black dark:text-white leading-tight tracking-tight">
+                  {data.title}
+                </h1>
+              </div>
+
+              {/* Thumbnail */}
+              <div className="relative aspect-video bg-neutral-100 dark:bg-neutral-900 border-y border-neutral-200 dark:border-neutral-800">
+                <img
+                  src={data.heroImage}
+                  alt={data.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Content — no max-width constraint */}
+              <div className="py-8">
+                <div className="px-4 sm:px-8 lg:px-16 xl:px-20 min-w-0 max-w-[1000px] mx-auto">
+                  {data.description && (
+                    <p className="mb-8 text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-4xl">
+                      {data.description}
+                    </p>
+                  )}
+                  {/* Grid info */}
+                  <div className="mb-10 grid grid-cols-2 md:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
+                    {data.role && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">Role</span>
+                        <p className="font-medium text-neutral-900 dark:text-neutral-100">{data.role}</p>
+                      </div>
+                    )}
+                    {data.company && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">Company</span>
+                        <p className="font-medium text-neutral-900 dark:text-neutral-100">{data.company}</p>
+                      </div>
+                    )}
+                    {data.year && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">Year</span>
+                        <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">{data.year}</p>
+                      </div>
+                    )}
+                    {(data.startDate || data.endDate) && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">Timeline</span>
+                        <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
+                          {data.startDate ? formatDate(data.startDate) : ''}
+                          {data.endDate ? ` — ${formatDate(data.endDate)}` : ''}
+                        </p>
+                      </div>
+                    )}
+                    {data.teamMembers && data.teamMembers.length > 0 && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">Contributors</span>
+                        <div className="flex -space-x-2">
+                          {data.teamMembers.slice(0, 3).map((m, i) => (
+                            <div key={i} className="group relative">
+                              <a
+                                href={m.linkedinURL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] object-cover bg-neutral-200 dark:bg-neutral-800 hover:scale-110 transition-transform duration-200 flex items-center justify-center overflow-hidden block"
+                              >
+                                <img src={m.photo} alt={m.fullName} className="w-full h-full object-cover" />
+                              </a>
+                              <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-xs text-white dark:text-neutral-900 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
+                                {m.fullName}
+                              </span>
+                            </div>
+                          ))}
+                          {data.teamMembers.length > 3 && (
+                            <div className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-[10px] font-bold text-neutral-600 dark:text-neutral-300" title={`+${data.teamMembers.length - 3} other contributors`}>
+                              +{data.teamMembers.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Body — scroll end anchor (content before related section) */}
+                  <div ref={contentEndRef}>
+                    <LexicalRenderer content={data.content} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Related Case Studies */}
+              <RelatedStudies studies={related} />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Back to Top Button */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-8 right-8 z-50 p-3 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#0A0A0B] shadow-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all"
+        aria-label="Back to top"
+      >
+        <Icon icon="uil:top-arrow-to-top" className="w-5 h-5 text-neutral-900 dark:text-neutral-100" />
+      </button>
+
+      <Suspense fallback={null}>
+        <FooterReveal />
+      </Suspense>
+    </div>
+  );
+}

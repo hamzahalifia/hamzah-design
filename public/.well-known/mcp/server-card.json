@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "Hamzah Design Agent Server",
+    "version": "1.0.0"
+  },
+  "endpoint": "/mcp",
+  "capabilities": {
+    "tools": [],
+    "resources": [],
+    "prompts": []
+  }
+}

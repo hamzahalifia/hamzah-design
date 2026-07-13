@@ -1,0 +1,8 @@
+{
+  "issuer": "YOUR_OAUTH_ISSUER_URL",
+  "authorization_endpoint": "YOUR_OAUTH_AUTHORIZATION_ENDPOINT",
+  "token_endpoint": "YOUR_OAUTH_TOKEN_ENDPOINT",
+  "jwks_uri": "YOUR_OAUTH_JWKS_URI",
+  "response_types_supported": ["code"],
+  "grant_types_supported": ["authorization_code"]
+}

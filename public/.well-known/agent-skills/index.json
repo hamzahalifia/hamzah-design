@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "link-headers-implementation",
+      "type": "skill-md",
+      "description": "Skill to implement Link response headers for agent discovery (RFC 8288).",
+      "url": "https://isitagentready.com/.well-known/agent-skills/link-headers/SKILL.md",
+      "digest": "sha256:PLACEHOLDER_DIGEST_FOR_LINK_HEADERS"
+    },
+    {
+      "name": "api-catalog-implementation",
+      "type": "skill-md",
+      "description": "Skill to publish an API catalog for automated API discovery (RFC 9727).",
+      "url": "https://isitagentready.com/.well-known/agent-skills/api-catalog/SKILL.md",
+      "digest": "sha256:PLACEHOLDER_DIGEST_FOR_API_CATALOG"
+    },
+    {
+      "name": "oauth-discovery-implementation",
+      "type": "skill-md",
+      "description": "Skill to publish OAuth/OIDC discovery metadata for agent authentication.",
+      "url": "https://isitagentready.com/.well-known/agent-skills/oauth-discovery/SKILL.md",
+      "digest": "sha256:PLACEHOLDER_DIGEST_FOR_OAUTH_DISCOVERY"
+    }
+  ]
+}
