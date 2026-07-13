@@ -5,7 +5,7 @@
 <h1 align="center">hamzah.design</h1>
 
 <p align="center">
-  <strong>Personal portfolio of Alifia Hamzah</strong> — Product Designer specializing in data-driven enterprise tools.
+  <strong>Astro portfolio of Alifia Hamzah</strong> — Product Designer specializing in data-driven enterprise tools.
 </p>
 
 <p align="center">
@@ -52,13 +52,13 @@ Telkom Indonesia · Pertamina · Nextiva · TAPPP · AMPD · Amigos Group · Bui
 
 | Layer             | Technology                                               |
 | ----------------- | -------------------------------------------------------- |
-| **Frontend**      | React 19, Vite 8, Tailwind CSS 3                         |
+| **Framework**     | Astro 7, React 19, Tailwind CSS 3                        |
 | **Animation**     | Framer Motion, custom micro-interactions                 |
 | **UI Components** | shadcn/ui, Radix UI, Lucide Icons, Iconify               |
 | **Hosting**       | Cloudflare Pages                                         |
 | **Data Fetching** | Headless CMS API                                         |
 | **Analytics**     | Google Analytics (GA4)                                   |
-| **SEO**           | react-helmet-async, prebuild sitemap generator, llms.txt |
+| **SEO**           | Open Graph, structured metadata, `llms.txt`, `api-catalog` |
 | **Scheduling**    | Cal.com embed                                            |
 
 ---
@@ -67,8 +67,8 @@ Telkom Indonesia · Pertamina · Nextiva · TAPPP · AMPD · Amigos Group · Bui
 
 - **Explorations Gallery** — Visual grid of design explorations with category filtering
 - **Dark Mode** — System-aware dark/light theme with smooth transitions
-- **Prebuild Sitemap** — Automatically generates static `sitemap.xml` during compilation
-- **AI-Optimized** — `llms.txt` and `llms-full.txt` for AI search engine discoverability (GEO)
+- **Static Sitemap** — Ships a static `sitemap.xml` for search discovery
+- **AI-Optimized** — `llms.txt`, `llms-full.txt`, Link headers, and well-known discovery files for AI/agent discoverability
 - **SEO** — Open Graph, Twitter Cards, JSON-LD structured data, robots.txt with AI crawler directives
 - **Responsive** — Mobile-first design with fluid layouts
 - **Sound Design** — Subtle UI click sounds for tactile feedback
@@ -80,7 +80,7 @@ Telkom Indonesia · Pertamina · Nextiva · TAPPP · AMPD · Amigos Group · Bui
 
 ```
 hamzah-design/
-├── public/                 # Static assets (images, audio, robots.txt, sitemap.xml)
+├── public/                 # Static assets (images, audio, robots.txt, sitemap.xml, AI discovery files)
 ├── src/
 │   ├── components/         # React components
 │   │   ├── core/           # Core UI primitives
@@ -91,9 +91,14 @@ hamzah-design/
 │   ├── lib/                # Utility functions
 │   ├── App.jsx             # Root app with routing
 │   └── index.css           # Global styles & Tailwind
-├── index.html              # Entry HTML
-├── vite.config.js          # Vite configuration
-└── tailwind.config.js      # Tailwind configuration
+├── astro.config.mjs        # Astro configuration
+├── components.json         # shadcn/ui components.json
+├── jsconfig.json           # Javascript configuration
+├── package.json            # Project dependencies and scripts
+├── pnpm-lock.yaml          # pnpm lock file
+├── postcss.config.js       # PostCSS configuration
+├── tailwind.config.js      # Tailwind configuration
+└── tsconfig.json           # TypeScript configuration
 ```
 
 ---
@@ -102,8 +107,8 @@ hamzah-design/
 
 ### Prerequisites
 
-- Node.js 18+
-- npm
+- Node.js 20+
+- pnpm (recommended) or npm
 
 ### Setup
 
@@ -112,11 +117,11 @@ hamzah-design/
 git clone https://github.com/hamzahalifia/hamzah-design.git
 cd hamzah-design
 
-# Install dependencies
-npm install
+# Install dependencies (using pnpm)
+pnpm install
 
 # Start development server
-npm run dev
+pnpm run dev
 ```
 
 ---
@@ -127,10 +132,11 @@ This project builds as a static site and can be deployed to **Cloudflare Pages**
 
 ```bash
 # Build for production (also generates sitemap)
-npm run build
+pnpm run build
 
 # Deploy to Cloudflare Pages (or link to GitHub for automatic deploy)
-npx wrangler pages deploy dist --project-name=hamzah-design
+# For manual deploy using Wrangler CLI:
+# npx wrangler pages deploy dist --project-name=hamzah-design
 ```
 
 ---
