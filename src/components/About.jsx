@@ -968,10 +968,10 @@ export default function About() {
                             href={selectedAI.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block md:inline-block w-full md:w-auto"
+                            className="flex justify-end w-full md:inline-block md:w-auto"
                           >
                             <Button
-                              className="btn-radius-lg h-[46px] w-full md:w-auto px-4 text-normal font-semibold"
+                              className="btn-radius-lg h-[46px] w-auto px-4 text-normal font-semibold"
                               variant="primary"
                             >
                               <RollingText>Ask AI</RollingText>
