@@ -258,12 +258,15 @@ export default function WorkDetail() {
                 <div className="flex items-center gap-3.5">
                   <Link
                     to="/work"
-                    className="text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer flex items-center justify-center"
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "icon" }),
+                      "shrink-0",
+                    )}
                     aria-label="Back to Work"
                   >
                     <Icon
-                      icon="solar:arrow-left-outline"
-                      className="w-6 h-6"
+                      icon="lucide:chevron-left"
+                      className="w-4 h-4 text-neutral-800 dark:text-neutral-200"
                     />
                   </Link>
                   <span className="text-sm font-normal text-neutral-900 dark:text-neutral-100 select-none">
@@ -271,25 +274,8 @@ export default function WorkDetail() {
                   </span>
                 </div>
 
-                {/* Right Group: Auto Play, Share, Save */}
+                {/* Right Group: Share, Save */}
                 <div className="flex items-center gap-3">
-                  {/* Auto Play Trigger */}
-                  <button
-                    onClick={handleToggleAutoPlay}
-                    className={cn(
-                      "p-1.5 rounded-full transition-all cursor-pointer flex items-center justify-center",
-                      autoPlayEnabled
-                        ? "text-blue-500 hover:text-blue-600"
-                        : "text-neutral-450 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
-                    )}
-                    title={autoPlayEnabled ? "Autoplay: ON" : "Autoplay: OFF"}
-                  >
-                    <Icon
-                      icon={autoPlayEnabled ? "solar:play-circle-bold" : "solar:play-circle-linear"}
-                      className="w-[22px] h-[22px]"
-                    />
-                  </button>
-
                   {/* Share Trigger */}
                   <button
                     onClick={handleShare}

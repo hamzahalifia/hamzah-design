@@ -63,46 +63,51 @@ export default function RelatedStudies({ studies }) {
               to={`/work/${study.slug}`}
               className="group bg-white dark:bg-[#0A0A0B] hover:bg-neutral-50/40 dark:hover:bg-zinc-900/10 transition-colors flex flex-col justify-between h-full cursor-pointer"
             >
-              {/* Thumbnail */}
-              <div
-                onMouseEnter={() => setIsCursorHovering(true)}
-                onMouseLeave={() => setIsCursorHovering(false)}
-                className="w-full aspect-[16/10] overflow-hidden bg-neutral-100 dark:bg-neutral-900 border-b border-zinc-150 dark:border-zinc-900/50"
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex flex-col h-full"
               >
-                {study.heroImage ? (
-                  <OptimizedImage
-                    src={study.heroImage}
-                    alt={study.title}
-                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-neutral-300 dark:text-neutral-600">
-                    <Icon
-                      icon="solar:gallery-linear"
-                      className="w-8 h-8"
+                {/* Thumbnail */}
+                <div
+                  onMouseEnter={() => setIsCursorHovering(true)}
+                  onMouseLeave={() => setIsCursorHovering(false)}
+                  className="w-full aspect-[16/10] overflow-hidden bg-neutral-100 dark:bg-neutral-900 border-b border-zinc-150 dark:border-zinc-900/50"
+                >
+                  {study.heroImage ? (
+                    <OptimizedImage
+                      src={study.heroImage}
+                      alt={study.title}
+                      className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
                     />
-                  </div>
-                )}
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 p-6 flex flex-col justify-between space-y-4 text-left">
-                <div className="space-y-2">
-                  <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-zinc-300 transition-colors">
-                    {study.title}
-                  </h3>
-                  {study.description && (
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-3 font-sans">
-                      {study.description}
-                    </p>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-neutral-300 dark:text-neutral-600">
+                      <Icon
+                        icon="solar:gallery-linear"
+                        className="w-8 h-8"
+                      />
+                    </div>
                   )}
                 </div>
 
-                {/* Footer details */}
-                <div className="text-[10px] text-neutral-400 dark:text-neutral-500 font-mono font-medium flex items-center gap-1.5 uppercase tracking-wider select-none">
-                  <span>{study.year || "2026"}</span>
+                {/* Info */}
+                <div className="flex-1 p-6 flex flex-col justify-between space-y-4 text-left">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-zinc-300 transition-colors">
+                      {study.title}
+                    </h3>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-3 font-sans">
+                      {study.description}
+                    </p>
+                  </div>
+
+                  {/* Footer details */}
+                  <div className="text-[10px] text-neutral-400 dark:text-neutral-500 font-mono font-medium flex items-center gap-1.5 uppercase tracking-wider select-none">
+                    <span>{study.year || "2024"}</span>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             </Link>
           ))}
         </div>
