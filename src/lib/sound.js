@@ -69,7 +69,15 @@ function getAudioContext() {
  */
 function runOscillatorGenerator(type) {
   const ctx = getAudioContext();
-  if (!ctx || ctx.state !== "running") return;
+  if (!ctx) return;
+
+  // Prevent queued sounds from playing later when context is resumed:
+  // Only allow click (tick) and theme toggles (open/close) if context is suspended
+  if (ctx.state === "suspended") {
+    if (type !== "tick" && type !== "open" && type !== "close") return;
+  } else if (ctx.state !== "running") {
+    return;
+  }
 
   const isSoft = SOUND_MODE === "soft";
   const startTime = ctx.currentTime + 0.01;
@@ -115,7 +123,9 @@ function runOscillatorGenerator(type) {
  */
 export function playHoverSound() {
   if (!isSoundEnabled()) return;
-  runOscillatorGenerator("tick");
+  if (audioCtx && audioCtx.state === "running") {
+    runOscillatorGenerator("tick");
+  }
 }
 
 /**
@@ -131,7 +141,9 @@ export function playClickSound() {
  */
 export function playScrollSound() {
   if (!isSoundEnabled()) return;
-  runOscillatorGenerator("nav");
+  if (audioCtx && audioCtx.state === "running") {
+    runOscillatorGenerator("nav");
+  }
 }
 
 /**
@@ -140,6 +152,17 @@ export function playScrollSound() {
  */
 export function playThemeToggleSound(toDark) {
   if (!isSoundEnabled()) return;
-  // Bawaan aslinya: toggle tema memicu sound efek 'open' untuk light dan 'close' untuk dark
   runOscillatorGenerator(toDark ? "close" : "open");
+}
+
+// One-time listener to resume AudioContext on first user interaction anywhere
+if (typeof window !== "undefined") {
+  const resumeAudio = () => {
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === "suspended") {
+      ctx.resume();
+    }
+  };
+  document.addEventListener("click", resumeAudio, { once: true });
+  document.addEventListener("touchstart", resumeAudio, { once: true });
 }
