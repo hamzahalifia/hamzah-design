@@ -17,16 +17,57 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
   const [hoverX, setHoverX] = useState(0);
   const [hoverTitle, setHoverTitle] = useState('');
 
-  // Auto-play on mount
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(err => {
-        console.log("Autoplay was blocked:", err);
-      });
+  // Load and sync video autoplay preference from localStorage
+  const [autoPlayPref, setAutoPlayPref] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('videoAutoPlay') !== 'false';
     }
-  }, [src]);
+    return true;
+  });
+
+  useEffect(() => {
+    const handlePrefChange = () => {
+      if (typeof window !== 'undefined') {
+        setAutoPlayPref(localStorage.getItem('videoAutoPlay') !== 'false');
+      }
+    };
+    window.addEventListener('videoAutoPlayChange', handlePrefChange);
+    return () => {
+      window.removeEventListener('videoAutoPlayChange', handlePrefChange);
+    };
+  }, []);
+
+  // Intersection Observer for autoplay/pause based on visibility and preference
+  useEffect(() => {
+    const el = containerRef.current;
+    const video = videoRef.current;
+    if (!el || !video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (autoPlayPref) {
+          if (entry.isIntersecting) {
+            video.play().then(() => {
+              setIsPlaying(true);
+            }).catch(err => {
+              console.log("Autoplay was blocked:", err);
+            });
+          } else {
+            video.pause();
+            setIsPlaying(false);
+          }
+        }
+      },
+      {
+        threshold: 0.3, // Trigger when 30% of the video container is visible
+      }
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.unobserve(el);
+    };
+  }, [autoPlayPref, src]);
 
   // Handle time update
   const handleTimeUpdate = () => {

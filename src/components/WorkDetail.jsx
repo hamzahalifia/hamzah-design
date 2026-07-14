@@ -7,6 +7,7 @@ import {
   RELATED_CASE_STUDIES_QUERY,
 } from "../lib/cmsendpoint";
 import PageMeta from "./SEO/PageMeta";
+import { toast } from "sonner";
 import LexicalRenderer, { lexicalToPlainText } from "./LexicalRenderer";
 import { cn } from "../lib/utils";
 import { buttonVariants } from "./ui/button";
@@ -36,6 +37,43 @@ const getReadingTime = (content) => {
 export default function WorkDetail() {
   const { slug } = useParams();
   const [data, setData] = useState(null);
+  const [autoPlayEnabled, setAutoPlayEnabled] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("videoAutoPlay");
+      return saved === null ? true : saved === "true";
+    }
+    return true;
+  });
+
+  const handleToggleAutoPlay = () => {
+    const nextVal = !autoPlayEnabled;
+    setAutoPlayEnabled(nextVal);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("videoAutoPlay", String(nextVal));
+      window.dispatchEvent(new Event("videoAutoPlayChange"));
+    }
+    toast.success(`Video autoplay turned ${nextVal ? "ON" : "OFF"}`);
+  };
+
+  const handleShare = (e) => {
+    e.stopPropagation();
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      toast.success("Link copied to clipboard!");
+    }).catch((err) => {
+      console.error("Failed to copy link: ", err);
+      toast.error("Failed to copy link");
+    });
+  };
+
+  const handleBookmark = (e) => {
+    e.stopPropagation();
+    const isMac = typeof window !== "undefined" && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const shortcut = isMac ? 'Cmd + D' : 'Ctrl + D';
+    toast.info(`Press ${shortcut} to bookmark this page!`, {
+      description: "Modern browsers require manual shortcuts to add bookmarks for security.",
+    });
+  };
   const [loading, setLoading] = useState(true);
   const [isNotFound, setIsNotFound] = useState(false);
   const [related, setRelated] = useState([]);
@@ -214,24 +252,68 @@ export default function WorkDetail() {
                 </nav>
               </div>
 
-              {/* Back + logo */}
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-6 flex items-center gap-3">
-                <Link
-                  to="/work"
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "icon" }),
-                    "rounded-full shrink-0",
-                  )}
-                  aria-label="Back to Work"
-                >
-                  <Icon
-                    icon="solar:alt-arrow-left-linear"
-                    className="w-4 h-4"
-                  />
-                </Link>
-                <span className="text-sm font-normal text-neutral-900 dark:text-neutral-100 select-none">
-                  {getReadingTime(data.content)} min read
-                </span>
+              {/* Back + Header Actions */}
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-6 flex items-center justify-between w-full">
+                {/* Left Group */}
+                <div className="flex items-center gap-3.5">
+                  <Link
+                    to="/work"
+                    className="text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer flex items-center justify-center"
+                    aria-label="Back to Work"
+                  >
+                    <Icon
+                      icon="solar:arrow-left-outline"
+                      className="w-6 h-6"
+                    />
+                  </Link>
+                  <span className="text-sm font-normal text-neutral-900 dark:text-neutral-100 select-none">
+                    {getReadingTime(data.content)} min read
+                  </span>
+                </div>
+
+                {/* Right Group: Auto Play, Share, Save */}
+                <div className="flex items-center gap-3">
+                  {/* Auto Play Trigger */}
+                  <button
+                    onClick={handleToggleAutoPlay}
+                    className={cn(
+                      "p-1.5 rounded-full transition-all cursor-pointer flex items-center justify-center",
+                      autoPlayEnabled
+                        ? "text-blue-500 hover:text-blue-600"
+                        : "text-neutral-450 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
+                    )}
+                    title={autoPlayEnabled ? "Autoplay: ON" : "Autoplay: OFF"}
+                  >
+                    <Icon
+                      icon={autoPlayEnabled ? "solar:play-circle-bold" : "solar:play-circle-linear"}
+                      className="w-[22px] h-[22px]"
+                    />
+                  </button>
+
+                  {/* Share Trigger */}
+                  <button
+                    onClick={handleShare}
+                    className="p-1.5 rounded-full text-neutral-450 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-all cursor-pointer flex items-center justify-center"
+                    title="Copy Share Link"
+                  >
+                    <Icon
+                      icon="solar:share-linear"
+                      className="w-[22px] h-[22px]"
+                    />
+                  </button>
+
+                  {/* Save Trigger (Bookmark Instruction) */}
+                  <button
+                    onClick={handleBookmark}
+                    className="p-1.5 rounded-full text-neutral-450 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-all cursor-pointer flex items-center justify-center"
+                    title="Bookmark Page"
+                  >
+                    <Icon
+                      icon="solar:bookmark-linear"
+                      className="w-[22px] h-[22px]"
+                    />
+                  </button>
+                </div>
               </div>
 
               {/* Title — scroll start anchor */}
