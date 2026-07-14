@@ -279,24 +279,30 @@ export default function WorkDetail() {
                   {/* Share Trigger */}
                   <button
                     onClick={handleShare}
-                    className="p-1.5 rounded-full text-neutral-450 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-all cursor-pointer flex items-center justify-center"
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "icon" }),
+                      "shrink-0 cursor-pointer flex items-center justify-center",
+                    )}
                     title="Copy Share Link"
                   >
                     <Icon
                       icon="solar:share-linear"
-                      className="w-[22px] h-[22px]"
+                      className="w-4 h-4 text-neutral-800 dark:text-neutral-200"
                     />
                   </button>
 
                   {/* Save Trigger (Bookmark Instruction) */}
                   <button
                     onClick={handleBookmark}
-                    className="p-1.5 rounded-full text-neutral-450 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-all cursor-pointer flex items-center justify-center"
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "icon" }),
+                      "shrink-0 cursor-pointer flex items-center justify-center",
+                    )}
                     title="Bookmark Page"
                   >
                     <Icon
                       icon="solar:bookmark-linear"
-                      className="w-[22px] h-[22px]"
+                      className="w-4 h-4 text-neutral-800 dark:text-neutral-200"
                     />
                   </button>
                 </div>
