@@ -62,8 +62,19 @@ function renderLexicalNode(node, key) {
       return <ListTag key={key} className={listClass} start={node.start} style={style}>{renderChildren(node.children, key)}</ListTag>;
     }
 
-    case 'listitem':
-      return <li key={key} className="mb-1.5 leading-relaxed" style={style}>{renderChildren(node.children, key)}</li>;
+    case 'listitem': {
+      const hasOnlyLists = node.children && node.children.length > 0 && node.children.every(child => 
+        child.type === 'list' || (child.type === 'text' && !child.text?.trim())
+      );
+      const combinedStyle = hasOnlyLists 
+        ? { ...style, listStyleType: 'none', paddingLeft: '0', marginTop: '0', marginBottom: '0', display: 'block' }
+        : style;
+      return (
+        <li key={key} className="mb-1.5 leading-relaxed" style={combinedStyle}>
+          {renderChildren(node.children, key)}
+        </li>
+      );
+    }
 
     case 'link': {
       const url = node.fields?.url || node.fields?.href || '';
@@ -77,10 +88,14 @@ function renderLexicalNode(node, key) {
         const { video, caption } = node.fields;
         if (!video?.url) return null;
         const videoUrl = video.url.startsWith('http') ? video.url : `${import.meta.env.PUBLIC_PAYLOAD_BASE_URL || import.meta.env.VITE_CMS_BASE_URL || ''}${video.url}`;
+        const videoChapters = (video.chapters || []).map(ch => ({
+          title: ch.title,
+          time: ch.start_timecode !== undefined ? ch.start_timecode : (ch.time || 0)
+        }));
         return (
           <figure key={key} className="my-8">
             <div className="relative aspect-video bg-neutral-100 dark:bg-neutral-900 rounded-lg overflow-hidden shadow-lg">
-        <CustomVideoPlayer src={videoUrl} className="w-full aspect-video" />
+              <CustomVideoPlayer src={videoUrl} chapters={videoChapters} className="w-full aspect-video" />
             </div>
             {caption && <figcaption className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 text-center">{caption}</figcaption>}
           </figure>

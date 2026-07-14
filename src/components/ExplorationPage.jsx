@@ -9,7 +9,7 @@ import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import Navbar from "./Navbar";
 import FooterReveal from "./FooterReveal";
 import { useTheme } from "../context/ThemeContext";
@@ -712,7 +712,6 @@ export default function ExplorationPage() {
             document.body,
           )}
       </div>
-      <Toaster position="bottom-center" />
     </>
   );
 }

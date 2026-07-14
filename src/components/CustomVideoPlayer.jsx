@@ -8,8 +8,14 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [showControls, setShowControls] = useState(false);
   const controlsTimeoutRef = useRef(null);
+  const timelineRef = useRef(null);
+  const [isScrubbing, setIsScrubbing] = useState(false);
+  const [hoverTime, setHoverTime] = useState(null);
+  const [hoverX, setHoverX] = useState(0);
+  const [hoverTitle, setHoverTitle] = useState('');
 
   // Auto-play on mount
   useEffect(() => {
@@ -67,13 +73,143 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
     }
   };
 
-  // Jump to chapter
-  const handleChapterClick = (time) => {
+  // Get segment definitions for chapter blocks
+  const getSegments = () => {
+    const sorted = [...chapters].sort((a, b) => a.time - b.time);
+    const total = duration || 100;
+    
+    if (sorted.length === 0) {
+      return [{ start: 0, end: total, title: 'Video' }];
+    }
+
+    const list = [];
+    let lastTime = 0;
+
+    // If the first chapter doesn't start at 0, add an intro segment
+    if (sorted[0].time > 0) {
+      list.push({ start: 0, end: sorted[0].time, title: 'Intro' });
+      lastTime = sorted[0].time;
+    }
+
+    for (let i = 0; i < sorted.length; i++) {
+      const start = sorted[i].time;
+      const end = (i < sorted.length - 1) ? sorted[i + 1].time : total;
+      list.push({ start, end, title: sorted[i].title });
+      lastTime = end;
+    }
+
+    if (lastTime < total) {
+      list[list.length - 1].end = total;
+    }
+
+    return list;
+  };
+
+  const handleTimelineInteraction = (clientX) => {
+    if (!timelineRef.current || !duration) return;
+    const rect = timelineRef.current.getBoundingClientRect();
+    const pos = (clientX - rect.left) / rect.width;
+    const boundedPos = Math.max(0, Math.min(1, pos));
+    const newTime = boundedPos * duration;
+    setCurrentTime(newTime);
     if (videoRef.current) {
-      videoRef.current.currentTime = time;
-      setCurrentTime(time);
-      videoRef.current.play();
-      setIsPlaying(true);
+      videoRef.current.currentTime = newTime;
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    e.stopPropagation();
+    setIsScrubbing(true);
+    handleTimelineInteraction(e.clientX);
+  };
+
+  const handleTouchStart = (e) => {
+    e.stopPropagation();
+    setIsScrubbing(true);
+    if (e.touches && e.touches[0]) {
+      handleTimelineInteraction(e.touches[0].clientX);
+    }
+  };
+
+  // Scrubbing drag listeners (mouse)
+  useEffect(() => {
+    const handleMouseMoveGlobal = (e) => {
+      if (isScrubbing) {
+        handleTimelineInteraction(e.clientX);
+      }
+    };
+
+    const handleMouseUpGlobal = () => {
+      if (isScrubbing) {
+        setIsScrubbing(false);
+      }
+    };
+
+    if (isScrubbing) {
+      document.addEventListener('mousemove', handleMouseMoveGlobal);
+      document.addEventListener('mouseup', handleMouseUpGlobal);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMoveGlobal);
+      document.removeEventListener('mouseup', handleMouseUpGlobal);
+    };
+  }, [isScrubbing, duration]);
+
+  // Scrubbing drag listeners (touch)
+  useEffect(() => {
+    const handleTouchMoveGlobal = (e) => {
+      if (isScrubbing && e.touches && e.touches[0]) {
+        handleTimelineInteraction(e.touches[0].clientX);
+      }
+    };
+
+    const handleTouchEndGlobal = () => {
+      if (isScrubbing) {
+        setIsScrubbing(false);
+      }
+    };
+
+    if (isScrubbing) {
+      document.addEventListener('touchmove', handleTouchMoveGlobal, { passive: true });
+      document.addEventListener('touchend', handleTouchEndGlobal);
+    }
+
+    return () => {
+      document.removeEventListener('touchmove', handleTouchMoveGlobal);
+      document.removeEventListener('touchend', handleTouchEndGlobal);
+    };
+  }, [isScrubbing, duration]);
+
+  const handleMouseMoveTimeline = (e) => {
+    if (!timelineRef.current || !duration) return;
+    const rect = timelineRef.current.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    const boundedPos = Math.max(0, Math.min(1, pos));
+    const calculatedTime = boundedPos * duration;
+    setHoverTime(calculatedTime);
+    setHoverX(e.clientX - rect.left);
+
+    const currentSegments = getSegments();
+    const matchedSegment = currentSegments.find(
+      seg => calculatedTime >= seg.start && calculatedTime <= seg.end
+    );
+    setHoverTitle(matchedSegment ? matchedSegment.title : '');
+  };
+
+  const handleMouseLeaveTimeline = () => {
+    setHoverTime(null);
+    setHoverTitle('');
+  };
+
+
+  // Toggle mute
+  const toggleMute = (e) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      const newMuted = !videoRef.current.muted;
+      videoRef.current.muted = newMuted;
+      setIsMuted(newMuted);
     }
   };
 
@@ -139,13 +275,13 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={handleContainerClick}
-      className="group relative w-full h-full bg-black rounded-lg overflow-hidden flex items-center justify-center cursor-pointer select-none"
+      className="group relative w-full h-full rounded-lg overflow-hidden flex items-center justify-center cursor-pointer select-none"
     >
       <video
         ref={videoRef}
         src={src}
         autoPlay
-        muted
+        muted={isMuted}
         loop
         playsInline
         onTimeUpdate={handleTimeUpdate}
@@ -177,26 +313,91 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
           {formatTime(currentTime)}
         </span>
 
-        {/* Custom Progress / Timeline Input */}
+        {/* Custom Progress / Timeline Input with YouTube-style Chapter Blocks */}
         <div className="relative flex-1 flex items-center">
-          <input
-            type="range"
-            min={0}
-            max={duration || 100}
-            step={0.05}
-            value={currentTime}
-            onChange={handleSeekChange}
-            className="w-full h-1 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-white focus:outline-none"
-            style={{
-              background: `linear-gradient(to right, #ffffff ${((currentTime / (duration || 1)) * 100)}%, #27272a ${((currentTime / (duration || 1)) * 100)}%)`
-            }}
-          />
+          {/* Tooltip for Hover / Scrubbing */}
+          {hoverTime !== null && (
+            <div
+              className="absolute bottom-full mb-3 bg-black/95 dark:bg-zinc-950/98 border border-neutral-800/80 text-white text-xs px-2.5 py-1.5 rounded-lg pointer-events-none flex flex-col items-center gap-0.5 shadow-xl transition-all duration-75 select-none"
+              style={{
+                left: `${hoverX}px`,
+                transform: 'translateX(-50%)',
+                whiteSpace: 'nowrap',
+                zIndex: 50
+              }}
+            >
+              {hoverTitle && <span className="font-semibold text-neutral-100 max-w-[240px] truncate">{hoverTitle}</span>}
+              <span className="font-mono text-neutral-400 text-[10px]">{formatTime(hoverTime)}</span>
+            </div>
+          )}
+
+          <div
+            ref={timelineRef}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            onMouseMove={handleMouseMoveTimeline}
+            onMouseLeave={handleMouseLeaveTimeline}
+            className="relative w-full flex items-center h-5 cursor-pointer group/timeline"
+          >
+            {/* Segment Blocks Container */}
+            <div className="w-full flex items-center gap-[2.5px] h-1 group-hover/timeline:h-2 transition-all duration-150">
+              {getSegments().map((seg, idx) => {
+                const total = duration || 100;
+                const widthPct = ((seg.end - seg.start) / total) * 100;
+
+                // Calculate fill percentage of this segment
+                let fillPct = 0;
+                if (currentTime >= seg.end) {
+                  fillPct = 100;
+                } else if (currentTime >= seg.start) {
+                  fillPct = ((currentTime - seg.start) / (seg.end - seg.start)) * 100;
+                }
+
+                return (
+                  <div
+                    key={idx}
+                    className="h-full bg-neutral-800/85 relative rounded-sm overflow-hidden flex-1"
+                    style={{ flexGrow: widthPct, flexBasis: 0 }}
+                  >
+                    <div
+                      className="absolute top-0 left-0 bottom-0 bg-white"
+                      style={{ width: `${fillPct}%` }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Interactive Scrub Handle (Circle Knob) */}
+            <div
+              className={`absolute w-3.5 h-3.5 bg-white rounded-full transition-opacity duration-150 pointer-events-none shadow-md ${
+                isScrubbing ? 'opacity-100 scale-110' : 'opacity-0 group-hover/timeline:opacity-100'
+              }`}
+              style={{
+                left: `${((currentTime / (duration || 1)) * 100)}%`,
+                transform: 'translateX(-50%)'
+              }}
+            />
+          </div>
         </div>
 
         {/* Duration */}
         <span className="text-xs font-mono text-neutral-400 min-w-[35px]">
           {formatTime(duration)}
         </span>
+
+        {/* Volume Button */}
+        <button
+          type="button"
+          onClick={toggleMute}
+          className="text-white hover:text-neutral-300 transition-colors p-1 flex items-center justify-center cursor-pointer"
+          aria-label={isMuted ? "Unmute" : "Mute"}
+        >
+          <Icon
+            icon={isMuted ? "lucide:volume-x" : "lucide:volume-2"}
+            className="w-4 h-4 shrink-0"
+          />
+        </button>
 
         {/* Fullscreen Button */}
         <button
@@ -210,21 +411,6 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
           />
         </button>
       </div>
-
-      {/* Chapters Overlay */}
-      {chapters.length > 0 && (
-        <div className="absolute top-4 right-4 z-30 flex flex-col gap-2">
-          {chapters.map((chapter, index) => (
-            <button
-              key={index}
-              onClick={() => handleChapterClick(chapter.time)}
-              className="bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full text-xs text-white hover:bg-black/80 transition-colors"
-            >
-              {chapter.title}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

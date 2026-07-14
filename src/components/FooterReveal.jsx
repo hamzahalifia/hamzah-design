@@ -155,6 +155,7 @@ export default function FooterReveal() {
                 }}
               >
                 <CalComponent 
+                  key={theme}
                   namespace="30min"
                   calLink="alifiahamzah/30min"
                   style={{ width: "100%", height: "auto", overflow: "visible" }}

@@ -6,6 +6,7 @@ import ScrollToTop from './ScrollToTop';
 import ErrorBoundary from './ErrorBoundary';
 import { Agentation } from 'agentation';
 import SoundManager from './SoundManager';
+import { Toaster } from './ui/sonner';
 
 // Lazy load components
 const Navbar = lazy(() => import('@/components/Navbar'));
@@ -80,6 +81,7 @@ export default function App() {
     <HelmetProvider>
       <ThemeProvider>
         <SoundManager />
+        <Toaster position="bottom-center" />
         <BrowserRouter>
           <ErrorBoundary>
             <ScrollToTop />

@@ -9,6 +9,7 @@ import { Cursor } from './core/cursor';
 import SkeletonLoader from './ui/SkeletonLoader';
 import { cmsFetch, FEATURED_CASE_STUDIES_QUERY } from '../lib/cmsendpoint';
 import OptimizedImage from './OptimizedImage';
+import { toast } from 'sonner';
 
 export default function WorkShowcase() {
   const [selectedExploration, setSelectedExploration] = useState(null);
@@ -18,7 +19,6 @@ export default function WorkShowcase() {
   const [isCursorHovering, setIsCursorHovering] = useState(false);
   const [cursorText, setCursorText] = useState('View Detail');
   const [showInfo, setShowInfo] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (selectedExploration) {
@@ -56,10 +56,10 @@ export default function WorkShowcase() {
     if (!selectedExploration) return;
     const url = `${window.location.origin}/exploration?id=${selectedExploration.id}`;
     navigator.clipboard.writeText(url).then(() => {
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
+      toast.success("Link copied to clipboard");
     }).catch((err) => {
       console.error('Failed to copy: ', err);
+      toast.error("Failed to copy link");
     });
   };
 
@@ -440,20 +440,6 @@ export default function WorkShowcase() {
                   )}
                 </AnimatePresence>
               </div>
-
-              {/* Toast Notification */}
-              <AnimatePresence>
-                {showToast && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute bottom-20 px-4 py-2 bg-neutral-900/90 border border-white/10 rounded-full text-xs font-semibold text-white shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-200"
-                  >
-                    Copied link to clipboard!
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
             </motion.div>
           )}

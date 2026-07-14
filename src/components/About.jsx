@@ -14,22 +14,22 @@ import PageMeta from "./SEO/PageMeta";
 
 const AI_OPTIONS = [
   {
+    id: "chatgpt",
+    label: "Chat GPT",
+    icon: "simple-icons:openai",
+    url: "https://chatgpt.com/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
+  },
+  {
+    id: "perplexity",
+    label: "Perplexity",
+    icon: "simple-icons:perplexity",
+    url: "https://www.perplexity.ai/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
+  },
+  {
     id: "claude",
     label: "Claude",
     icon: "logos:claude-icon",
     url: "https://claude.ai/new?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
-  },
-  {
-    id: "chatgpt",
-    label: "Chat GPT",
-    icon: "hugeicons:chat-gpt",
-    url: "https://chatgpt.com/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
-  },
-  {
-    id: "gemini",
-    label: "Gemini",
-    icon: "vscode-icons:file-type-gemini",
-    url: "https://gemini.google.com/app?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%2520him",
   },
   {
     id: "grok",
@@ -38,54 +38,12 @@ const AI_OPTIONS = [
     url: "https://grok.com/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
   },
   {
-    id: "perplexity",
-    label: "Perplexity",
-    icon: "simple-icons:perplexity",
-    url: "https://www.perplexity.ai/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
+    id: "gemini",
+    label: "Gemini",
+    icon: "vscode-icons:file-type-gemini",
+    url: "https://gemini.google.com/app?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%2520him",
   },
 ];
-
-const SUGGESTED_QUESTIONS = [
-  {
-    id: "saas-fit",
-    label: "Verify SaaS Fit",
-    icon: "solar:widget-bold-duotone",
-    query:
-      "Would Alifia Hamzah be a strong UI/UX design partner for a B2B SaaS startup? Based on public info from https://hamzah.design, summarize his experience, portfolio, strengths, and client fit.",
-  },
-  {
-    id: "case-studies",
-    label: "Audit Case Studies",
-    icon: "solar:document-bold-duotone",
-    query:
-      "Summarize the enterprise product design case studies, design process, and data-driven methods of Alifia Hamzah from his portfolio at https://hamzah.design",
-  },
-  {
-    id: "design-philosophy",
-    label: "Simplify Workflows",
-    icon: "solar:magic-stick-bold-duotone",
-    query:
-      "What is Alifia Hamzah's design philosophy for simplifying complex workflows and enterprise systems? Answer using details from https://hamzah.design",
-  },
-];
-
-const getQueryUrl = (aiId, queryText) => {
-  const query = encodeURIComponent(queryText);
-  switch (aiId) {
-    case "claude":
-      return `https://claude.ai/new?q=${query}`;
-    case "chatgpt":
-      return `https://chatgpt.com/?q=${query}`;
-    case "gemini":
-      return `https://gemini.google.com/app?q=${query}`;
-    case "grok":
-      return `https://grok.com/?q=${query}`;
-    case "perplexity":
-      return `https://www.perplexity.ai/?q=${query}`;
-    default:
-      return `https://claude.ai/new?q=${query}`;
-  }
-};
 
 const TESTIMONIALS = [
   {
@@ -306,10 +264,48 @@ const EDUCATION = [
 ];
 
 const COMMUNITY_PHOTOS = [
-  { id: 1, src: "/images/about/sharing_001.webp", alt: "Sharing 1" },
-  { id: 2, src: "/images/about/sharing_002.webp", alt: "Sharing 2" },
-  { id: 3, src: "/images/about/sharing_003.webp", alt: "Sharing 3" },
-  { id: 4, src: "/images/about/sharing_004.webp", alt: "Sharing 4" },
+  {
+    id: 1,
+    src: "/images/about/sharing_001.webp",
+    alt: "Sharing 1",
+    label: "design training",
+    rotation: "-rotate-6 hover:-rotate-1",
+  },
+  {
+    id: 2,
+    src: "/images/about/sharing_002.webp",
+    alt: "Sharing 2",
+    label: "pitch the idea",
+    rotation: "rotate-3 hover:rotate-0",
+  },
+  {
+    id: 3,
+    src: "/images/about/sharing_003.webp",
+    alt: "Sharing 3",
+    label: "mentoring session",
+    rotation: "-rotate-2 hover:rotate-1",
+  },
+  {
+    id: 4,
+    src: "/images/about/sharing_004.webp",
+    alt: "Sharing 4",
+    label: "meetup & sharing",
+    rotation: "rotate-6 hover:rotate-1",
+  },
+  {
+    id: 5,
+    src: "/images/about/sharing_005.webp",
+    alt: "Sharing 5",
+    label: "workspace",
+    rotation: "-rotate-3 hover:rotate-1",
+  },
+  {
+    id: 6,
+    src: "/images/about/sharing_006.avif",
+    alt: "Sharing 6",
+    label: "coffee break",
+    rotation: "rotate-4 hover:-rotate-1",
+  },
 ];
 
 function RollingTestimonials({ testimonials }) {
@@ -392,7 +388,6 @@ function RollingTestimonials({ testimonials }) {
 export default function About() {
   const [selectedAI, setSelectedAI] = useState(AI_OPTIONS[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [prompt, setPrompt] = useState(SUGGESTED_QUESTIONS[0].query);
 
   return (
     <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
@@ -607,7 +602,7 @@ export default function About() {
                                   ? "Stealth"
                                   : "Live";
 
-                           const itemContent = (
+                          const itemContent = (
                             <div className="group grid grid-cols-[60px_1fr] sm:grid-cols-[64px_2fr_1.2fr] lg:grid-cols-[80px_2.2fr_1.3fr] py-3 border-b border-neutral-100/50 dark:border-neutral-900/50 cursor-pointer gap-x-3 gap-y-1 sm:gap-4 items-start sm:items-center">
                               <span className="text-sm font-mono text-neutral-400 dark:text-neutral-600 col-start-1 col-span-1">
                                 {showYear ? item.year : ""}
@@ -796,17 +791,30 @@ export default function About() {
                       community, discussing workflow solutions, and sharing
                       insights about enterprise product design.
                     </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="flex flex-row md:justify-center justify-start items-center -space-x-8 md:-space-x-12 pt-16 pb-12 w-full overflow-x-auto md:overflow-x-visible select-none scrollbar-none px-10 md:px-0">
                       {COMMUNITY_PHOTOS.map((photo) => (
                         <div
                           key={photo.id}
-                          className="aspect-[4/3] rounded-xl overflow-hidden border border-attio-border-light dark:border-attio-border-dark bg-neutral-100 dark:bg-neutral-800 shadow-sm hover:scale-[1.02] transition-transform duration-200"
+                          className={`group relative flex-shrink-0 w-[145px] sm:w-[155px] md:w-[165px] bg-white dark:bg-zinc-900 border border-neutral-200/80 dark:border-zinc-800 rounded-sm p-2 pb-8 sm:p-2.5 sm:pb-10 md:p-3 md:pb-12 shadow-md hover:shadow-xl dark:shadow-black/40 transition-all duration-300 ease-out cursor-pointer hover:scale-[1.05] hover:-translate-y-3 hover:z-30 ${photo.rotation}`}
                         >
-                          <img
-                            src={photo.src}
-                            alt={photo.alt}
-                            className="w-full h-full object-cover"
-                          />
+                          {/* Bubble Chat Tooltip */}
+                          <div className="absolute bottom-[104%] left-1/2 -translate-x-1/2 opacity-0 translate-y-1 pointer-events-none transition-all duration-250 group-hover:opacity-100 group-hover:translate-y-0 z-50 select-none">
+                            <div className="relative bg-white dark:bg-zinc-800 text-neutral-800 dark:text-zinc-100 text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full border border-neutral-200 dark:border-zinc-700/80 shadow-md dark:shadow-black/50 whitespace-nowrap">
+                              {photo.label}
+                              {/* Triangle pointer */}
+                              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[5px] w-2.5 h-2.5 rotate-45 bg-white dark:bg-zinc-800 border-r border-b border-neutral-200 dark:border-zinc-700/80" />
+                            </div>
+                          </div>
+
+                          {/* Polaroid Image Box */}
+                          <div className="w-full aspect-square overflow-hidden bg-neutral-50 dark:bg-zinc-950 border border-neutral-100 dark:border-zinc-800/60 rounded-[1px]">
+                            <img
+                              src={photo.src}
+                              alt={photo.alt}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -837,8 +845,8 @@ export default function About() {
                         </p>
                         <footer>
                           <cite
-                            className="not-italic text-2xl sm:text-3xl text-neutral-900 dark:text-white tracking-wide"
-                            style={{ fontFamily: '"Caveat", cursive' }}
+                            className="not-italic text-xl sm:text-xl text-neutral-900 dark:text-white tracking-wide"
+                            style={{ fontFamily: '"Playwrite NZ", cursive' }}
                           >
                             Alifia Hamzah
                           </cite>
@@ -871,73 +879,35 @@ export default function About() {
                 </div>
 
                 {/* Column 2: Right Sidebar (below intro on mobile) */}
-                <div className="border-t lg:border-t-0 lg:border-l border-attio-border-light dark:border-attio-border-dark pb-20">
+                <div className="border-t lg:border-t-0 lg:border-l border-attio-border-light dark:border-attio-border-dark pb-7">
                   <div className="sticky top-[60px] divide-y divide-attio-border-light dark:divide-attio-border-dark">
                     {/* Ask AI Section */}
                     <div className="p-5">
-                      <div className="p-5 bg-neutral-50 dark:bg-zinc-900/50 border border-attio-border-light dark:border-attio-border-dark rounded-2xl space-y-5 font-sans shadow-sm">
-                        {/* Header */}
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Icon
-                              icon="ri:quill-pen-ai-fill"
-                              className="w-4 h-4 text-blue-500"
-                            />
-                            <h3 className="text-sm font-semibold text-[#111827] dark:text-white">
-                              Ask your AI Partner
-                            </h3>
-                          </div>
-                        </div>
-
-                        {/* Interactive prompt area */}
-                        <div className="relative rounded-xl bg-white dark:bg-zinc-950 border border-attio-border-light dark:border-attio-border-dark p-3 shadow-inner">
-                          <textarea
-                            value={prompt}
-                            onChange={(e) => setPrompt(e.target.value)}
-                            aria-label="Ask AI about Hamzah's work"
-                            className="w-full h-24 bg-transparent text-sm text-neutral-800 dark:text-zinc-200 outline-none resize-none border-0 p-0 font-sans leading-relaxed focus:outline-none focus:ring-0"
-                            placeholder="Type your question about Hamzah's work..."
+                      <div className="p-4 bg-neutral-50 dark:bg-zinc-900/40 border border-attio-border-light dark:border-attio-border-dark rounded-2xl font-sans shadow-sm w-full space-y-3">
+                        {/* Dynamic Prompt Box */}
+                        <a
+                          href={selectedAI.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2.5 px-4 py-3 bg-white dark:bg-zinc-950 border border-neutral-200/80 dark:border-zinc-800/80 rounded-xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] w-full select-none cursor-pointer transition-all hover:border-neutral-300 dark:hover:border-zinc-700 active:scale-[0.98]"
+                        >
+                          <Icon
+                            icon="lucide:sparkles"
+                            className="w-4 h-4 text-blue-500 shrink-0"
                           />
-                        </div>
-
-                        {/* Suggestion Chips */}
-                        <div className="space-y-2">
-                          <span className="text-sm font-semibold text-[#111827] dark:text-white block">
-                            Suggested Questions
+                          <span className="text-sm font-medium text-neutral-800 dark:text-zinc-200 truncate">
+                            Ask {selectedAI.label} if Hamzah is worth hiring
                           </span>
-                          <div className="flex flex-col gap-2">
-                            {SUGGESTED_QUESTIONS.map((q) => {
-                              const isActive = prompt === q.query;
-                              return (
-                                <button
-                                  key={q.id}
-                                  type="button"
-                                  onClick={() => setPrompt(q.query)}
-                                  className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm text-left border transition-all duration-200 cursor-pointer ${
-                                    isActive
-                                      ? "bg-neutral-200 dark:bg-zinc-800 border-neutral-300 dark:border-zinc-700 text-neutral-900 dark:text-white font-medium shadow-sm"
-                                      : "bg-white dark:bg-zinc-950 border-attio-border-light dark:border-attio-border-dark text-neutral-500 dark:text-zinc-400 hover:bg-neutral-100 dark:hover:bg-zinc-900"
-                                  }`}
-                                >
-                                  <Icon
-                                    icon={q.icon}
-                                    className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-500" : "text-neutral-400"}`}
-                                  />
-                                  <span className="truncate">{q.label}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
+                        </a>
 
                         {/* Bottom Actions Row */}
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between pt-3 border-t border-attio-border-light dark:border-attio-border-dark gap-3">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-2.5 relative">
                           {/* Dropdown Selector */}
                           <div className="relative w-full md:w-auto">
                             <button
                               type="button"
                               onClick={() => setDropdownOpen(!dropdownOpen)}
-                              className="flex items-center justify-between md:justify-start gap-1.5 w-full md:w-auto px-3 py-2 h-[46px] bg-[#F2F2F2] dark:bg-neutral-800 border border-attio-border-light dark:border-attio-border-dark text-[#545454] dark:text-neutral-300 btn-radius-lg text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer select-none"
+                              className="flex items-center justify-between md:justify-start gap-1.5 px-3 h-[46px] w-full md:w-auto rounded-xl bg-neutral-200/50 dark:bg-zinc-800 border border-neutral-300/30 dark:border-zinc-700/50 text-[#545454] dark:text-neutral-300 text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer select-none"
                             >
                               <div className="flex items-center gap-1.5">
                                 <Icon
@@ -947,7 +917,7 @@ export default function About() {
                                 <span>{selectedAI.label}</span>
                               </div>
                               <Icon
-                                icon="lucide:chevron-down"
+                                icon="lucide:chevrons-up-down"
                                 className="w-3 h-3 text-neutral-400 dark:text-neutral-500"
                               />
                             </button>
@@ -958,7 +928,7 @@ export default function About() {
                                   className="fixed inset-0 z-40"
                                   onClick={() => setDropdownOpen(false)}
                                 />
-                                <div className="absolute bottom-full left-0 mb-1.5 z-50 w-full md:min-w-[130px]bg-white dark:bg-zinc-950 border border-attio-border-light dark:border-attio-border-dark rounded-xl shadow-xl p-1 animate-in fade-in slide-in-from-bottom-1 duration-150">
+                                <div className="absolute top-full left-0 mt-1.5 z-50 w-full md:min-w-[150px] bg-white dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 rounded-xl shadow-xl p-1 animate-in fade-in slide-in-from-top-1 duration-150">
                                   {AI_OPTIONS.map((opt) => (
                                     <button
                                       key={opt.id}
@@ -967,17 +937,25 @@ export default function About() {
                                         setSelectedAI(opt);
                                         setDropdownOpen(false);
                                       }}
-                                      className={`w-full flex items-center gap-2 px-2.5 py-2 text-left text-sm rounded-lg transition-colors cursor-pointer ${
+                                      className={`w-full flex items-center justify-between px-2.5 py-2 text-left text-xs rounded-lg transition-colors cursor-pointer ${
                                         selectedAI.id === opt.id
                                           ? "bg-neutral-100 dark:bg-zinc-800 text-neutral-900 dark:text-white font-semibold"
                                           : "text-[#545454] dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-zinc-900"
                                       }`}
                                     >
-                                      <Icon
-                                        icon={opt.icon}
-                                        className="w-3.5 h-3.5 shrink-0"
-                                      />
-                                      <span>{opt.label}</span>
+                                      <div className="flex items-center gap-2">
+                                        <Icon
+                                          icon={opt.icon}
+                                          className="w-3.5 h-3.5 shrink-0"
+                                        />
+                                        <span>{opt.label}</span>
+                                      </div>
+                                      {selectedAI.id === opt.id && (
+                                        <Icon
+                                          icon="lucide:check"
+                                          className="w-3.5 h-3.5 text-neutral-800 dark:text-neutral-200"
+                                        />
+                                      )}
                                     </button>
                                   ))}
                                 </div>
@@ -987,16 +965,14 @@ export default function About() {
 
                           {/* Execute Button */}
                           <a
-                            href={getQueryUrl(selectedAI.id, prompt)}
+                            href={selectedAI.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full md:w-auto block md:inline-block"
+                            className="block md:inline-block w-full md:w-auto"
                           >
                             <Button
-                              className="btn-radius-lg w-full"
-                              size="xl"
+                              className="btn-radius-lg h-[46px] w-full md:w-auto px-4 text-normal font-semibold"
                               variant="primary"
-                              style={{ height: "46px" }}
                             >
                               <RollingText>Ask AI</RollingText>
                             </Button>

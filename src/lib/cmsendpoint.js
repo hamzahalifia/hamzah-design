@@ -119,6 +119,7 @@ export async function fetchRelatedCaseStudies(currentId, currentSlug) {
     _id: doc.id,
     title: doc.title,
     slug: doc.slug,
+    description: doc.description,
     heroImage: resolveMediaUrl(doc.heroImage?.url),
     year: doc.year,
     publishedAt: doc.publishedAt,

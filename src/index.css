@@ -1,6 +1,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap');
 
 @font-face {
   font-family: 'Geist Pixel';
@@ -302,6 +303,12 @@
   margin-bottom: 1.25rem;
   display: block;
 }
+.case-study-content ol ol {
+  list-style-type: upper-alpha !important;
+}
+.case-study-content ol ol ol {
+  list-style-type: lower-roman !important;
+}
 .case-study-content ol li {
   margin-bottom: 0.5rem;
   display: list-item;
@@ -457,4 +464,15 @@
   z-index: 2;
   position: fixed;
   inset: 0;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
