@@ -2,6 +2,29 @@ import React from 'react';
 
 // Your ImageKit URL Endpoint
 const IMAGEKIT_ENDPOINT = 'https://ik.imagekit.io/nr1gjsmwr/';
+const CMS_BASE =
+  import.meta.env.PUBLIC_PAYLOAD_BASE_URL ||
+  'https://hamzah-design-cms.onrender.com';
+const R2_ENDPOINT =
+  import.meta.env.PUBLIC_R2_ENDPOINT ||
+  '';
+const R2_BUCKET = import.meta.env.PUBLIC_R2_BUCKET || '';
+
+function trimSlashes(value = '') {
+  return value.replace(/^\/+|\/+$/g, '');
+}
+
+function getOptimizableBases() {
+  const bases = [CMS_BASE, R2_ENDPOINT]
+    .filter(Boolean)
+    .map((base) => base.replace(/\/+$/g, ''));
+
+  if (R2_ENDPOINT && R2_BUCKET) {
+    bases.push(`${R2_ENDPOINT.replace(/\/+$/g, '')}/${trimSlashes(R2_BUCKET)}`);
+  }
+
+  return bases;
+}
 
 /**
  * A component to automatically optimize images from the CMS using ImageKit.
@@ -30,7 +53,10 @@ const OptimizedImage = ({
   }
 
   // If the src is not from our CMS, use it as is (e.g., local images, SVGs).
-  if (!src.startsWith(import.meta.env.PUBLIC_PAYLOAD_BASE_URL || import.meta.env.VITE_CMS_BASE_URL)) {
+  const optimizableBases = getOptimizableBases();
+  const shouldOptimize = optimizableBases.some((base) => src.startsWith(base));
+
+  if (!shouldOptimize) {
     return (
       <img
         src={src}

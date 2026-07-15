@@ -314,6 +314,27 @@
   display: list-item;
 }
 
+.case-study-content details summary::-webkit-details-marker {
+  display: none;
+}
+
+.case-study-content details[open] summary span:last-child {
+  transform: rotate(45deg);
+}
+
+.case-study-content .case-study-callout-content > *:last-child {
+  margin-bottom: 0;
+}
+
+.case-study-content .case-study-callout-content p {
+  margin-bottom: 0.875rem;
+}
+
+.case-study-content .case-study-callout-content ul,
+.case-study-content .case-study-callout-content ol {
+  margin-bottom: 0.875rem;
+}
+
 .case-study-content table {
   width: 100%;
   text-align: left;

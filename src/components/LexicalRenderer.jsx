@@ -13,6 +13,353 @@ const IS_CODE = 16;
 const IS_SUBSCRIPT = 32;
 const IS_SUPERSCRIPT = 64;
 
+const CMS_BASE =
+  import.meta.env.PUBLIC_PAYLOAD_BASE_URL ||
+  'https://hamzah-design-cms.onrender.com';
+const R2_ENDPOINT = import.meta.env.PUBLIC_R2_ENDPOINT || '';
+const R2_BUCKET = import.meta.env.PUBLIC_R2_BUCKET || '';
+
+function trimSlashes(value = '') {
+  return value.replace(/^\/+|\/+$/g, '');
+}
+
+function buildR2MediaUrl(pathOrFilename) {
+  if (!R2_ENDPOINT || !pathOrFilename) return null;
+
+  const endpoint = R2_ENDPOINT.replace(/\/+$/g, '');
+  const cleanedPath = trimSlashes(String(pathOrFilename));
+  const normalizedBucket = trimSlashes(R2_BUCKET);
+
+  if (!normalizedBucket) return `${endpoint}/${cleanedPath}`;
+  if (endpoint.endsWith(`/${normalizedBucket}`)) return `${endpoint}/${cleanedPath}`;
+
+  return `${endpoint}/${normalizedBucket}/${cleanedPath}`;
+}
+
+function extractMediaFilename(url) {
+  if (!url) return null;
+  const pathname = url.startsWith('http') ? new URL(url).pathname : url;
+  const filename = pathname.split('/').filter(Boolean).pop();
+  return filename ? decodeURIComponent(filename) : null;
+}
+
+function toAbsoluteUrl(url) {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  if (R2_ENDPOINT) {
+    const filename = extractMediaFilename(url);
+    const r2Url = buildR2MediaUrl(filename || url);
+    if (r2Url) return r2Url;
+  }
+  if (url.startsWith('/')) return `${CMS_BASE}${url}`;
+  return buildR2MediaUrl(url) || `${CMS_BASE}/${trimSlashes(url)}`;
+}
+
+function firstDefined(...values) {
+  return values.find((value) => value !== undefined && value !== null && value !== '');
+}
+
+function getMediaUrl(media) {
+  const fallbackPath =
+    media?.filename ||
+    media?.key ||
+    media?.path ||
+    media?.name ||
+    extractMediaFilename(media?.url);
+  const r2Url = buildR2MediaUrl(fallbackPath);
+  if (r2Url) return r2Url;
+
+  return toAbsoluteUrl(
+    firstDefined(media?.url, media?.filename, media?.src, media?.file?.url),
+  );
+}
+
+function extractNodeText(node) {
+  if (!node) return '';
+  if (node.type === 'text') return node.text || '';
+  if (Array.isArray(node.children)) {
+    return node.children.map(extractNodeText).join(' ');
+  }
+  return '';
+}
+
+function normalizeEmbedUrl(url, kind) {
+  if (!url) return null;
+
+  if (kind === 'figma') {
+    return `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}`;
+  }
+
+  if (kind === 'loom') {
+    if (url.includes('/embed/')) return url;
+    return url.replace('/share/', '/embed/');
+  }
+
+  return url;
+}
+
+function renderEmbedCard({ key, title, description, href, icon, meta }) {
+  if (!href) return null;
+
+  return (
+    <a
+      key={key}
+      href={href}
+      target="_blank"
+      rel="noreferrer noopener"
+      className="not-prose my-6 flex items-start gap-4 rounded-2xl border border-neutral-200 bg-white p-5 no-underline shadow-sm transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:hover:bg-neutral-900"
+    >
+      <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+        <span className="text-lg">{icon}</span>
+      </div>
+      <div className="min-w-0 flex-1">
+        {meta ? (
+          <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500">
+            {meta}
+          </div>
+        ) : null}
+        <div className="truncate text-base font-semibold text-neutral-900 dark:text-white">
+          {title || href}
+        </div>
+        {description ? (
+          <p className="mt-1 mb-0 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+            {description}
+          </p>
+        ) : null}
+        <div className="mt-3 truncate text-sm text-blue-600 dark:text-blue-400">
+          {href}
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function renderIframeEmbed({ key, url, caption, title }) {
+  if (!url) return null;
+
+  return (
+    <figure key={key} className="not-prose my-8">
+      <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+        <iframe
+          src={url}
+          title={title}
+          loading="lazy"
+          allowFullScreen
+          className="h-full min-h-[340px] w-full border-0"
+        />
+      </div>
+      {caption ? (
+        <figcaption className="mt-2 text-center text-sm text-neutral-500 dark:text-neutral-400">
+          {caption}
+        </figcaption>
+      ) : null}
+    </figure>
+  );
+}
+
+function renderCallout({ key, fields, children }) {
+  const variant = firstDefined(fields?.style, fields?.variant, fields?.tone, 'default');
+  const title = firstDefined(fields?.title, fields?.heading, fields?.label);
+  const icon = firstDefined(fields?.icon, fields?.emoji);
+  const body =
+    fields?.content?.root?.children ||
+    fields?.content?.children ||
+    fields?.body?.root?.children ||
+    fields?.body?.children ||
+    children;
+
+  const palette = {
+    default:
+      'border-neutral-200 bg-neutral-50 text-neutral-800 dark:border-neutral-800 dark:bg-neutral-900/70 dark:text-neutral-100',
+    info:
+      'border-sky-200 bg-sky-50 text-sky-950 dark:border-sky-900/70 dark:bg-sky-950/40 dark:text-sky-100',
+    success:
+      'border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-100',
+    warning:
+      'border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-100',
+    danger:
+      'border-rose-200 bg-rose-50 text-rose-950 dark:border-rose-900/70 dark:bg-rose-950/40 dark:text-rose-100',
+  };
+
+  return (
+    <aside
+      key={key}
+      className={`not-prose my-8 rounded-2xl border p-5 ${palette[variant] || palette.default}`}
+    >
+      {(icon || title) ? (
+        <div className="mb-3 flex items-center gap-3">
+          {icon ? (
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/70 text-lg dark:bg-black/20">
+              {icon}
+            </div>
+          ) : null}
+          {title ? <div className="text-base font-semibold">{title}</div> : null}
+        </div>
+      ) : null}
+      <div className="case-study-callout-content text-sm leading-relaxed">
+        {Array.isArray(body) ? renderChildren(body, `${key}-callout`) : null}
+      </div>
+    </aside>
+  );
+}
+
+function renderToggle({ key, node }) {
+  const title =
+    firstDefined(
+      node.fields?.title,
+      node.fields?.label,
+      node.label,
+      extractNodeText(node.title),
+    ) || 'Details';
+  const contentNodes =
+    node.fields?.content?.root?.children ||
+    node.fields?.content?.children ||
+    node.children ||
+    [];
+
+  return (
+    <details
+      key={key}
+      className="not-prose my-5 overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950"
+    >
+      <summary className="cursor-pointer list-none px-5 py-4 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50 dark:text-neutral-100 dark:hover:bg-neutral-900">
+        <div className="flex items-center justify-between gap-4">
+          <span>{title}</span>
+          <span className="text-neutral-400">+</span>
+        </div>
+      </summary>
+      <div className="border-t border-neutral-200 px-5 py-4 text-sm text-neutral-700 dark:border-neutral-800 dark:text-neutral-300">
+        {renderChildren(contentNodes, `${key}-toggle`)}
+      </div>
+    </details>
+  );
+}
+
+function renderBlockNode(node, key) {
+  const fields = node.fields || {};
+  const blockType = fields.blockType;
+
+  if (blockType === 'video') {
+    const video = firstDefined(fields.video, fields.videoFile, fields.file);
+    const caption = firstDefined(fields.caption, fields.description);
+    const videoUrl = getMediaUrl(video);
+    if (!videoUrl) return null;
+
+    const videoChapters = (video?.chapters || []).map((chapter) => ({
+      title: chapter.title,
+      time:
+        chapter.start_timecode !== undefined
+          ? chapter.start_timecode
+          : (chapter.time || 0),
+    }));
+
+    return (
+      <figure key={key} className="my-8">
+        <div className="relative aspect-video overflow-hidden rounded-lg bg-neutral-100 shadow-lg dark:bg-neutral-900">
+          <CustomVideoPlayer
+            src={videoUrl}
+            chapters={videoChapters}
+            className="w-full aspect-video"
+          />
+        </div>
+        {caption ? (
+          <figcaption className="mt-2 text-center text-sm text-neutral-500 dark:text-neutral-400">
+            {caption}
+          </figcaption>
+        ) : null}
+      </figure>
+    );
+  }
+
+  if (blockType === 'youtube-embed') {
+    const url = firstDefined(fields.url, fields.videoUrl);
+    const caption = firstDefined(fields.caption, fields.description);
+    const aspectRatio = firstDefined(fields.aspectRatio, fields.aspect_ratio);
+    if (!url) return null;
+    return (
+      <YouTubeEmbed
+        key={key}
+        url={url}
+        caption={caption}
+        aspectRatio={aspectRatio}
+      />
+    );
+  }
+
+  if (blockType === 'audio') {
+    const audio = firstDefined(fields.audio, fields.file, fields.audioFile);
+    const audioUrl = getMediaUrl(audio);
+    const caption = firstDefined(fields.caption, fields.description, audio?.alt);
+    if (!audioUrl) return null;
+
+    return (
+      <figure
+        key={key}
+        className="not-prose my-8 rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
+      >
+        <audio controls preload="metadata" className="w-full" src={audioUrl}>
+          Your browser does not support the audio element.
+        </audio>
+        {caption ? (
+          <figcaption className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">
+            {caption}
+          </figcaption>
+        ) : null}
+      </figure>
+    );
+  }
+
+  if (blockType === 'file') {
+    const file = firstDefined(fields.file, fields.asset, fields.document);
+    const href = getMediaUrl(file);
+    return renderEmbedCard({
+      key,
+      href,
+      title: firstDefined(fields.title, file?.alt, file?.filename, 'Download file'),
+      description: firstDefined(fields.description, fields.caption),
+      icon: 'FILE',
+      meta: file?.mimeType || 'Attachment',
+    });
+  }
+
+  if (blockType === 'web-bookmark') {
+    return renderEmbedCard({
+      key,
+      href: firstDefined(fields.url, fields.href),
+      title: firstDefined(fields.title, fields.siteName),
+      description: firstDefined(fields.description, fields.caption),
+      icon: 'LINK',
+      meta: 'Web bookmark',
+    });
+  }
+
+  if (blockType === 'figma-prototype') {
+    const sourceUrl = firstDefined(fields.url, fields.href, fields.prototypeUrl);
+    return renderIframeEmbed({
+      key,
+      url: normalizeEmbedUrl(sourceUrl, 'figma'),
+      caption: firstDefined(fields.caption, fields.description),
+      title: firstDefined(fields.title, 'Figma prototype'),
+    });
+  }
+
+  if (blockType === 'loom-video') {
+    const sourceUrl = firstDefined(fields.url, fields.href, fields.videoUrl);
+    return renderIframeEmbed({
+      key,
+      url: normalizeEmbedUrl(sourceUrl, 'loom'),
+      caption: firstDefined(fields.caption, fields.description),
+      title: firstDefined(fields.title, 'Loom video'),
+    });
+  }
+
+  if (blockType === 'callout') {
+    return renderCallout({ key, fields, children: node.children });
+  }
+
+  return null;
+}
+
 function resolveTextNode(node, index) {
   if (!node || !node.text) return null;
   let { text, format = 0 } = node;
@@ -84,35 +431,43 @@ function renderLexicalNode(node, key) {
     }
 
     case 'block': {
-      if (node.fields?.blockType === 'video') {
-        const { video, caption } = node.fields;
-        if (!video?.url) return null;
-        const videoUrl = video.url.startsWith('http') ? video.url : `${import.meta.env.PUBLIC_PAYLOAD_BASE_URL || import.meta.env.VITE_CMS_BASE_URL || ''}${video.url}`;
-        const videoChapters = (video.chapters || []).map(ch => ({
-          title: ch.title,
-          time: ch.start_timecode !== undefined ? ch.start_timecode : (ch.time || 0)
-        }));
-        return (
-          <figure key={key} className="my-8">
-            <div className="relative aspect-video bg-neutral-100 dark:bg-neutral-900 rounded-lg overflow-hidden shadow-lg">
-              <CustomVideoPlayer src={videoUrl} chapters={videoChapters} className="w-full aspect-video" />
-            </div>
-            {caption && <figcaption className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 text-center">{caption}</figcaption>}
-          </figure>
-        );
-      }
-      if (node.fields?.blockType === 'youtube-embed') {
-        const { url, caption, aspectRatio } = node.fields;
-        if (!url) return null;
-        return <YouTubeEmbed key={key} url={url} caption={caption} aspectRatio={aspectRatio} />;
-      }
-      return null;
+      return renderBlockNode(node, key);
     }
 
     case 'upload': {
       const media = node.value;
-      if (!media?.url) return null;
-      const fullUrl = media.url.startsWith('http') ? media.url : `${import.meta.env.PUBLIC_PAYLOAD_BASE_URL || import.meta.env.VITE_CMS_BASE_URL || ''}${media.url}`;
+      const fullUrl = getMediaUrl(media);
+      if (!fullUrl) return null;
+
+      if (media?.mimeType?.startsWith('audio/')) {
+        return (
+          <figure
+            key={key}
+            className="not-prose my-8 rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
+          >
+            <audio controls preload="metadata" className="w-full" src={fullUrl}>
+              Your browser does not support the audio element.
+            </audio>
+            {media?.alt ? (
+              <figcaption className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">
+                {media.alt}
+              </figcaption>
+            ) : null}
+          </figure>
+        );
+      }
+
+      if (media?.mimeType && !media.mimeType.startsWith('image/')) {
+        return renderEmbedCard({
+          key,
+          href: fullUrl,
+          title: firstDefined(media?.alt, media?.filename, 'Download file'),
+          description: media?.mimeType,
+          icon: 'FILE',
+          meta: 'Attachment',
+        });
+      }
+
       return (
         <figure key={key} className="my-6">
           <img src={fullUrl} alt={media.alt || ''} loading="lazy" className="rounded-lg shadow-lg w-full" />
@@ -132,6 +487,12 @@ function renderLexicalNode(node, key) {
 
     case 'linebreak':
       return <br key={key} />;
+
+    case 'collapsible':
+    case 'details':
+    case 'toggle':
+    case 'toggle-list':
+      return renderToggle({ key, node });
 
     case 'text':
       return resolveTextNode(node, key);
