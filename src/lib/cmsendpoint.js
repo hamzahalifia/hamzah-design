@@ -15,6 +15,26 @@ function resolveCategory(cat) {
   return cat.name || cat.id || null;
 }
 
+function extractSortableYear(year) {
+  if (typeof year === 'number' && Number.isFinite(year)) return year;
+  if (typeof year === 'string') {
+    const match = year.match(/\d{4}/);
+    return match ? Number(match[0]) : Number.NEGATIVE_INFINITY;
+  }
+  return Number.NEGATIVE_INFINITY;
+}
+
+function sortCaseStudiesByYear(items) {
+  return [...items].sort((a, b) => {
+    const yearDiff = extractSortableYear(b.year) - extractSortableYear(a.year);
+    if (yearDiff !== 0) return yearDiff;
+
+    const publishedAtA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+    const publishedAtB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+    return publishedAtB - publishedAtA;
+  });
+}
+
 /**
  * Generic fetch wrapper for Payload CMS REST API
  */
@@ -41,7 +61,7 @@ async function payloadFetch(endpoint, options = {}) {
  */
 export async function fetchCaseStudies() {
   const data = await payloadFetch('/case-studies?depth=1&sort=-publishedAt');
-  return data.docs.map((doc) => ({
+  const docs = data.docs.map((doc) => ({
     _id: doc.id,
     title: doc.title,
     slug: doc.slug,
@@ -53,6 +73,7 @@ export async function fetchCaseStudies() {
     featured: doc.featured || false,
     publishedAt: doc.publishedAt,
   }));
+  return sortCaseStudiesByYear(docs);
 }
 
 /**
