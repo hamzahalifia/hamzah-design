@@ -109,7 +109,22 @@ function sortCaseStudiesByYear(items) {
 
 function isPublishedCaseStudy(doc) {
   if (!doc) return false;
+
+  // Handle draft status
   if (doc.status === 'draft') return false;
+
+  // If status is 'publish-now', it is always published
+  if (doc.status === 'publish-now') return true;
+
+  // If status is 'schedule', it is published only if the scheduled time has passed
+  if (doc.status === 'schedule') {
+    if (!doc.publishedAt) return false;
+    const publishedTime = new Date(doc.publishedAt).getTime();
+    if (!Number.isFinite(publishedTime)) return false;
+    return publishedTime <= Date.now();
+  }
+
+  // Fallback for old documents that do not have the status field yet
   if (doc._status && doc._status !== 'published') return false;
   if (!doc.publishedAt) return false;
 
