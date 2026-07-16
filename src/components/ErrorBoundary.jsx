@@ -24,7 +24,7 @@ export default class ErrorBoundary extends React.Component {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
-          className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAF9] dark:bg-[#080809] text-[#111827] dark:text-[#F4F4F5] relative overflow-hidden px-6"
+          className="h-[100vh] w-screen flex flex-col items-center justify-center bg-[#FAFAF9] dark:bg-[#080809] text-[#111827] dark:text-[#F4F4F5] relative overflow-hidden px-6"
         >
           <div className="relative z-10 flex flex-col items-center text-center max-w-lg">
             <motion.span

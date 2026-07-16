@@ -21,11 +21,17 @@ const NotFound = lazy(() => import('@/components/NotFound'));
 function AppRoutes() {
   const location = useLocation();
 
+  const showNavbar = ['/', '/about', '/work', '/exploration'].includes(location.pathname) ||
+    /^\/work\/[^/]+$/.test(location.pathname) ||
+    /^\/exploration\/[^/]+$/.test(location.pathname);
+
   return (
     <>
-      <Suspense fallback={null}>
-        <Navbar />
-      </Suspense>
+      {showNavbar && (
+        <Suspense fallback={null}>
+          <Navbar />
+        </Suspense>
+      )}
 
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
