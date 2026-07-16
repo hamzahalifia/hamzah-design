@@ -31,7 +31,7 @@ export default class ErrorBoundary extends React.Component {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-              className="font-mono text-[80px] sm:text-[120px] font-bold leading-none tracking-tighter text-[#DC2626] dark:text-[#F87171] select-none"
+              className="font-geist text-[80px] sm:text-[120px] font-bold leading-none tracking-tighter text-[#DC2626] dark:text-[#F87171] select-none"
             >
               500
             </motion.span>

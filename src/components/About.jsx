@@ -455,9 +455,9 @@ export default function About() {
           <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-white dark:bg-[#0A0A0B]">
             <div className="w-full">
               {/* 2-Column Responsive Layout — wider right column */}
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_420px] w-full">
                 {/* Column 1: Main Content Area */}
-                <div className="p-5 space-y-10 pb-16">
+                <div className="p-5 space-y-10 pb-16 min-w-0">
                   {/* Profile Header — photo → name → role → desc as one block */}
                   <div className="space-y-6">
                     <div className="w-[50px] h-[50px] flex items-center justify-center">
@@ -901,13 +901,13 @@ export default function About() {
                         </a>
 
                         {/* Bottom Actions Row */}
-                        <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-2.5 relative">
+                        <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row lg:items-stretch xl:items-center justify-between w-full gap-2.5 relative">
                           {/* Dropdown Selector */}
-                          <div className="relative w-full md:w-auto">
+                          <div className="relative w-full sm:w-auto lg:w-full xl:w-auto">
                             <button
                               type="button"
                               onClick={() => setDropdownOpen(!dropdownOpen)}
-                              className="flex items-center justify-between md:justify-start gap-1.5 px-3 h-[46px] w-full md:w-auto rounded-xl bg-neutral-200/50 dark:bg-zinc-800 border border-neutral-300/30 dark:border-zinc-700/50 text-[#545454] dark:text-neutral-300 text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer select-none"
+                              className="flex items-center justify-between sm:justify-start gap-1.5 px-3 h-[46px] w-full sm:w-auto lg:w-full xl:w-auto rounded-xl bg-neutral-200/50 dark:bg-zinc-800 border border-neutral-300/30 dark:border-zinc-700/50 text-[#545454] dark:text-neutral-300 text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer select-none"
                             >
                               <div className="flex items-center gap-1.5">
                                 <Icon
@@ -964,16 +964,17 @@ export default function About() {
                           </div>
 
                           {/* Execute Button */}
-                          <div className="flex justify-end w-full md:w-auto">
+                          <div className="flex justify-end w-full sm:w-auto lg:w-full xl:w-auto">
                             <Button
                               asChild
-                              className="btn-radius-lg h-[46px] w-auto px-4 font-semibold text-white dark:text-[#111827]"
+                              className="btn-radius-lg h-[46px] w-full sm:w-auto lg:w-full xl:w-auto px-4 font-semibold text-white dark:text-[#111827]"
                               variant="primary"
                             >
                               <a
                                 href={selectedAI.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                className="w-full text-center"
                               >
                                 <RollingText>Ask AI</RollingText>
                               </a>

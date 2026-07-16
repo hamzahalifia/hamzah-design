@@ -10,6 +10,7 @@ export default {
         sans: ['Inter', 'sans-serif'],
         serif: ['"Instrument Serif"', 'serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        geist: ['"Geist Pixel"', 'sans-serif'],
       },
       colors: {
         background: "var(--background)",

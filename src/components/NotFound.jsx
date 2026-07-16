@@ -51,7 +51,7 @@ export default function NotFound() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-          className="font-mono text-[120px] sm:text-[160px] font-bold leading-none tracking-tighter text-[#111827] dark:text-[#F4F4F5] select-none"
+          className="font-geist text-[120px] sm:text-[160px] font-bold leading-none tracking-tighter text-[#111827] dark:text-[#F4F4F5] select-none"
         >
           404
         </motion.span>

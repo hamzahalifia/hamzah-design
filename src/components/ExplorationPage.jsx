@@ -29,6 +29,7 @@ import {
 } from "./ui/pagination";
 import PageMeta from "./SEO/PageMeta";
 import { cmsFetch } from "../lib/cmsendpoint";
+import ZoomableImage from "./ZoomableImage";
 
 /* Seeded random based on a single numeric seed */
 /* Seeded random based on a single numeric seed */
@@ -73,7 +74,7 @@ function fillLayout(explorations) {
 }
 
 /* Media preview component: renders video or image based on mediaType */
-function MediaPreview({ item, className = "" }) {
+export function MediaPreview({ item, className = "" }) {
   if (item.mediaType === "video" && item.videoEmbedUrl) {
     return (
       <div
@@ -109,14 +110,10 @@ function MediaPreview({ item, className = "" }) {
 
   // Default: image
   return (
-    <motion.img
-      key={item.id}
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.25 }}
+    <ZoomableImage
       src={item.image}
       alt={item.title}
-      className={`max-w-full max-h-full object-contain rounded-lg shadow-2xl border border-white/5 ${className}`}
+      className={className}
     />
   );
 }
@@ -210,17 +207,6 @@ export default function ExplorationPage() {
         const data = await cmsFetch({ type: "explorations" });
         if (data) {
           setExplorations(data);
-
-          // Auto open modal if slug is present in URL
-          if (slug) {
-            const matchedItem = data.find((item) => item.slug === slug);
-            if (matchedItem) {
-              setSelectedItem(matchedItem);
-            } else {
-              // Slug not found, maybe redirect to base exploration page
-              navigate("/exploration", { replace: true });
-            }
-          }
         }
       } catch (err) {
         console.error("Failed to load explorations:", err);
@@ -229,7 +215,24 @@ export default function ExplorationPage() {
       }
     }
     fetchData();
-  }, [slug, navigate]);
+  }, []);
+
+  // Sync selectedItem with URL slug
+  useEffect(() => {
+    if (explorations.length === 0) return;
+
+    if (slug) {
+      const matchedItem = explorations.find((item) => item.slug === slug);
+      if (matchedItem) {
+        setSelectedItem(matchedItem);
+      } else {
+        // Slug not found, redirect to base exploration page
+        navigate("/exploration", { replace: true });
+      }
+    } else {
+      setSelectedItem(null);
+    }
+  }, [slug, explorations, navigate]);
 
   const currentIndex = useMemo(() => {
     return explorations.findIndex((item) => item.id === selectedItem?.id);
@@ -237,7 +240,7 @@ export default function ExplorationPage() {
 
   const handlePrev = (e) => {
     e.stopPropagation();
-    if (explorations.length === 0) return;
+    if (explorations.length === 0 || currentIndex === -1) return;
     const prevIndex =
       (currentIndex - 1 + explorations.length) % explorations.length;
     setSelectedItem(explorations[prevIndex]);
@@ -245,7 +248,7 @@ export default function ExplorationPage() {
 
   const handleNext = (e) => {
     e.stopPropagation();
-    if (explorations.length === 0) return;
+    if (explorations.length === 0 || currentIndex === -1) return;
     const nextIndex = (currentIndex + 1) % explorations.length;
     setSelectedItem(explorations[nextIndex]);
   };
@@ -555,6 +558,9 @@ export default function ExplorationPage() {
                           onClose={() => {
                             setSelectedItem(null);
                             setShowInfo(false);
+                            if (slug) {
+                              navigate("/exploration");
+                            }
                           }}
                         />
                       </div>

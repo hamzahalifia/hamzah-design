@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { RollingText } from './magicui/RollingText';
 import ClosePopup from './ClosePopup';
 import { Cursor } from './core/cursor';
@@ -10,8 +10,10 @@ import SkeletonLoader from './ui/SkeletonLoader';
 import { cmsFetch, FEATURED_CASE_STUDIES_QUERY } from '../lib/cmsendpoint';
 import OptimizedImage from './OptimizedImage';
 import { toast } from 'sonner';
+import { MediaPreview } from './ExplorationPage';
 
 export default function WorkShowcase() {
+  const navigate = useNavigate();
   const [selectedExploration, setSelectedExploration] = useState(null);
   const [works, setWorks] = useState([]);
   const [explorations, setExplorations] = useState([]);
@@ -54,7 +56,7 @@ export default function WorkShowcase() {
   const handleShare = (e) => {
     e.stopPropagation();
     if (!selectedExploration) return;
-    const url = `${window.location.origin}/exploration?id=${selectedExploration.id}`;
+    const url = `${window.location.origin}/exploration/${selectedExploration.slug}`;
     navigator.clipboard.writeText(url).then(() => {
       toast.success("Link copied to clipboard");
     }).catch((err) => {
@@ -68,7 +70,7 @@ export default function WorkShowcase() {
       try {
         const [worksData, explorationsData] = await Promise.all([
           cmsFetch(FEATURED_CASE_STUDIES_QUERY),
-          cmsFetch({ type: 'highlighted-explorations' })
+          cmsFetch({ type: 'explorations' })
         ]);
         setWorks(worksData || []);
         setExplorations(explorationsData || []);
@@ -80,6 +82,10 @@ export default function WorkShowcase() {
     }
     loadShowcaseData();
   }, []);
+
+  const highlightedExplorations = React.useMemo(() => {
+    return explorations.filter(exp => exp.is_highlighted === 1);
+  }, [explorations]);
 
   return (
     <section className="flex-1 bg-white dark:bg-[#0A0A0B] divide-y divide-attio-border-light dark:divide-attio-border-dark">
@@ -237,7 +243,7 @@ export default function WorkShowcase() {
           
           {!loading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {explorations.map((exp) => (
+              {highlightedExplorations.map((exp) => (
                 <motion.div
                   key={exp.id}
                   initial={{ opacity: 0.9 }}
@@ -323,17 +329,9 @@ export default function WorkShowcase() {
                   <Icon icon="solar:alt-arrow-left-linear" className="w-6 h-6" />
                 </button>
 
-                 {/* Active Image Preview */}
+                 {/* Active Media Preview */}
                  <div className="w-full h-full flex items-center justify-center select-none p-2 relative">
-                  <motion.img
-                    key={selectedExploration.id}
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.25 }}
-                    src={selectedExploration.image}
-                    alt={selectedExploration.title}
-                    className="max-w-full max-h-full object-contain rounded-lg shadow-2xl border border-white/5"
-                  />
+                  <MediaPreview item={selectedExploration} />
                 </div>
 
                 {/* Next Button */}
@@ -414,8 +412,8 @@ export default function WorkShowcase() {
                           <h4 className="text-base font-semibold text-white leading-snug">
                             {selectedExploration.title}
                           </h4>
-                          <p className="text-xs text-neutral-450 mt-2 leading-relaxed">
-                            {selectedExploration.description}
+                          <p className="text-xs text-neutral-450 mt-2 leading-relaxed whitespace-pre-line font-normal">
+                            {selectedExploration.description?.trim()}
                           </p>
                         </div>
 
