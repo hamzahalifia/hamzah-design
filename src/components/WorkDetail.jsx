@@ -55,15 +55,38 @@ export default function WorkDetail() {
     toast.success(`Video autoplay turned ${nextVal ? "ON" : "OFF"}`);
   };
 
-  const handleShare = (e) => {
-    e.stopPropagation();
-    const url = window.location.href;
+  const copyToClipboard = (url) => {
     navigator.clipboard.writeText(url).then(() => {
       toast.success("Link copied to clipboard!");
     }).catch((err) => {
       console.error("Failed to copy link: ", err);
       toast.error("Failed to copy link");
     });
+  };
+
+  const handleShare = (e) => {
+    e.stopPropagation();
+    const url = window.location.href;
+    const shareData = {
+      title: data?.title || document.title,
+      text: data?.description || "",
+      url: url,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData)
+        .then(() => {
+          toast.success("Successfully shared!");
+        })
+        .catch((err) => {
+          if (err.name !== "AbortError") {
+            console.error("Error sharing: ", err);
+            copyToClipboard(url);
+          }
+        });
+    } else {
+      copyToClipboard(url);
+    }
   };
 
   const handleBookmark = (e) => {

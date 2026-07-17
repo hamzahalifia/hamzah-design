@@ -135,18 +135,36 @@ function renderEmbedCard({ key, title, description, href, icon, meta }) {
   );
 }
 
-function renderIframeEmbed({ key, url, caption, title }) {
+function renderIframeEmbed({ key, url, caption, title, isCustomIframe }) {
   if (!url) return null;
 
   return (
     <figure key={key} className="not-prose my-8">
-      <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+      <div
+        className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
+        style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: isCustomIframe ? '4 / 3' : undefined,
+        }}
+      >
         <iframe
           src={url}
           title={title}
           loading="lazy"
           allowFullScreen
-          className="h-full min-h-[340px] w-full border-0"
+          className="w-full border-0"
+          style={{
+            margin: 0,
+            border: 'none',
+            borderRadius: 0,
+            position: isCustomIframe ? 'absolute' : 'relative',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: isCustomIframe ? 'calc(100% + 60px)' : '100%',
+            aspectRatio: isCustomIframe ? undefined : '16 / 9',
+          }}
         />
       </div>
       {caption ? (
@@ -355,7 +373,7 @@ function renderBlockNode(node, key) {
   }
 
   if (blockType === 'toggle-list') {
-    const { title, content } = fields;
+    const { title, content } = fields || {};
     return (
       <ToggleList
         key={key}
@@ -374,6 +392,7 @@ function renderBlockNode(node, key) {
       url: sourceUrl,
       caption: firstDefined(fields.caption, fields.description),
       title: firstDefined(fields.title, 'Embedded content'),
+      isCustomIframe: true,
     });
   }
 
