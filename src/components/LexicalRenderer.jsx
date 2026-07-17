@@ -1,6 +1,7 @@
 import React, { isValidElement } from 'react';
 import YouTubeEmbed from './YouTubeEmbed';
 import CustomVideoPlayer from './CustomVideoPlayer';
+import ToggleList from './ToggleList';
 
 /**
  * Render Payload CMS Lexical rich text JSON to React elements.
@@ -350,6 +351,29 @@ function renderBlockNode(node, key) {
       url: normalizeEmbedUrl(sourceUrl, 'loom'),
       caption: firstDefined(fields.caption, fields.description),
       title: firstDefined(fields.title, 'Loom video'),
+    });
+  }
+
+  if (blockType === 'toggle-list') {
+    const { title, content } = fields;
+    return (
+      <ToggleList
+        key={key}
+        title={title}
+        content={content?.root?.children || content?.children}
+        renderChildren={renderChildren}
+        parentKey={key}
+      />
+    );
+  }
+
+  if (blockType === 'custom-iframe-embed') {
+    const sourceUrl = firstDefined(fields.url, fields.href, fields.embedUrl);
+    return renderIframeEmbed({
+      key,
+      url: sourceUrl,
+      caption: firstDefined(fields.caption, fields.description),
+      title: firstDefined(fields.title, 'Embedded content'),
     });
   }
 
