@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import {
@@ -8,7 +8,8 @@ import {
 } from "../lib/cmsendpoint";
 import PageMeta from "./SEO/PageMeta";
 import { toast } from "sonner";
-import LexicalRenderer, { lexicalToPlainText } from "./LexicalRenderer";
+import TableOfContents from "./TableOfContents";
+import LexicalRenderer, { extractTableOfContents, lexicalToPlainText } from "./LexicalRenderer";
 import { cn } from "../lib/utils";
 import { buttonVariants } from "./ui/button";
 import ScrollProgress from "./ScrollProgress";
@@ -100,6 +101,7 @@ export default function WorkDetail() {
   const [loading, setLoading] = useState(true);
   const [isNotFound, setIsNotFound] = useState(false);
   const [related, setRelated] = useState([]);
+  const [activeTocId, setActiveTocId] = useState(null);
 
   // Refs for ScrollProgress (start=title, end=related section or body)
   const titleRef = useRef(null);
@@ -111,12 +113,35 @@ export default function WorkDetail() {
     return date.toLocaleString("default", { month: "short", year: "numeric" });
   };
 
+  const tableOfContents = useMemo(() => {
+    if (!data?.content) return [];
+    return extractTableOfContents(data.content);
+  }, [data?.content]);
+
+  const handleTocClick = (event, id) => {
+    event.preventDefault();
+    const target = document.getElementById(id);
+    if (!target) {
+      console.warn(`TOC target not found: ${id}`);
+      return;
+    }
+
+    setActiveTocId(id);
+    const headerOffset = 120;
+    const elementTop = target.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({
+      top: Math.max(elementTop - headerOffset, 0),
+      behavior: "smooth",
+    });
+  };
+
   useEffect(() => {
     async function getWork() {
       if (!slug) return;
       setLoading(true);
       setIsNotFound(false);
       setRelated([]);
+      setActiveTocId(null);
       try {
         const match = await cmsFetch(SINGLE_CASE_STUDY_QUERY(slug));
         if (!match) {
@@ -143,6 +168,55 @@ export default function WorkDetail() {
     }
     getWork();
   }, [slug]);
+
+  useEffect(() => {
+    if (!tableOfContents.length || typeof window === "undefined") return undefined;
+
+    const flatItems = tableOfContents.flatMap((section) => [
+      section,
+      ...(section.children || []),
+    ]);
+
+    const getHeadingElements = () => flatItems
+      .map((item) => document.getElementById(item.id))
+      .filter(Boolean);
+
+    let ticking = false;
+
+    const updateActiveHeading = () => {
+      const headingElements = getHeadingElements();
+      if (!headingElements.length) {
+        ticking = false;
+        return;
+      }
+
+      const activationOffset = 160;
+      const headingsAboveOffset = headingElements.filter(
+        (element) => element.getBoundingClientRect().top <= activationOffset,
+      );
+      const nextActiveId = headingsAboveOffset.at(-1)?.id || headingElements[0].id;
+
+      setActiveTocId((currentId) => (currentId === nextActiveId ? currentId : nextActiveId));
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateActiveHeading);
+    };
+
+    updateActiveHeading();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    window.addEventListener("resize", updateActiveHeading);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("scroll", onScroll, { capture: true });
+      window.removeEventListener("resize", updateActiveHeading);
+    };
+  }, [tableOfContents]);
 
   if (loading) {
     return (
@@ -350,100 +424,110 @@ export default function WorkDetail() {
                 />
               </div>
 
-              {/* Content — no max-width constraint */}
-              <div className="py-8">
-                <div className="px-4 sm:px-8 lg:px-16 xl:px-20 min-w-0 max-w-[1000px] mx-auto">
-                  {data.description && (
-                    <p className="mb-8 text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-4xl">
-                      {data.description}
-                    </p>
-                  )}
-                  {/* Grid info */}
-                  <div className="mb-10 grid grid-cols-2 md:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
-                    {data.role && (
-                      <div>
-                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                          Role
-                        </span>
-                        <p className="font-medium text-neutral-900 dark:text-neutral-100">
-                          {data.role}
-                        </p>
-                      </div>
+              {/* Content — Grid layout */}
+              <div className="py-3 sm:py-8 lg:py-16 xl:py-20 px-4 sm:px-8 lg:px-16 xl:px-20 grid grid-cols-1 lg:grid-cols-[1fr,240px] gap-12 max-w-[1440px] mx-auto">
+                  <div className="min-w-0">
+                    {data.description && (
+                      <p className="mb-8 text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-4xl">
+                        {data.description}
+                      </p>
                     )}
-                    {data.company && (
-                      <div>
-                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                          Company
-                        </span>
-                        <p className="font-medium text-neutral-900 dark:text-neutral-100">
-                          {data.company}
-                        </p>
-                      </div>
-                    )}
-                    {data.year && (
-                      <div>
-                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                          Year
-                        </span>
-                        <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
-                          {data.year}
-                        </p>
-                      </div>
-                    )}
-                    {(data.startDate || data.endDate) && (
-                      <div>
-                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                          Timeline
-                        </span>
-                        <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
-                          {data.startDate ? formatDate(data.startDate) : ""}
-                          {data.endDate ? ` — ${formatDate(data.endDate)}` : ""}
-                        </p>
-                      </div>
-                    )}
-                    {data.teamMembers && data.teamMembers.length > 0 && (
-                      <div>
-                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                          Contributors
-                        </span>
-                        <div className="flex -space-x-2">
-                          {data.teamMembers.slice(0, 3).map((m, i) => (
-                            <div key={i} className="group relative">
-                              <a
-                                href={m.linkedinURL}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] object-cover bg-neutral-200 dark:bg-neutral-800 hover:scale-110 transition-transform duration-200 flex items-center justify-center overflow-hidden block"
-                              >
-                                <img
-                                  src={m.photo}
-                                  alt={m.fullName}
-                                  className="w-full h-full object-cover"
-                                />
-                              </a>
-                              <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-xs text-white dark:text-neutral-900 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
-                                {m.fullName}
-                              </span>
-                            </div>
-                          ))}
-                          {data.teamMembers.length > 3 && (
-                            <div
-                              className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-[10px] font-bold text-neutral-600 dark:text-neutral-300"
-                              title={`+${data.teamMembers.length - 3} other contributors`}
-                            >
-                              +{data.teamMembers.length - 3}
-                            </div>
-                          )}
+                    {/* Grid info */}
+                    <div className="mb-10 grid grid-cols-2 md:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
+                      {data.role && (
+                        <div>
+                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                            Role
+                          </span>
+                          <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                            {data.role}
+                          </p>
                         </div>
-                      </div>
-                    )}
+                      )}
+                      {data.company && (
+                        <div>
+                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                            Company
+                          </span>
+                          <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                            {data.company}
+                          </p>
+                        </div>
+                      )}
+                      {data.year && (
+                        <div>
+                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                            Year
+                          </span>
+                          <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
+                            {data.year}
+                          </p>
+                        </div>
+                      )}
+                      {(data.startDate || data.endDate) && (
+                        <div>
+                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                            Timeline
+                          </span>
+                          <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
+                            {data.startDate ? formatDate(data.startDate) : ""}
+                            {data.endDate ? ` — ${formatDate(data.endDate)}` : ""}
+                          </p>
+                        </div>
+                      )}
+                      {data.teamMembers && data.teamMembers.length > 0 && (
+                        <div>
+                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                            Contributors
+                          </span>
+                          <div className="flex -space-x-2">
+                            {data.teamMembers.slice(0, 3).map((m, i) => (
+                              <div key={i} className="group relative">
+                                <a
+                                  href={m.linkedinURL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] object-cover bg-neutral-200 dark:bg-neutral-800 hover:scale-110 transition-transform duration-200 flex items-center justify-center overflow-hidden block"
+                                >
+                                  <img
+                                    src={m.photo}
+                                    alt={m.fullName}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </a>
+                                <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-xs text-white dark:text-neutral-900 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
+                                  {m.fullName}
+                                </span>
+                              </div>
+                            ))}
+                            {data.teamMembers.length > 3 && (
+                              <div
+                                className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-[10px] font-bold text-neutral-600 dark:text-neutral-300"
+                                title={`+${data.teamMembers.length - 3} other contributors`}
+                              >
+                                +{data.teamMembers.length - 3}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {/* Body — scroll end anchor (content before related section) */}
+                    <div ref={contentEndRef}>
+                      <LexicalRenderer content={data.content} />
+                    </div>
                   </div>
 
-                  {/* Body — scroll end anchor (content before related section) */}
-                  <div ref={contentEndRef}>
-                    <LexicalRenderer content={data.content} />
-                  </div>
-                </div>
+                  {/* ToC Sidebar */}
+                  <aside className="hidden lg:block">
+                    <div className="sticky top-24">
+                      <TableOfContents
+                        items={tableOfContents}
+                        activeId={activeTocId}
+                        onTocClick={handleTocClick}
+                      />
+                    </div>
+                  </aside>
               </div>
 
               {/* Related Case Studies */}
