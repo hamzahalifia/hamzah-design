@@ -152,8 +152,26 @@ function renderLexicalNode(node, key, context) {
     case 'block': {
       const blockType = node.fields?.blockType;
       if (blockType === 'table') return renderTableBlock({ key, fields: node.fields });
+      if (blockType === 'video') return (
+        <figure key={key} className="not-prose my-8">
+            <CustomVideoPlayer 
+                src={node.fields.video?.url} 
+                caption={node.fields.caption}
+            />
+        </figure>
+      );
+      if (blockType === 'toggle-list') return (
+        <ToggleList 
+            key={key} 
+            title={node.fields.title} 
+            content={node.fields.content?.root?.children}
+            renderChildren={renderChildren}
+            parentKey={key}
+        />
+      );
       return null;
     }
+    case 'horizontalrule': return <hr key={key} className="my-8 border-neutral-200 dark:border-neutral-800" />;
     case 'text': return resolveTextNode(node, key);
     default: return node.children?.length ? <React.Fragment key={key}>{renderChildren(node.children, key, headingContext)}</React.Fragment> : null;
   }
