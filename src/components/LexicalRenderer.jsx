@@ -148,6 +148,7 @@ function renderLexicalNode(node, key, context) {
       const url = node.fields?.url || node.fields?.href || '';
       return <a key={key} href={url} target={node.fields?.newTab ? '_blank' : undefined} className="text-blue-500 hover:underline">{renderChildren(node.children, key, headingContext)}</a>;
     }
+    case 'upload': return renderUploadNode(node, key);
     case 'block': {
       const blockType = node.fields?.blockType;
       if (blockType === 'table') return renderTableBlock({ key, fields: node.fields });
@@ -156,6 +157,24 @@ function renderLexicalNode(node, key, context) {
     case 'text': return resolveTextNode(node, key);
     default: return node.children?.length ? <React.Fragment key={key}>{renderChildren(node.children, key, headingContext)}</React.Fragment> : null;
   }
+}
+
+function renderUploadNode(node, key) {
+  const { value } = node;
+  if (!value || !value.url) return null;
+  
+  const url = getMediaUrl(value);
+  return (
+    <figure key={key} className="not-prose my-8">
+      <img 
+        src={url} 
+        alt={value.alt || 'Image'} 
+        className="w-full rounded-2xl border border-neutral-200 shadow-sm dark:border-neutral-800"
+        loading="lazy" 
+      />
+      {value.alt ? <figcaption className="mt-3 text-center text-sm text-neutral-500 dark:text-neutral-400">{value.alt}</figcaption> : null}
+    </figure>
+  );
 }
 
 function resolveTextNode(node, index) {
