@@ -318,6 +318,8 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
       onClick={handleContainerClick}
       className="group relative w-full h-full rounded-lg overflow-hidden flex items-center justify-center cursor-pointer select-none"
     >
+      {/* Debug: log src to console to verify resolution */}
+      {console.log("CustomVideoPlayer: rendering with src =", src)}
       <video
         ref={videoRef}
         src={src}

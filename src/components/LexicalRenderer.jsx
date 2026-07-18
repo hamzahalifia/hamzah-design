@@ -155,8 +155,9 @@ function renderLexicalNode(node, key, context) {
       if (blockType === 'video') return (
         <figure key={key} className="not-prose my-8">
             <CustomVideoPlayer 
-                src={node.fields.video?.url} 
+                src={toAbsoluteUrl(node.fields.video?.url)} 
                 caption={node.fields.caption}
+                chapters={node.fields.video?.chapters}
             />
         </figure>
       );
@@ -164,7 +165,7 @@ function renderLexicalNode(node, key, context) {
         <ToggleList 
             key={key} 
             title={node.fields.title} 
-            content={node.fields.content?.root?.children}
+            content={node.fields.content?.root?.children || node.fields.content?.children || []}
             renderChildren={renderChildren}
             parentKey={key}
         />
