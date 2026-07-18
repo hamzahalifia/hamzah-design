@@ -316,10 +316,8 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={handleContainerClick}
-      className="group relative w-full h-full rounded-lg overflow-hidden flex items-center justify-center cursor-pointer select-none"
+      className="group relative w-full h-full rounded-lg overflow-hidden flex items-center justify-center cursor-pointer select-none pb-4"
     >
-      {/* Debug: log src to console to verify resolution */}
-      {console.log("CustomVideoPlayer: rendering with src =", src)}
       <video
         ref={videoRef}
         src={src}
@@ -334,7 +332,7 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
 
       {/* Floating Control Bar */}
       <div
-        className={`absolute bottom-4 left-4 right-4 bg-black/85 dark:bg-zinc-950/95 backdrop-blur-md border border-neutral-800/80 rounded-xl p-3 px-4 flex items-center gap-3.5 transition-all duration-300 shadow-xl z-30 ${
+        className={`absolute bottom-6 left-4 right-4 bg-black/85 dark:bg-zinc-950/95 backdrop-blur-md border border-neutral-800/80 rounded-xl p-3 px-4 flex items-center gap-3.5 transition-all duration-300 shadow-xl z-30 ${
           showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
         }`}
         onClick={(e) => e.stopPropagation()}
