@@ -97,8 +97,8 @@ function renderTableBlock({ key, fields }) {
   return (
     <figure key={key} className="not-prose my-8">
       {fields.title ? <figcaption className="mb-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">{fields.title}</figcaption> : null}
-      <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+      <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950 h-auto">
+        <table className="w-full min-w-[640px] border-collapse text-left text-sm h-auto">
           <thead className="bg-neutral-50 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500 dark:bg-neutral-900/70 dark:text-neutral-400">
             <tr>{headerRow.map((col, i) => <th key={`h-${i}`} className="border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">{col.cell}</th>)}</tr>
           </thead>
@@ -170,6 +170,20 @@ function renderLexicalNode(node, key, context) {
             parentKey={key}
         />
       );
+      if (blockType === 'youtube-embed') return (
+        <YouTubeEmbed 
+            key={key} 
+            url={node.fields.url} 
+            caption={node.fields.caption} 
+        />
+      );
+      if (blockType === 'custom-iframe-embed') return renderIframeEmbed({ 
+        key, 
+        url: node.fields.url, 
+        caption: node.fields.caption, 
+        title: node.fields.title, 
+        isCustomIframe: true 
+      });
       return null;
     }
     case 'horizontalrule': return <hr key={key} className="my-8 border-neutral-200 dark:border-neutral-800" />;
