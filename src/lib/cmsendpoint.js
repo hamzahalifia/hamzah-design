@@ -205,9 +205,10 @@ export async function fetchFeaturedCaseStudies() {
 /**
  * Fetch a single case study by slug
  */
-export async function fetchSingleCaseStudy(slug) {
-  const data = await payloadFetch(`/case-studies?where[slug][equals]=${encodeURIComponent(slug)}&depth=2`);
-  const doc = data.docs.find(isPublishedCaseStudy);
+export async function fetchSingleCaseStudy(slug, preview = false) {
+  const draftParam = preview ? '&draft=true' : '';
+  const data = await payloadFetch(`/case-studies?where[slug][equals]=${encodeURIComponent(slug)}&depth=2${draftParam}`);
+  const doc = preview ? data.docs[0] : data.docs.find(isPublishedCaseStudy);
   if (!doc) {
     throw new Error(`Case study not found: ${slug}`);
   }
@@ -325,7 +326,7 @@ export async function cmsFetch(query, params = {}) {
     case 'featured-case-studies':
       return fetchFeaturedCaseStudies();
     case 'single-case-study':
-      return fetchSingleCaseStudy(params.slug || query.slug);
+      return fetchSingleCaseStudy(params.slug || query.slug, params.preview || false);
     case 'related-case-studies':
       return fetchRelatedCaseStudies(params.id || query.id, params.slug || query.slug);
     case 'explorations':

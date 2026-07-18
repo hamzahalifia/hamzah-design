@@ -1,11 +1,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
-@import url('https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap");
 
 @font-face {
-  font-family: 'Geist Pixel';
-  src: url('../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Grid.woff2') format('woff2');
+  font-family: "Geist Pixel";
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Grid.woff2")
+    format("woff2");
 }
 
 @tailwind base;
@@ -15,17 +16,17 @@
 /* ─── Attio Design System Theme Variables ────────────────────────────────── */
 :root {
   --footer-height: 8rem;
-  --color-bg: #FAFAF9;
-  --color-bg-subtle: #FFFFFF;
-  --color-bg-muted: #F4F4F5;
-  --color-footer-bg: #FAFAFB;
+  --color-bg: #fafaf9;
+  --color-bg-subtle: #ffffff;
+  --color-bg-muted: #f4f4f5;
+  --color-footer-bg: #fafafb;
 
   --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
-  --color-text-muted: #9CA3AF;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
 
-  --color-border: #CDD1CD;
-  --color-border-subtle: #E5E7EB;
+  --color-border: #cdd1cd;
+  --color-border-subtle: #e5e7eb;
 
   --dot-color: rgba(17, 24, 39, 0.12);
   --grid-line-color: rgba(17, 24, 39, 0.06);
@@ -33,16 +34,16 @@
 
 .dark {
   --color-bg: #080809;
-  --color-bg-subtle: #0A0A0B;
-  --color-bg-muted: #18181B;
+  --color-bg-subtle: #0a0a0b;
+  --color-bg-muted: #18181b;
   --color-footer-bg: #080809;
 
-  --color-text-primary: #F4F4F5;
-  --color-text-secondary: #A1A1AA;
-  --color-text-muted: #52525B;
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #52525b;
 
-  --color-border: #27272A;
-  --color-border-subtle: #18181B;
+  --color-border: #27272a;
+  --color-border-subtle: #18181b;
 
   --dot-color: rgba(244, 244, 245, 0.12);
   --grid-line-color: rgba(244, 244, 245, 0.06);
@@ -60,7 +61,9 @@
 
 /* ─── Base Styles with Fluid Responsive Clamp Typography ────────────────── */
 @layer base {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -73,7 +76,7 @@
   }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     background-color: var(--color-bg);
     color: var(--color-text-primary);
     font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
@@ -188,20 +191,26 @@
   }
 
   .font-serif-attio {
-    font-family: 'Geist Pixel', sans-serif;
+    font-family: "Geist Pixel", sans-serif;
     font-size: clamp(1.875rem, 1.25rem + 2vw, 3rem);
   }
 
   .btn-attio-primary {
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1), inset 0px 1.5px 1px 0px rgba(255, 255, 255, 0.25);
+    box-shadow:
+      0px 2px 10px 0px rgba(0, 0, 0, 0.1),
+      inset 0px 1.5px 1px 0px rgba(255, 255, 255, 0.25);
   }
 
   .btn-attio-secondary {
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.04), inset 0px 2px 1px 0px rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0px 2px 10px 0px rgba(0, 0, 0, 0.04),
+      inset 0px 2px 1px 0px rgba(255, 255, 255, 0.6);
   }
 
   .dark .btn-attio-secondary {
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.3), inset 0px 1px 1px 0px rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0px 2px 10px 0px rgba(0, 0, 0, 0.3),
+      inset 0px 1px 1px 0px rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -262,15 +271,15 @@
 }
 
 .case-study-content blockquote {
-  border-left: 2px solid #D1D5DB;
+  border-left: 2px solid #d1d5db;
   padding-left: 1.25rem;
   margin: 1.5rem 0;
-  color: #4B5563;
+  color: #4b5563;
   font-style: italic;
 }
 .dark .case-study-content blockquote {
-  border-left-color: #4B5563;
-  color: #9CA3AF;
+  border-left-color: #4b5563;
+  color: #9ca3af;
 }
 
 .case-study-content blockquote p {
@@ -280,10 +289,10 @@
 .case-study-content blockquote cite {
   font-style: normal;
   font-size: 0.75rem;
-  color: #9CA3AF;
+  color: #9ca3af;
 }
 .dark .case-study-content blockquote cite {
-  color: #52525B;
+  color: #52525b;
 }
 
 .case-study-content ul {
@@ -340,38 +349,47 @@
   text-align: left;
   font-size: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
   border-collapse: collapse;
-  margin: 1.5rem 0;
   border-radius: 0.75rem;
   overflow: hidden;
-  border: 1px solid #CDD1CD;
+  border: 1px solid #cdd1cd;
 }
 .dark .case-study-content table {
-  border-color: #27272A;
+  border-color: #27272a;
 }
 
 .case-study-content th {
   padding: 0.875rem 1rem;
   font-weight: 600;
-  background-color: #F4F4F5;
+  background-color: #f4f4f5;
   color: #111827;
-  border-bottom: 1px solid #CDD1CD;
+  border-bottom: 1px solid #cdd1cd;
+  border-right: 1px solid #cdd1cd;
+}
+.case-study-content th:last-child {
+  border-right: none;
 }
 .dark .case-study-content th {
   background-color: rgba(39, 39, 42, 0.8);
   color: #ffffff;
-  border-bottom-color: #27272A;
+  border-bottom-color: #27272a;
+  border-right-color: #27272a;
 }
 
 .case-study-content td {
   padding: 0.875rem 1rem;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
   background-color: #ffffff;
   color: #374151;
 }
+.case-study-content td:last-child {
+  border-right: none;
+}
 .dark .case-study-content td {
-  border-bottom-color: #27272A;
+  border-bottom-color: #27272a;
+  border-right-color: #27272a;
   background-color: rgba(39, 39, 42, 0.2);
-  color: #D1D5DB;
+  color: #d1d5db;
 }
 
 .case-study-content table tr:last-child td {
@@ -391,7 +409,7 @@
   width: 100%;
   height: auto;
   border-radius: 0.75rem;
-  margin: 1.5rem 0;
+  margin: 0;
   display: block;
 }
 
@@ -401,10 +419,10 @@
   border-radius: 0.75rem;
   margin: 1.5rem 0;
   display: block;
-  border: 1px solid #CDD1CD;
+  border: 1px solid #cdd1cd;
 }
 .dark .case-study-content iframe {
-  border-color: #27272A;
+  border-color: #27272a;
 }
 
 .case-study-content div[data-youtube-video] {
@@ -412,10 +430,10 @@
   margin: 1.5rem 0;
   border-radius: 0.75rem;
   overflow: hidden;
-  border: 1px solid #CDD1CD;
+  border: 1px solid #cdd1cd;
 }
 .dark .case-study-content div[data-youtube-video] {
-  border-color: #27272A;
+  border-color: #27272a;
 }
 
 .case-study-content div[data-youtube-video] iframe {
@@ -432,12 +450,12 @@
   margin: 1.5rem 0;
   border-radius: 0.75rem;
   overflow: hidden;
-  border: 1px solid #CDD1CD;
+  border: 1px solid #cdd1cd;
   background: #000;
 }
 .dark .case-study-content div[data-video-embed],
 .dark .case-study-content .video-embed-node {
-  border-color: #27272A;
+  border-color: #27272a;
 }
 
 .case-study-content div[data-video-embed] video,
@@ -494,6 +512,6 @@
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-none {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

@@ -143,7 +143,13 @@ export default function WorkDetail() {
       setRelated([]);
       setActiveTocId(null);
       try {
-        const match = await cmsFetch(SINGLE_CASE_STUDY_QUERY(slug));
+        const searchParams = new URLSearchParams(window.location.search);
+        const isPreview = searchParams.get('preview') === 'true';
+        
+        const match = await cmsFetch(SINGLE_CASE_STUDY_QUERY(slug), { 
+          slug, 
+          preview: isPreview 
+        });
         if (!match) {
           setIsNotFound(true);
           setData(null);
@@ -495,63 +501,39 @@ export default function WorkDetail() {
                                     className="w-full h-full object-cover"
                                   />
                                 </a>
-                                <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-xs text-white dark:text-neutral-900 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
-                                  {m.fullName}
-                                </span>
                               </div>
                             ))}
-                            {data.teamMembers.length > 3 && (
-                              <div
-                                className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-[10px] font-bold text-neutral-600 dark:text-neutral-300"
-                                title={`+${data.teamMembers.length - 3} other contributors`}
-                              >
-                                +{data.teamMembers.length - 3}
-                              </div>
-                            )}
                           </div>
                         </div>
                       )}
                     </div>
-                    {/* Body — scroll end anchor (content before related section) */}
+                    
+                    {/* Main Lexical Content */}
                     <div ref={contentEndRef}>
                       <LexicalRenderer content={data.content} />
                     </div>
                   </div>
 
                   {/* ToC Sidebar */}
-                  <aside className="hidden lg:block">
-                    <div className="sticky top-24">
-                      <TableOfContents
-                        items={tableOfContents}
-                        activeId={activeTocId}
-                        onTocClick={handleTocClick}
+                  {tableOfContents.length > 0 && (
+                    <div className="hidden lg:block">
+                      <TableOfContents 
+                          items={tableOfContents} 
+                          activeId={activeTocId} 
+                          onItemClick={handleTocClick}
                       />
                     </div>
-                  </aside>
+                  )}
               </div>
-
-              {/* Related Case Studies */}
-              <RelatedStudies studies={related} />
+              
+              {/* Footer Reveal (Lazy Loaded) */}
+              <Suspense fallback={null}>
+                <FooterReveal />
+              </Suspense>
             </div>
           </div>
         </div>
       </main>
-
-      {/* Back to Top Button */}
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="fixed bottom-8 right-8 z-50 p-3 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#0A0A0B] shadow-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all"
-        aria-label="Back to top"
-      >
-        <Icon
-          icon="uil:top-arrow-to-top"
-          className="w-5 h-5 text-neutral-900 dark:text-neutral-100"
-        />
-      </button>
-
-      <Suspense fallback={null}>
-        <FooterReveal />
-      </Suspense>
     </div>
   );
 }

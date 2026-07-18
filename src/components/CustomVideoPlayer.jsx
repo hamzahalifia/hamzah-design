@@ -316,7 +316,7 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={handleContainerClick}
-      className="group relative w-full h-full rounded-lg overflow-hidden flex items-center justify-center cursor-pointer select-none pb-4"
+      className={`group relative w-full rounded-lg overflow-hidden flex items-center justify-center cursor-pointer select-none ${isFullscreen ? 'h-full' : 'h-auto'}`}
     >
       <video
         ref={videoRef}
@@ -327,7 +327,7 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
         playsInline
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
-        className="w-full h-full object-contain pointer-events-none"
+        className={`w-full pointer-events-none ${isFullscreen ? 'h-full object-contain' : 'h-auto'}`}
       />
 
       {/* Floating Control Bar */}
