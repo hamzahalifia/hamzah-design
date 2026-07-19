@@ -431,7 +431,7 @@ export default function WorkDetail() {
               </div>
 
               {/* Content — Grid layout */}
-              <div className="py-3 sm:py-8 lg:py-16 xl:py-20 px-4 sm:px-8 lg:px-16 xl:px-20 grid grid-cols-1 lg:grid-cols-[1fr,240px] gap-12 max-w-[1440px] mx-auto">
+              <div className="py-3 sm:py-8 lg:py-16 xl:py-20 px-4 sm:px-8 lg:px-16 xl:px-20 grid grid-cols-1 md:grid-cols-[1fr,200px] lg:grid-cols-[1fr,240px] gap-8 lg:gap-12 max-w-[1440px] mx-auto">
                   <div className="min-w-0">
                     {data.description && (
                       <p className="mb-8 text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-4xl">
@@ -516,7 +516,7 @@ export default function WorkDetail() {
 
                   {/* ToC Sidebar */}
                   {tableOfContents.length > 0 && (
-                    <div className="hidden lg:block">
+                    <div className="hidden md:block sticky top-28 self-start">
                       <TableOfContents 
                           items={tableOfContents} 
                           activeId={activeTocId} 
@@ -525,15 +525,18 @@ export default function WorkDetail() {
                     </div>
                   )}
               </div>
-              
-              {/* Footer Reveal (Lazy Loaded) */}
-              <Suspense fallback={null}>
-                <FooterReveal />
-              </Suspense>
+
+              {/* Related Studies */}
+              <RelatedStudies studies={related} />
             </div>
           </div>
         </div>
       </main>
+
+      {/* Footer Reveal (Lazy Loaded) */}
+      <Suspense fallback={null}>
+        <FooterReveal />
+      </Suspense>
     </div>
   );
 }
