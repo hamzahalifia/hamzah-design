@@ -229,7 +229,7 @@ export default function ProfileSidebar() {
             </span>
 
             <a
-              href="https://drive.google.com/file/d/1mAf33lnuU8jFjZxiJINHke9qOE1AuPsg/view?usp=sharing"
+              href="https://drive.google.com/file/d/1Y18tRL9FbpHFL5zpf5dDPMmcg2WxcNoH/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center px-4 py-2.5 btn-radius-lg text-base font-semibold bg-[#F2F2F2] text-[#111827] dark:bg-neutral-800 dark:text-white dark:border-neutral-700 border border-attio-border-light hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all active:scale-95 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)] cursor-pointer w-full sm:w-auto"
