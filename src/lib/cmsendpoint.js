@@ -218,6 +218,7 @@ export async function fetchSingleCaseStudy(slug, preview = false) {
     slug: doc.slug,
     description: doc.description,
     company: doc.company,
+    liveWebsite: doc.liveWebsite || null,
     role: doc.role,
     year: doc.year,
     startDate: doc.startDate,

@@ -460,6 +460,24 @@ export default function WorkDetail() {
                           </p>
                         </div>
                       )}
+                      {data.liveWebsite && (
+                        <div>
+                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                            Live Website
+                          </span>
+                          <a
+                            href={data.liveWebsite}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cn(
+                              buttonVariants({ variant: "default" }),
+                              "mt-1 bg-[#c3571c] hover:bg-[#a84a18] text-white"
+                            )}
+                          >
+                            Visit Site
+                          </a>
+                        </div>
+                      )}
                       {data.year && (
                         <div>
                           <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
