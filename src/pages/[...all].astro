@@ -4,7 +4,10 @@ import '../index.css';
 
 export function getStaticPaths() {
   return [
-    { params: { all: undefined } }
+    { params: { all: undefined } },
+    { params: { all: 'work' } },
+    { params: { all: 'about' } },
+    { params: { all: 'exploration' } }
   ];
 }
 ---

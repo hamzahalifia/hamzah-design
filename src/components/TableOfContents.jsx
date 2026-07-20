@@ -19,7 +19,7 @@ function TocLink({ item, depth = 0, activeId, onTocClick }) {
         )}
         aria-current={isActive ? "location" : undefined}
       >
-        <span className={cn(depth > 0 && "pl-3")}>{item.title}</span>
+        <span className={cn("block", depth > 0 && "pl-3")}>{item.title}</span>
       </a>
       {item.children?.length > 0 && (
         <ul className="mt-2 space-y-1">

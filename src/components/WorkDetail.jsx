@@ -9,13 +9,18 @@ import {
 import PageMeta from "./SEO/PageMeta";
 import { toast } from "sonner";
 import TableOfContents from "./TableOfContents";
-import LexicalRenderer, { extractTableOfContents, lexicalToPlainText } from "./LexicalRenderer";
+import LexicalRenderer, {
+  extractTableOfContents,
+  lexicalToPlainText,
+} from "./LexicalRenderer";
 import { cn } from "../lib/utils";
 import { buttonVariants } from "./ui/button";
 import ScrollProgress from "./ScrollProgress";
 import RelatedStudies from "./RelatedStudies";
 import VideoPopup from "./VideoPopup"; // Import VideoPopup
 import ReactPlayer from "react-player"; // For video embeds
+import { RollingText } from "./magicui/RollingText";
+import { RainbowButton } from "./ui/rainbow-button";
 import SkeletonLoader from "./ui/SkeletonLoader";
 
 // Lazy load heavy components
@@ -57,12 +62,15 @@ export default function WorkDetail() {
   };
 
   const copyToClipboard = (url) => {
-    navigator.clipboard.writeText(url).then(() => {
-      toast.success("Link copied to clipboard!");
-    }).catch((err) => {
-      console.error("Failed to copy link: ", err);
-      toast.error("Failed to copy link");
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        toast.success("Link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy link: ", err);
+        toast.error("Failed to copy link");
+      });
   };
 
   const handleShare = (e) => {
@@ -75,7 +83,8 @@ export default function WorkDetail() {
     };
 
     if (navigator.share) {
-      navigator.share(shareData)
+      navigator
+        .share(shareData)
         .then(() => {
           toast.success("Successfully shared!");
         })
@@ -92,10 +101,13 @@ export default function WorkDetail() {
 
   const handleBookmark = (e) => {
     e.stopPropagation();
-    const isMac = typeof window !== "undefined" && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-    const shortcut = isMac ? 'Cmd + D' : 'Ctrl + D';
+    const isMac =
+      typeof window !== "undefined" &&
+      navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    const shortcut = isMac ? "Cmd + D" : "Ctrl + D";
     toast.info(`Press ${shortcut} to bookmark this page!`, {
-      description: "Modern browsers require manual shortcuts to add bookmarks for security.",
+      description:
+        "Modern browsers require manual shortcuts to add bookmarks for security.",
     });
   };
   const [loading, setLoading] = useState(true);
@@ -144,11 +156,11 @@ export default function WorkDetail() {
       setActiveTocId(null);
       try {
         const searchParams = new URLSearchParams(window.location.search);
-        const isPreview = searchParams.get('preview') === 'true';
-        
-        const match = await cmsFetch(SINGLE_CASE_STUDY_QUERY(slug), { 
-          slug, 
-          preview: isPreview 
+        const isPreview = searchParams.get("preview") === "true";
+
+        const match = await cmsFetch(SINGLE_CASE_STUDY_QUERY(slug), {
+          slug,
+          preview: isPreview,
         });
         if (!match) {
           setIsNotFound(true);
@@ -161,7 +173,8 @@ export default function WorkDetail() {
               RELATED_CASE_STUDIES_QUERY(match._id, match.slug),
             );
             setRelated(rel || []);
-          } catch {
+          } catch (e) {
+            console.error("Failed to fetch related:", e);
             setRelated([]);
           }
         }
@@ -176,16 +189,16 @@ export default function WorkDetail() {
   }, [slug]);
 
   useEffect(() => {
-    if (!tableOfContents.length || typeof window === "undefined") return undefined;
+    if (!tableOfContents.length || typeof window === "undefined")
+      return undefined;
 
     const flatItems = tableOfContents.flatMap((section) => [
       section,
       ...(section.children || []),
     ]);
 
-    const getHeadingElements = () => flatItems
-      .map((item) => document.getElementById(item.id))
-      .filter(Boolean);
+    const getHeadingElements = () =>
+      flatItems.map((item) => document.getElementById(item.id)).filter(Boolean);
 
     let ticking = false;
 
@@ -200,9 +213,12 @@ export default function WorkDetail() {
       const headingsAboveOffset = headingElements.filter(
         (element) => element.getBoundingClientRect().top <= activationOffset,
       );
-      const nextActiveId = headingsAboveOffset.at(-1)?.id || headingElements[0].id;
+      const nextActiveId =
+        headingsAboveOffset.at(-1)?.id || headingElements[0].id;
 
-      setActiveTocId((currentId) => (currentId === nextActiveId ? currentId : nextActiveId));
+      setActiveTocId((currentId) =>
+        currentId === nextActiveId ? currentId : nextActiveId,
+      );
       ticking = false;
     };
 
@@ -214,7 +230,10 @@ export default function WorkDetail() {
 
     updateActiveHeading();
     window.addEventListener("scroll", onScroll, { passive: true });
-    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    document.addEventListener("scroll", onScroll, {
+      passive: true,
+      capture: true,
+    });
     window.addEventListener("resize", updateActiveHeading);
 
     return () => {
@@ -432,116 +451,120 @@ export default function WorkDetail() {
 
               {/* Content — Grid layout */}
               <div className="py-3 sm:py-8 lg:py-16 xl:py-20 px-4 sm:px-8 lg:px-16 xl:px-20 grid grid-cols-1 md:grid-cols-[1fr,200px] lg:grid-cols-[1fr,240px] gap-8 lg:gap-12 max-w-[1440px] mx-auto">
-                  <div className="min-w-0">
-                    {data.description && (
-                      <p className="mb-8 text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-4xl">
-                        {data.description}
-                      </p>
+                <div className="min-w-0">
+                  {data.description && (
+                    <p className="mb-8 text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-4xl">
+                      {data.description}
+                    </p>
+                  )}
+                  {data.liveWebsite && (
+                    <RainbowButton
+                      asChild
+                      className="w-full sm:w-auto text-base font-semibold btn-radius-lg mb-8"
+                      style={{ height: "46px" }}
+                    >
+                      <a
+                        href={data.liveWebsite}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <RollingText>Live Website</RollingText>
+                      </a>
+                    </RainbowButton>
+                  )}
+                  {/* Grid info */}
+                  <div className="mb-10 grid grid-cols-2 md:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
+                    {data.role && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                          Role
+                        </span>
+                        <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                          {data.role}
+                        </p>
+                      </div>
                     )}
-                    {/* Grid info */}
-                    <div className="mb-10 grid grid-cols-2 md:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
-                      {data.role && (
-                        <div>
-                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                            Role
-                          </span>
-                          <p className="font-medium text-neutral-900 dark:text-neutral-100">
-                            {data.role}
-                          </p>
+                    {data.company && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                          Company
+                        </span>
+                        <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                          {data.company}
+                        </p>
+                      </div>
+                    )}
+                    {data.year && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                          Year
+                        </span>
+                        <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
+                          {data.year}
+                        </p>
+                      </div>
+                    )}
+                    {(data.startDate || data.endDate) && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                          Timeline
+                        </span>
+                        <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
+                          {data.startDate ? formatDate(data.startDate) : ""}
+                          {data.endDate ? ` — ${formatDate(data.endDate)}` : ""}
+                        </p>
+                      </div>
+                    )}
+                    {data.teamMembers && data.teamMembers.length > 0 && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                          Contributors
+                        </span>
+                        <div className="flex -space-x-2 hover:space-x-1 transition-all duration-300">
+                          {data.teamMembers.slice(0, 3).map((m, i) => (
+                            <div
+                              key={i}
+                              className="group relative transition-all duration-300"
+                            >
+                              <a
+                                href={m.linkedinURL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] object-cover bg-neutral-200 dark:bg-neutral-800 hover:scale-110 transition-transform duration-200 flex items-center justify-center overflow-hidden block"
+                              >
+                                <img
+                                  src={m.photo}
+                                  alt={m.fullName}
+                                  className="w-full h-full object-cover"
+                                />
+                              </a>
+                              {/* Tooltip */}
+                              <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-[10px] leading-tight text-white dark:text-neutral-900 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
+                                {m.fullName}
+                              </span>
+                            </div>
+                          ))}
                         </div>
-                      )}
-                      {data.company && (
-                        <div>
-                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                            Company
-                          </span>
-                          <p className="font-medium text-neutral-900 dark:text-neutral-100">
-                            {data.company}
-                          </p>
-                        </div>
-                      )}
-                      {data.liveWebsite && (
-                        <div>
-                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                            Live Website
-                          </span>
-                          <a
-                            href={data.liveWebsite}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={cn(
-                              buttonVariants({ variant: "default" }),
-                              "mt-1 bg-[#c3571c] hover:bg-[#a84a18] text-white"
-                            )}
-                          >
-                            Visit Site
-                          </a>
-                        </div>
-                      )}
-                      {data.year && (
-                        <div>
-                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                            Year
-                          </span>
-                          <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
-                            {data.year}
-                          </p>
-                        </div>
-                      )}
-                      {(data.startDate || data.endDate) && (
-                        <div>
-                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                            Timeline
-                          </span>
-                          <p className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
-                            {data.startDate ? formatDate(data.startDate) : ""}
-                            {data.endDate ? ` — ${formatDate(data.endDate)}` : ""}
-                          </p>
-                        </div>
-                      )}
-                      {data.teamMembers && data.teamMembers.length > 0 && (
-                        <div>
-                          <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
-                            Contributors
-                          </span>
-                          <div className="flex -space-x-2">
-                            {data.teamMembers.slice(0, 3).map((m, i) => (
-                              <div key={i} className="group relative">
-                                <a
-                                  href={m.linkedinURL}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="w-8 h-8 rounded-full border-2 border-white dark:border-[#0A0A0B] object-cover bg-neutral-200 dark:bg-neutral-800 hover:scale-110 transition-transform duration-200 flex items-center justify-center overflow-hidden block"
-                                >
-                                  <img
-                                    src={m.photo}
-                                    alt={m.fullName}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </a>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Main Lexical Content */}
-                    <div ref={contentEndRef}>
-                      <LexicalRenderer content={data.content} />
-                    </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* ToC Sidebar */}
-                  {tableOfContents.length > 0 && (
-                    <div className="hidden md:block sticky top-28 self-start">
-                      <TableOfContents 
-                          items={tableOfContents} 
-                          activeId={activeTocId} 
-                          onItemClick={handleTocClick}
-                      />
-                    </div>
-                  )}
+                  {/* Main Lexical Content */}
+                  <div ref={contentEndRef}>
+                    <LexicalRenderer content={data.content} />
+                  </div>
+                </div>
+
+                {/* ToC Sidebar */}
+                {tableOfContents.length > 0 && (
+                  <div className="hidden md:block sticky top-28 self-start">
+                    <TableOfContents
+                      items={tableOfContents}
+                      activeId={activeTocId}
+                      onItemClick={handleTocClick}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Related Studies */}
