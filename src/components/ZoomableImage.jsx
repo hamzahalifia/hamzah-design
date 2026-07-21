@@ -5,6 +5,7 @@ export default function ZoomableImage({ src, alt, className = "" }) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
+  const lastTouchesCountRef = useRef(0);
 
   const touchStartRef = useRef({ distance: 0, scale: 1, x: 0, y: 0, posX: 0, posY: 0 });
   const mouseStartRef = useRef({ x: 0, y: 0, posX: 0, posY: 0, isDragging: false });
@@ -41,6 +42,7 @@ export default function ZoomableImage({ src, alt, className = "" }) {
   }, []);
 
   const handleTouchStart = (e) => {
+    lastTouchesCountRef.current = e.touches.length;
     if (e.touches.length === 2) {
       // Pinch gesture
       const t1 = e.touches[0];
@@ -69,12 +71,42 @@ export default function ZoomableImage({ src, alt, className = "" }) {
   };
 
   const handleTouchMove = (e) => {
-    if (e.touches.length === 2) {
+    const touchesCount = e.touches.length;
+
+    // If the number of active touches changed mid-gesture, re-anchor our start reference points
+    if (touchesCount !== lastTouchesCountRef.current) {
+      lastTouchesCountRef.current = touchesCount;
+      if (touchesCount === 2) {
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        touchStartRef.current = {
+          distance: Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY),
+          scale,
+          x: 0,
+          y: 0,
+          posX: position.x,
+          posY: position.y
+        };
+      } else if (touchesCount === 1) {
+        const t = e.touches[0];
+        touchStartRef.current = {
+          distance: 0,
+          scale,
+          x: t.clientX,
+          y: t.clientY,
+          posX: position.x,
+          posY: position.y
+        };
+      }
+      return;
+    }
+
+    if (touchesCount === 2) {
       e.preventDefault();
       const t1 = e.touches[0];
       const t2 = e.touches[1];
       const distance = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-      const factor = distance / touchStartRef.current.distance;
+      const factor = distance / (touchStartRef.current.distance || 1);
       
       setScale((prevScale) => {
         const nextScale = Math.min(Math.max(touchStartRef.current.scale * factor, 1), 5);
@@ -83,7 +115,7 @@ export default function ZoomableImage({ src, alt, className = "" }) {
         }
         return nextScale;
       });
-    } else if (e.touches.length === 1 && scale > 1) {
+    } else if (touchesCount === 1 && scale > 1) {
       e.preventDefault();
       const t = e.touches[0];
       const dx = t.clientX - touchStartRef.current.x;
@@ -92,6 +124,22 @@ export default function ZoomableImage({ src, alt, className = "" }) {
         x: touchStartRef.current.posX + dx,
         y: touchStartRef.current.posY + dy
       });
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    lastTouchesCountRef.current = e.touches.length;
+    if (e.touches.length === 1 && scale > 1) {
+      // Re-anchor for the single remaining finger
+      const t = e.touches[0];
+      touchStartRef.current = {
+        distance: 0,
+        scale,
+        x: t.clientX,
+        y: t.clientY,
+        posX: position.x,
+        posY: position.y
+      };
     }
   };
 
@@ -138,6 +186,7 @@ export default function ZoomableImage({ src, alt, className = "" }) {
       ref={containerRef}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUpOrLeave}
