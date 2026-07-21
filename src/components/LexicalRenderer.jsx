@@ -148,7 +148,7 @@ function renderLexicalNode(node, key, context) {
       const url = node.fields?.url || node.fields?.href || '';
       return <a key={key} href={url} target={node.fields?.newTab ? '_blank' : undefined} className="text-blue-500 hover:underline">{renderChildren(node.children, key, headingContext)}</a>;
     }
-    case 'upload': return renderUploadNode(node, key);
+    case 'upload': return renderUploadNode(node, key, headingContext);
     case 'block': {
       const blockType = node.fields?.blockType;
       if (blockType === 'table') return renderTableBlock({ key, fields: node.fields });
@@ -166,7 +166,7 @@ function renderLexicalNode(node, key, context) {
             key={key} 
             title={node.fields.title} 
             content={node.fields.content?.root?.children || node.fields.content?.children || []}
-            renderChildren={renderChildren}
+            renderChildren={(children, parentKey) => renderChildren(children, parentKey, headingContext)}
             parentKey={key}
         />
       );
@@ -192,18 +192,30 @@ function renderLexicalNode(node, key, context) {
   }
 }
 
-function renderUploadNode(node, key) {
+function renderUploadNode(node, key, context) {
   const { value } = node;
   if (!value || !value.url) return null;
   
   const url = getMediaUrl(value);
+  const isGif = url && /\.(gif)($|\?)/i.test(url);
+  const onImageClick = context?.onImageClick;
+
+  const handleClick = () => {
+    if (!isGif && onImageClick) {
+      onImageClick({ src: url, alt: value.alt || 'Image' });
+    }
+  };
+
   return (
     <figure key={key} className="not-prose my-8">
       <img 
         src={url} 
         alt={value.alt || 'Image'} 
-        className="w-full rounded-2xl border border-neutral-200 shadow-sm dark:border-neutral-800"
+        className={`w-full rounded-2xl border border-neutral-200 shadow-sm dark:border-neutral-800 ${
+          !isGif && onImageClick ? 'cursor-zoom-in hover:opacity-95 transition-all duration-300 hover:shadow-md' : ''
+        }`}
         loading="lazy" 
+        onClick={!isGif && onImageClick ? handleClick : undefined}
       />
       {value.alt ? <figcaption className="mt-3 text-center text-sm text-neutral-500 dark:text-neutral-400">{value.alt}</figcaption> : null}
     </figure>
@@ -241,10 +253,10 @@ export function extractTableOfContents(content) {
   return items;
 }
 
-export default function LexicalRenderer({ content }) {
+export default function LexicalRenderer({ content, onImageClick }) {
   if (!content) return null;
 
-  const headingContext = { h2: 0, h3: 0, currentSection: null };
+  const headingContext = { h2: 0, h3: 0, currentSection: null, onImageClick };
 
   return (
     <div className="case-study-content prose prose-neutral dark:prose-invert max-w-none">

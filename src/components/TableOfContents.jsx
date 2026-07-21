@@ -14,8 +14,8 @@ function TocLink({ item, depth = 0, activeId, onTocClick }) {
           "group block rounded-md py-0.5 pr-2 text-sm leading-5 transition-colors duration-200",
           depth === 0 ? "font-medium" : "font-normal",
           isActive
-            ? "text-white"
-            : "text-neutral-500 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100",
+            ? "text-neutral-900 dark:text-neutral-100 font-semibold"
+            : "text-neutral-500 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100"
         )}
         aria-current={isActive ? "location" : undefined}
       >

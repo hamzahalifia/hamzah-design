@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef, Suspense, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import ZoomableImage from "./ZoomableImage";
+import ClosePopup from "./ClosePopup";
 import {
   cmsFetch,
   SINGLE_CASE_STUDY_QUERY,
@@ -43,6 +47,59 @@ const getReadingTime = (content) => {
 export default function WorkDetail() {
   const { slug } = useParams();
   const [data, setData] = useState(null);
+  const [activeImage, setActiveImage] = useState(null);
+  const [isLoved, setIsLoved] = useState(false);
+
+  // Sync love status from localStorage when data slug is loaded
+  useEffect(() => {
+    if (data?.slug && typeof window !== "undefined") {
+      const loved = localStorage.getItem(`love_${data.slug}`) === "true";
+      setIsLoved(loved);
+    }
+  }, [data?.slug]);
+
+  const handleToggleLove = (e) => {
+    e.stopPropagation();
+    if (!data?.slug) return;
+
+    const nextVal = !isLoved;
+    setIsLoved(nextVal);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(`love_${data.slug}`, String(nextVal));
+    }
+    if (nextVal) {
+      toast.success("Thank you for your reaction ❤️");
+    } else {
+      toast.info("This is just a joke, right?");
+    }
+  };
+
+  // Lock body scroll when activeImage is open
+  useEffect(() => {
+    if (activeImage) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeImage]);
+
+  // Close lightbox on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setActiveImage(null);
+      }
+    };
+    if (activeImage) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeImage]);
   const [autoPlayEnabled, setAutoPlayEnabled] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("videoAutoPlay");
@@ -61,24 +118,28 @@ export default function WorkDetail() {
     toast.success(`Video autoplay turned ${nextVal ? "ON" : "OFF"}`);
   };
 
-  const copyToClipboard = (url) => {
+  const copyToClipboard = (text) => {
     navigator.clipboard
-      .writeText(url)
+      .writeText(text)
       .then(() => {
-        toast.success("Link copied to clipboard!");
+        toast.success("Copied to clipboard!");
       })
       .catch((err) => {
-        console.error("Failed to copy link: ", err);
-        toast.error("Failed to copy link");
+        console.error("Failed to copy content: ", err);
+        toast.error("Failed to copy content");
       });
   };
 
   const handleShare = (e) => {
     e.stopPropagation();
     const url = window.location.href;
+    const title = data?.title || document.title;
+    const desc = data?.description || "";
+    const shareText = `${title}\n${desc}\n\n${url}`;
+
     const shareData = {
-      title: data?.title || document.title,
-      text: data?.description || "",
+      title: title,
+      text: `${title}\n${desc}`,
       url: url,
     };
 
@@ -91,25 +152,14 @@ export default function WorkDetail() {
         .catch((err) => {
           if (err.name !== "AbortError") {
             console.error("Error sharing: ", err);
-            copyToClipboard(url);
+            copyToClipboard(shareText);
           }
         });
     } else {
-      copyToClipboard(url);
+      copyToClipboard(shareText);
     }
   };
 
-  const handleBookmark = (e) => {
-    e.stopPropagation();
-    const isMac =
-      typeof window !== "undefined" &&
-      navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-    const shortcut = isMac ? "Cmd + D" : "Ctrl + D";
-    toast.info(`Press ${shortcut} to bookmark this page!`, {
-      description:
-        "Modern browsers require manual shortcuts to add bookmarks for security.",
-    });
-  };
   const [loading, setLoading] = useState(true);
   const [isNotFound, setIsNotFound] = useState(false);
   const [related, setRelated] = useState([]);
@@ -311,6 +361,7 @@ export default function WorkDetail() {
         title={data.seoTitle || data.title}
         description={data.seoDescription || data.description}
         keywords={`case study, ${data.title}, ${data.company}, product design, UI/UX`}
+        ogImage={data.ogImage || data.heroImage}
         canonical={`https://hamzah.design/work/${data.slug}`}
         schema={{
           "@context": "https://schema.org",
@@ -413,18 +464,27 @@ export default function WorkDetail() {
                     />
                   </button>
 
-                  {/* Save Trigger (Bookmark Instruction) */}
+                  {/* Love Trigger (Persistent Like) */}
                   <button
-                    onClick={handleBookmark}
+                    onClick={handleToggleLove}
                     className={cn(
                       buttonVariants({ variant: "outline", size: "icon" }),
-                      "shrink-0 cursor-pointer flex items-center justify-center",
+                      "shrink-0 cursor-pointer flex items-center justify-center transition-colors duration-300",
+                      isLoved &&
+                        "border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-950/30",
                     )}
-                    title="Bookmark Page"
+                    title={
+                      isLoved ? "Remove from loved works" : "Love this work"
+                    }
                   >
                     <Icon
-                      icon="solar:bookmark-linear"
-                      className="w-4 h-4 text-neutral-800 dark:text-neutral-200"
+                      icon={isLoved ? "solar:heart-bold" : "solar:heart-linear"}
+                      className={cn(
+                        "w-4 h-4 transition-transform duration-300 active:scale-125",
+                        isLoved
+                          ? "text-red-500 scale-110"
+                          : "text-neutral-800 dark:text-neutral-200",
+                      )}
                     />
                   </button>
                 </div>
@@ -551,7 +611,10 @@ export default function WorkDetail() {
 
                   {/* Main Lexical Content */}
                   <div ref={contentEndRef}>
-                    <LexicalRenderer content={data.content} />
+                    <LexicalRenderer
+                      content={data.content}
+                      onImageClick={setActiveImage}
+                    />
                   </div>
                 </div>
 
@@ -578,6 +641,70 @@ export default function WorkDetail() {
       <Suspense fallback={null}>
         <FooterReveal />
       </Suspense>
+
+      {/* Image Lightbox Popup */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {activeImage && (
+              <motion.div
+                key="image-lightbox"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[9999] bg-[#09090b]/98 flex flex-col justify-between text-white font-sans backdrop-blur-md"
+                style={{ backgroundColor: "rgba(9, 9, 11, 0.98)" }}
+              >
+                {/* TOP BAR */}
+                <div className="relative flex items-center justify-between px-6 py-4 border-b border-white/10 z-20">
+                  {/* Profile/Author Pill */}
+                  <div className="flex items-center gap-2 select-none">
+                    <img
+                      src="/images/general/profilephoto.webp"
+                      alt="Alifia Hamzah"
+                      className="w-8 h-8 rounded-full object-cover border border-white/20"
+                    />
+                    <div className="text-left">
+                      <span className="text-xs font-bold text-white block">
+                        Alifia Hamzah
+                      </span>
+                      <span className="text-[10px] text-neutral-400 block font-medium">
+                        Product Designer
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Title / Alt Text */}
+                  <h3 className="text-sm font-semibold tracking-tight text-neutral-200 hidden sm:block max-w-md truncate">
+                    {activeImage.alt !== "Image"
+                      ? activeImage.alt
+                      : data?.title}
+                  </h3>
+
+                  {/* Close Button */}
+                  <div className="relative w-10 h-10 select-none">
+                    <div className="absolute top-12 right-0">
+                      <ClosePopup onClose={() => setActiveImage(null)} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* CENTER SECTION (Zoomable Image) */}
+                <div className="relative flex-1 flex items-center justify-center p-4 min-h-0">
+                  <div className="w-full h-full flex items-center justify-center select-none p-2 relative">
+                    <ZoomableImage
+                      src={activeImage.src}
+                      alt={activeImage.alt}
+                      className="max-h-[85vh] max-w-[90vw]"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
     </div>
   );
 }
