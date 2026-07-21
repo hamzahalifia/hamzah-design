@@ -15,6 +15,25 @@ export default class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+
+    // Detect SPA Chunk Load / Import / Syntax Errors (when a deployment occurs)
+    const errorMsg = error?.message || String(error);
+    const isChunkLoadError =
+      errorMsg.includes("Failed to fetch dynamically imported module") ||
+      errorMsg.includes("Unexpected token '<'") ||
+      (error instanceof SyntaxError && errorMsg.includes("Unexpected token '<'"));
+
+    if (isChunkLoadError && typeof window !== "undefined") {
+      const reloadKey = "last_chunk_reload";
+      const now = Date.now();
+      const lastReload = sessionStorage.getItem(reloadKey);
+
+      // Only reload once every 10 seconds to avoid infinite reload loops
+      if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+        sessionStorage.setItem(reloadKey, String(now));
+        window.location.reload();
+      }
+    }
   }
 
   render() {
