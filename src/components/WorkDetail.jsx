@@ -135,7 +135,7 @@ export default function WorkDetail() {
     const url = window.location.href;
     const title = data?.title || document.title;
     const desc = data?.description || "";
-    const shareText = `${title}\n${desc}\n\n${url}`;
+    const shareText = `${title}\n\n${desc}\n\n${url}`;
 
     const shareData = {
       title: title,

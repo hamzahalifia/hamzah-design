@@ -1,14 +1,83 @@
 ---
 import App from '../components/App.jsx';
 import '../index.css';
+import { fetchSingleCaseStudy, fetchCaseStudies, fetchExplorations } from '../lib/cmsendpoint';
 
-export function getStaticPaths() {
-  return [
+export async function getStaticPaths() {
+  const paths = [
     { params: { all: undefined } },
     { params: { all: 'work' } },
     { params: { all: 'about' } },
     { params: { all: 'exploration' } }
   ];
+
+  try {
+    const caseStudies = await fetchCaseStudies();
+    caseStudies.forEach((cs) => {
+      if (cs.slug) {
+        paths.push({ params: { all: `work/${cs.slug}` } });
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching case studies for static paths:", err);
+  }
+
+  try {
+    const explorations = await fetchExplorations();
+    explorations.forEach((exp) => {
+      if (exp.slug) {
+        paths.push({ params: { all: `exploration/${exp.slug}` } });
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching explorations for static paths:", err);
+  }
+
+  return paths;
+}
+
+const { all } = Astro.params;
+
+let seoTitle = 'Alifia Hamzah — Product Designer';
+let seoDescription = 'Portfolio of Alifia Hamzah, Product Designer specializing in data-driven enterprise tools and story-data approach.';
+let ogImage = 'https://hamzah.design/images/general/og-image.png';
+let canonical = 'https://hamzah.design';
+
+if (all) {
+  canonical = `https://hamzah.design/${all}`;
+  if (all.startsWith('work/')) {
+    const slug = all.replace('work/', '');
+    try {
+      const data = await fetchSingleCaseStudy(slug);
+      seoTitle = data.seoTitle || data.title;
+      seoDescription = data.seoDescription || data.description;
+      ogImage = data.ogImage || data.heroImage || ogImage;
+    } catch (e) {
+      console.error('Error fetching case study SEO data:', e);
+    }
+  } else if (all.startsWith('exploration/')) {
+    const slug = all.replace('exploration/', '');
+    try {
+      const explorations = await fetchExplorations();
+      const exp = explorations.find(e => e.slug === slug);
+      if (exp) {
+        seoTitle = exp.title;
+        seoDescription = exp.description || seoDescription;
+        ogImage = exp.image || ogImage;
+      }
+    } catch (e) {
+      console.error('Error fetching exploration SEO data:', e);
+    }
+  } else if (all === 'work') {
+    seoTitle = 'Work — Alifia Hamzah';
+    seoDescription = 'Case studies and product design work by Alifia Hamzah.';
+  } else if (all === 'about') {
+    seoTitle = 'About — Alifia Hamzah';
+    seoDescription = 'About Alifia Hamzah, Product Designer.';
+  } else if (all === 'exploration') {
+    seoTitle = 'Explorations — Alifia Hamzah';
+    seoDescription = 'Design explorations, experiments, and side projects by Alifia Hamzah.';
+  }
 }
 ---
 
@@ -20,8 +89,29 @@ export function getStaticPaths() {
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-friendly content summary" />
 		<link rel="alternate" type="text/markdown" href="/llms-full.txt" title="LLM-friendly full profile" />
-		<title>Alifia Hamzah — Product Designer</title>
-		<!-- SEO/Meta tags dari index lama -->
+		
+		<!-- Primary Meta -->
+		<title>{seoTitle}</title>
+		<meta name="description" content={seoDescription} />
+		<meta name="author" content="Alifia Hamzah" />
+		<link rel="canonical" href={canonical} />
+
+		<!-- Open Graph -->
+		<meta property="og:title" content={seoTitle} />
+		<meta property="og:description" content={seoDescription} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:site_name" content="Alifia Hamzah Design Portfolio" />
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={seoTitle} />
+		<meta name="twitter:description" content={seoDescription} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:creator" content="@hamzahalifia" />
+
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-TVV6202JTF"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
