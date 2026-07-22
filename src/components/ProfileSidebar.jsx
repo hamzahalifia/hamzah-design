@@ -112,31 +112,11 @@ const truncateQuote = (quote, limit = 80) => {
   return `"${cleaned.slice(0, limit).trim()}..."`;
 };
 
-// Function to calculate years since a specific date
-const calculateYearsSince = (startDate) => {
-  const now = new Date();
-  let years = now.getFullYear() - startDate.getFullYear();
-  const monthDifference = now.getMonth() - startDate.getMonth();
-
-  // If current month is before start month, or if it's the same month but earlier day, subtract a year
-  if (
-    monthDifference < 0 ||
-    (monthDifference === 0 && now.getDate() < startDate.getDate())
-  ) {
-    years--;
-  }
-  return years;
-};
-
 export default function ProfileSidebar() {
   const { theme } = useTheme();
   const isDarkTheme = theme === "dark";
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-
-  // Set the career start date to September 1st, 2021
-  const careerStartDate = new Date("2021-09-01T00:00:00");
-  const yearsOfExperience = calculateYearsSince(careerStartDate);
 
   // Auto-rotate testimonials every 5 seconds
   useEffect(() => {
@@ -208,9 +188,7 @@ export default function ProfileSidebar() {
 
             {/* Bio */}
             <p className="text-base leading-6 text-[#111827] dark:text-[#E5E7EB] font-normal">
-              For the last {yearsOfExperience} years, I partner with companies
-              to build and scale their data-driven enterprise tools with a
-              story-data approach.
+              Helping companies build scalable enterprise tools with a story-data approach
             </p>
           </div>
 
