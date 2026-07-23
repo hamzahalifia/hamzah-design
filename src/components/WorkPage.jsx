@@ -172,6 +172,7 @@ export default function WorkPage() {
                     maxOpacity={theme === "dark" ? 0.15 : 0.12}
                     className="w-full h-full"
                     speed={0.02}
+                    align="right"
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-[#0A0A0B] pointer-events-none" />
                 </div>

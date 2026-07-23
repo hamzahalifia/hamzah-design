@@ -21,9 +21,14 @@ const NotFound = lazy(() => import('@/components/NotFound'));
 function AppRoutes() {
   const location = useLocation();
 
-  const showNavbar = ['/', '/about', '/work', '/exploration'].includes(location.pathname) ||
-    /^\/work\/[^/]+$/.test(location.pathname) ||
-    /^\/exploration\/[^/]+$/.test(location.pathname);
+  // Normalize pathname to ignore trailing slashes (except for '/')
+  const normalizedPathname = location.pathname.endsWith('/') && location.pathname.length > 1
+    ? location.pathname.slice(0, -1)
+    : location.pathname;
+
+  const showNavbar = ['/', '/about', '/work', '/exploration'].includes(normalizedPathname) ||
+    /^\/work\/[^/]+$/.test(normalizedPathname) ||
+    /^\/exploration\/[^/]+$/.test(normalizedPathname);
 
   return (
     <>

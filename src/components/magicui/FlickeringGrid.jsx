@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../../lib/utils";
 
 export const FlickeringGrid = ({
@@ -16,6 +16,7 @@ export const FlickeringGrid = ({
 }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   const memoizedColor = useMemo(() => {
     return color;
@@ -38,13 +39,34 @@ export const FlickeringGrid = ({
   );
 
   useEffect(() => {
-    const canvas = canvasRef.current;
     const container = containerRef.current;
-    if (!canvas || !container) return;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height,
+        });
+      }
+    });
+
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
     let animationFrameId;
-    let widthToUse = width || container.clientWidth;
-    let heightToUse = height || container.clientHeight;
+    const widthToUse = width || dimensions.width;
+    const heightToUse = height || dimensions.height;
+
+    if (widthToUse === 0 || heightToUse === 0) return;
 
     const ctx = setupCanvas(canvas, widthToUse, heightToUse);
     if (!ctx) return;
@@ -93,20 +115,23 @@ export const FlickeringGrid = ({
 
     draw();
 
-    const handleResize = () => {
-      if (!container) return;
-      widthToUse = width || container.clientWidth;
-      heightToUse = height || container.clientHeight;
-      setupCanvas(canvas, widthToUse, heightToUse);
-    };
-
-    window.addEventListener("resize", handleResize);
-
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", handleResize);
     };
-  }, [squareSize, gridGap, flickerChance, memoizedColor, maxOpacity, speed, setupCanvas, width, height, align, verticalAlign]);
+  }, [
+    dimensions,
+    squareSize,
+    gridGap,
+    flickerChance,
+    memoizedColor,
+    maxOpacity,
+    speed,
+    setupCanvas,
+    width,
+    height,
+    align,
+    verticalAlign,
+  ]);
 
   return (
     <div ref={containerRef} className={cn("h-full w-full pointer-events-none", className)}>
