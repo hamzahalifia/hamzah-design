@@ -43,6 +43,21 @@ let seoDescription = 'Portfolio of Alifia Hamzah, Product Designer specializing 
 let ogImage = 'https://hamzah.design/images/general/og-image.png';
 let canonical = 'https://hamzah.design';
 
+let caseStudyList = [];
+let explorationList = [];
+
+try {
+  caseStudyList = await fetchCaseStudies();
+} catch (e) {
+  console.error('Error fetching case studies list for fallback:', e);
+}
+
+try {
+  explorationList = await fetchExplorations();
+} catch (e) {
+  console.error('Error fetching exploration list for fallback:', e);
+}
+
 if (all) {
   canonical = `https://hamzah.design/${all}`;
   if (all.startsWith('work/')) {
@@ -58,8 +73,7 @@ if (all) {
   } else if (all.startsWith('exploration/')) {
     const slug = all.replace('exploration/', '');
     try {
-      const explorations = await fetchExplorations();
-      const exp = explorations.find(e => e.slug === slug);
+      const exp = explorationList.find(e => e.slug === slug);
       if (exp) {
         seoTitle = exp.title;
         seoDescription = exp.description || seoDescription;
@@ -122,6 +136,37 @@ if (all) {
 	</head>
 	<body>
 		<div id="root">
+			<!-- Static fallback for SEO crawlers before JS hydration -->
+			<div class="sr-only" style="display:none;">
+				<h1>{seoTitle}</h1>
+				<p>{seoDescription}</p>
+				<nav aria-label="Main Navigation">
+					<a href="/">Home</a>
+					<a href="/work">Work</a>
+					<a href="/about">About</a>
+					<a href="/exploration">Exploration</a>
+				</nav>
+				<section>
+					<h2>Selected Case Studies</h2>
+					<ul>
+						{caseStudyList.map((cs) => (
+							<li>
+								<a href={`/work/${cs.slug}`}>{cs.title} - {cs.description}</a>
+							</li>
+						))}
+					</ul>
+				</section>
+				<section>
+					<h2>Explorations & Experiments</h2>
+					<ul>
+						{explorationList.map((exp) => (
+							<li>
+								<a href={`/exploration/${exp.slug}`}>{exp.title} - {exp.description}</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			</div>
 			<App client:only="react" />
 		</div>
 	</body>

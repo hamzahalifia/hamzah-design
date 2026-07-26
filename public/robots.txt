@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
-Sitemap: https://hamzah.design/sitemap.xml
+Sitemap: https://hamzah.design/sitemap-index.xml
+Sitemap: https://hamzah.design/sitemap-0.xml
 
 # AI Crawlers - Allow for GEO optimization
 User-agent: GPTBot
