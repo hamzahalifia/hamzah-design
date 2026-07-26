@@ -189,7 +189,7 @@ export default function FooterReveal() {
                   </span>
                   <div className="flex flex-col space-y-2.5">
                     <a
-                      href="https://linkedin.com/in/hamzahalifia"
+                      href="https://linkedin.com/in/alifiahamzah"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
@@ -197,7 +197,7 @@ export default function FooterReveal() {
                       <RollingText>LinkedIn</RollingText>
                     </a>
                     <a
-                      href="https://threads.net/@hamzahalifia"
+                      href="https://www.threads.com/@hamzahalifia"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"

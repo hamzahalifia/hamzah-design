@@ -104,7 +104,7 @@ const SOCIAL_LINKS = [
   {
     id: "threads",
     icon: "bi:threads",
-    url: "https://www.threads.net/@hamzahalifia",
+    url: "https://www.threads.com/@hamzahalifia",
   },
   {
     id: "instagram",
@@ -177,7 +177,7 @@ const EXPERIENCE = [
     period: "Jan 2022 - Mar 2023",
     year: "2022",
     logo: "/images/experience/tappp.svg",
-    link: "",
+    link: "https://tappp.link/",
     dotColor: "bg-orange-500",
   },
 ];
