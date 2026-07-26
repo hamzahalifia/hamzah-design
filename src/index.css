@@ -9,6 +9,46 @@
     format("woff2");
 }
 
+@font-face {
+  font-family: "Geist Pixel Line";
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Line.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Pixel Grid";
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Grid.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Pixel Square";
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Pixel Regular";
+  src: url("../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Grid.woff2")
+    format("woff2");
+}
+
+.font-geist-line {
+  font-family: "Geist Pixel Line", "Geist Pixel", sans-serif;
+}
+
+.font-geist-grid {
+  font-family: "Geist Pixel Grid", "Geist Pixel", sans-serif;
+}
+
+.font-geist-square {
+  font-family: "Geist Pixel Square", "Geist Pixel", sans-serif;
+}
+
+.font-geist-regular {
+  font-family: "Geist Pixel Regular", "Geist Pixel", sans-serif;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -514,4 +554,135 @@
 .scrollbar-none {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+/* ─── Glow Border Spotlight Styles ─────────────────────────── */
+:root {
+  --glow-color: rgba(0, 0, 0, 0.35);
+  --glow-size: 320px;
+  --glow-border-width: 1.5px;
+}
+
+.dark {
+  --glow-color: rgba(255, 255, 255, 0.55);
+}
+
+.glow-border-b,
+.glow-border-r,
+.glow-border-l,
+.glow-border-t {
+  position: relative;
+}
+
+.glow-border-b::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--glow-border-width);
+  background: radial-gradient(
+    var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    var(--glow-color),
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.glow-border-r::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--glow-border-width);
+  background: radial-gradient(
+    var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    var(--glow-color),
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.glow-border-l::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--glow-border-width);
+  background: radial-gradient(
+    var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    var(--glow-color),
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.glow-border-t::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--glow-border-width);
+  background: radial-gradient(
+    var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    var(--glow-color),
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+@media (min-width: 1024px) {
+  .lg\:glow-border-l,
+  .lg\:glow-border-r {
+    position: relative;
+  }
+
+  .lg\:glow-border-l::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--glow-border-width);
+    background: radial-gradient(
+      var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+      var(--glow-color),
+      transparent 80%
+    );
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+  }
+
+  .lg\:glow-border-r::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: var(--glow-border-width);
+    background: radial-gradient(
+      var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+      var(--glow-color),
+      transparent 80%
+    );
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+  }
+
+  .lg\:glow-border-b-0::after {
+    display: none !important;
+  }
 }

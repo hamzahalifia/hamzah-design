@@ -7,15 +7,16 @@ import ErrorBoundary from './ErrorBoundary';
 import { Agentation } from 'agentation';
 import SoundManager from './SoundManager';
 import { Toaster } from './ui/sonner';
+import GlowInitializer from './core/GlowInitializer';
 
 // Lazy load components
-const Navbar = lazy(() => import('@/components/Navbar'));
-const HomePage = lazy(() => import('@/components/HomePage'));
+const Navbar = lazy(() => import('./Navbar'));
+const HomePage = lazy(() => import('./HomePage'));
 const About = lazy(() => import('./About'));
-const WorkPage = lazy(() => import('@/components/WorkPage'));
-const WorkDetail = lazy(() => import('@/components/WorkDetail'));
-const ExplorationPage = lazy(() => import('@/components/ExplorationPage'));
-const NotFound = lazy(() => import('@/components/NotFound'));
+const WorkPage = lazy(() => import('./WorkPage'));
+const WorkDetail = lazy(() => import('./WorkDetail'));
+const ExplorationPage = lazy(() => import('./ExplorationPage'));
+const NotFound = lazy(() => import('./NotFound'));
 // const ServerError = lazy(() => import('./components/ServerError')); // Ini tidak digunakan
 
 function AppRoutes() {
@@ -91,6 +92,7 @@ export default function App() {
   return (
     <HelmetProvider>
       <ThemeProvider>
+        <GlowInitializer />
         <SoundManager />
         <Toaster position="bottom-center" />
         <BrowserRouter>

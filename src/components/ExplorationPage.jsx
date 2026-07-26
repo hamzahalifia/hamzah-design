@@ -17,6 +17,7 @@ import { GridPattern } from "./magicui/GridPattern";
 import ClosePopup from "./ClosePopup";
 import { FlickeringGrid } from "./magicui/FlickeringGrid";
 import { Cursor } from "./core/cursor";
+import GlowCard from './core/GlowCard';
 import SkeletonLoader from "./ui/SkeletonLoader";
 import ReactPlayer from "react-player";
 import {
@@ -393,7 +394,7 @@ export default function ExplorationPage() {
                 {/* Content */}
                 <div className="px-5 sm:px-5 lg:px-5 xl:px-5 py-5">
                   {loading ? (
-                    <div className="relative w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 gap-5 md:gap-4 lg:gap-8 xl:gap-8 2xl:gap-8 auto-rows-auto sm:auto-rows-[280px] lg:auto-rows-[300px] grid-flow-row-dense">
+                    <div className="relative w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 gap-4 auto-rows-auto sm:auto-rows-[280px] lg:auto-rows-[300px] grid-flow-row-dense">
                       {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
                         <SkeletonLoader
                           key={i}
@@ -415,7 +416,7 @@ export default function ExplorationPage() {
                     </div>
                   ) : (
                     <>
-                      <div className="relative w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 gap-5 md:gap-4 lg:gap-8 xl:gap-8 2xl:gap-8 auto-rows-auto sm:auto-rows-[280px] lg:auto-rows-[300px] grid-flow-row-dense">
+                      <div className="relative w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 gap-4 auto-rows-auto sm:auto-rows-[280px] lg:auto-rows-[300px] grid-flow-row-dense">
                         {paginatedExplorations.map((exp) => {
                           const is16by9 = exp.aspect_ratio === "16:9";
                           const is9by16 = exp.aspect_ratio === "9:16";
@@ -433,30 +434,35 @@ export default function ExplorationPage() {
                           }
 
                           return (
-                            <motion.div
+                            <GlowCard
                               key={exp.id}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.5 }}
                               onClick={() => setSelectedItem(exp)}
                               onMouseEnter={() => setIsCursorHovering(true)}
                               onMouseLeave={() => setIsCursorHovering(false)}
-                              className={`group relative rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 cursor-pointer border-0 hover:ring-2 hover:ring-neutral-200 dark:hover:ring-neutral-700 transition-all ${itemClasses}`}
+                              className={itemClasses}
+                              innerClassName="relative group cursor-pointer w-full h-full"
                             >
-                              <img
-                                src={exp.image}
-                                alt={exp.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                loading="lazy"
-                              />
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.5 }}
+                                className="w-full h-full"
+                              >
+                                <img
+                                  src={exp.image}
+                                  alt={exp.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                  loading="lazy"
+                                />
 
-                              {/* Hover overlay */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 pointer-events-none">
-                                <h4 className="text-sm font-semibold text-white leading-tight line-clamp-2">
-                                  {exp.title}
-                                </h4>
-                              </div>
-                            </motion.div>
+                                {/* Hover overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 pointer-events-none">
+                                  <h4 className="text-sm font-semibold text-white leading-tight line-clamp-2">
+                                    {exp.title}
+                                  </h4>
+                                </div>
+                              </motion.div>
+                            </GlowCard>
                           );
                         })}
                       </div>

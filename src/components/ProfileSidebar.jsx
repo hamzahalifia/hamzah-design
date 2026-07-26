@@ -142,7 +142,7 @@ export default function ProfileSidebar() {
   return (
     <aside
       id="about"
-      className={`w-full lg:w-[429px] flex-shrink-0 border-b lg:border-b-0 lg:border-r border-attio-border-light dark:border-attio-border-dark bg-white dark:bg-[#0A0A0B] relative flex flex-col justify-between overflow-visible ${
+      className={`w-full lg:w-[429px] flex-shrink-0 border-b lg:border-b-0 lg:border-r border-attio-border-light dark:border-attio-border-dark glow-border-b lg:glow-border-b-0 lg:glow-border-r bg-white dark:bg-[#0A0A0B] relative flex flex-col justify-between overflow-visible ${
         isSticky
           ? "lg:sticky lg:top-[60px] lg:h-[calc(100vh-60px)]"
           : "lg:relative lg:h-auto"

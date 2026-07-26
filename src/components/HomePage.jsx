@@ -11,13 +11,8 @@ export default function HomePage() {
   const { theme } = useTheme();
 
   return (
-    <motion.div 
-      animate={{ 
-        backgroundColor: theme === 'dark' ? '#080809' : '#FAFAF9',
-        color: theme === 'dark' ? '#F4F4F5' : '#111827'
-      }}
-      transition={{ duration: 0.35, ease: [0.33, 1, 0.68, 1] }}
-      className="min-h-screen theme-transition selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-black"
+    <div 
+      className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-[#111827] dark:text-[#F4F4F5] transition-colors duration-300 selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-black"
     >
       <PageMeta
         title="Alifia Hamzah — Product Designer | Portfolio"
@@ -78,9 +73,9 @@ export default function HomePage() {
         }}
       />
       {/* <Navbar /> */}
-      <main aria-label="Home page content" className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">
+      <main aria-label="Home page content" className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="flex flex-col lg:flex-row gap-0 border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-white dark:bg-[#0A0A0B]">
+          <div className="flex flex-col lg:flex-row gap-0 border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark lg:glow-border-l lg:glow-border-r bg-white dark:bg-[#0A0A0B]">
             <ProfileSidebar />
             <div className="flex-1">
               <WorkShowcase />
@@ -89,6 +84,6 @@ export default function HomePage() {
         </div>
       </main>
       <FooterReveal />
-    </motion.div>
+    </div>
   );
 }

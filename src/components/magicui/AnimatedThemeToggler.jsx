@@ -12,55 +12,9 @@ export function AnimatedThemeToggler({ className = '', ...props }) {
     playThemeToggleSound(theme === 'light');
   };
 
-  const handleToggle = (e) => {
+  const handleToggle = () => {
     playToggleSound();
-
-    // Perform circular expand view transition if supported by browser
-    if (!document.startViewTransition) {
-      toggleTheme();
-      return;
-    }
-
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-
-    const transition = document.startViewTransition(() => {
-      toggleTheme();
-    });
-
-    transition.ready.then(() => {
-      // Fade out the old view so the expanding circle is clearly visible
-      document.documentElement.animate(
-        { opacity: [1, 0] },
-        {
-          duration: 350,
-          easing: 'ease-in',
-          pseudoElement: '::view-transition-old(root)',
-        }
-      );
-
-      // Always expand the circle outward from the button — works for both directions
-      document.documentElement.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
-          ],
-        },
-        {
-          duration: 450,
-          easing: 'ease-in-out',
-          // Always animate the incoming view (the new theme)
-          pseudoElement: '::view-transition-new(root)',
-        }
-      );
-    });
+    toggleTheme();
   };
 
   return (
@@ -73,9 +27,9 @@ export function AnimatedThemeToggler({ className = '', ...props }) {
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={theme}
-          initial={{ y: -20, opacity: 0, rotate: -90 }}
-          animate={{ y: 0, opacity: 1, rotate: 0 }}
-          exit={{ y: 20, opacity: 0, rotate: 90 }}
+          initial={{ rotate: -90, scale: 0.6, opacity: 0 }}
+          animate={{ rotate: 0, scale: 1, opacity: 1 }}
+          exit={{ rotate: 90, scale: 0.6, opacity: 0 }}
           transition={{ duration: 0.25, ease: 'easeInOut' }}
         >
           <Icon

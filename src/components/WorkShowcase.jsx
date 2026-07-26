@@ -11,6 +11,7 @@ import { cmsFetch, FEATURED_CASE_STUDIES_QUERY } from '../lib/cmsendpoint';
 import OptimizedImage from './OptimizedImage';
 import { toast } from 'sonner';
 import { MediaPreview } from './ExplorationPage';
+import GlowCard from './core/GlowCard';
 
 export default function WorkShowcase() {
   const navigate = useNavigate();
@@ -88,7 +89,7 @@ export default function WorkShowcase() {
   }, [explorations]);
 
   return (
-    <section className="flex-1 bg-white dark:bg-[#0A0A0B] divide-y divide-attio-border-light dark:divide-attio-border-dark">
+    <section className="flex-1 bg-white dark:bg-[#0A0A0B]">
       {/* Cursor */}
       <Cursor
         variants={{
@@ -131,15 +132,15 @@ export default function WorkShowcase() {
       </Cursor>
 
       {/* Featured Work Container */}
-      <div id="work" className="divide-y divide-attio-border-light dark:divide-attio-border-dark">
+      <div id="work" className="border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
         {/* Section Header with Refined Smaller Heading (text-lg) */}
-        <div className="p-5 lg:p-6 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B]">
+        <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
           <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
             Featured Work
           </h2>
           <Link
             to="/work"
-            className="inline-flex items-center gap-1 text-xs font-semibold px-4 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
+            className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
           >
             <RollingText>More</RollingText>
             <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
@@ -150,7 +151,7 @@ export default function WorkShowcase() {
         {loading && (
           <div className="divide-y divide-attio-border-light dark:divide-attio-border-dark">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="p-5 lg:p-6 flex flex-col md:flex-row items-start justify-start gap-5 lg:gap-6">
+              <div key={i} className="p-5 flex flex-col md:flex-row items-start justify-start gap-4">
                 <SkeletonLoader className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg flex-shrink-0" />
                 <div className="flex-1 flex flex-col items-start justify-start space-y-3 pt-0.5">
                   <SkeletonLoader className="w-3/4 h-5 rounded-md" />
@@ -171,7 +172,7 @@ export default function WorkShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="p-5 lg:p-6 flex flex-col md:flex-row items-start justify-start gap-5 lg:gap-6 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer"
+              className={`p-5 flex flex-col md:flex-row items-start justify-start gap-4 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer ${index < works.length - 1 ? 'border-b border-attio-border-light dark:border-attio-border-dark glow-border-b' : ''}`}
             >
               {/* Project Image Preview */}
               <div
@@ -216,15 +217,15 @@ export default function WorkShowcase() {
       </div>
 
       {/* Exploration Container (No Bottom Border) */}
-      <div id="exploration" className="divide-y divide-attio-border-light dark:divide-attio-border-dark">
+      <div id="exploration">
         {/* Section Header with Refined Smaller Heading (text-lg) */}
-        <div className="p-5 lg:p-6 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B]">
+        <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
           <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
             Exploration
           </h2>
           <Link
             to="/exploration"
-            className="inline-flex items-center gap-1 text-xs font-semibold px-4 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
+            className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
           >
             <RollingText>More</RollingText>
             <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
@@ -232,7 +233,7 @@ export default function WorkShowcase() {
         </div>
 
         {/* 2x2 Grid Seamless Cards */}
-        <div className="p-5 lg:p-6">
+        <div className="p-5">
           {loading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[...Array(4)].map((_, i) => (
@@ -244,32 +245,37 @@ export default function WorkShowcase() {
           {!loading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {highlightedExplorations.map((exp) => (
-                <motion.div
+                <GlowCard
                   key={exp.id}
-                  initial={{ opacity: 0.9 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
                   onClick={() => setSelectedExploration(exp)}
                   onMouseEnter={() => { setIsCursorHovering(true); setCursorText('View Detail'); }}
                   onMouseLeave={() => setIsCursorHovering(false)}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="group rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 cursor-pointer h-[230px] relative"
+                  className="h-[230px]"
+                  innerClassName="relative group cursor-pointer w-full h-full"
                 >
-                  <motion.img
-                    src={exp.image}
-                    alt={exp.title}
-                    loading="lazy"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                    className="w-full h-full object-cover transform-gpu will-change-transform"
-                  />
-                  {/* Hover overlay with title */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 pointer-events-none">
-                    <h4 className="text-sm font-semibold text-white leading-tight line-clamp-2">
-                      {exp.title}
-                    </h4>
-                  </div>
-                </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0.9 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="w-full h-full"
+                  >
+                    <motion.img
+                      src={exp.image}
+                      alt={exp.title}
+                      loading="lazy"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+                      className="w-full h-full object-cover transform-gpu will-change-transform"
+                    />
+                    {/* Hover overlay with title */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 pointer-events-none">
+                      <h4 className="text-sm font-semibold text-white leading-tight line-clamp-2">
+                        {exp.title}
+                      </h4>
+                    </div>
+                  </motion.div>
+                </GlowCard>
               ))}
           </div>
           )}

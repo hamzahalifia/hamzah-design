@@ -1,15 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
-import { DotPattern } from './magicui/DotPattern';
-import { RollingText } from './magicui/RollingText';
-import { SlidingNumber } from './core/sliding-number';
+import React, { useState, useEffect, useRef } from "react";
+import { useLocation, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useTheme } from "../context/ThemeContext";
+import { RollingText } from "./magicui/RollingText";
+import { RainbowButton } from "./ui/rainbow-button";
+import { SlidingNumber } from "./core/sliding-number";
+import LetsTalkModal from "./LetsTalkModal";
+import ParticleSphere from "./ParticleSphere";
+import DynamicWeight from "./DynamicWeight";
 
 export default function FooterReveal() {
   const { theme } = useTheme();
   const location = useLocation();
-  const [CalComponent, setCalComponent] = useState(null);
-  const [loadCalendar, setLoadCalendar] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const containerRef = useRef(null);
 
   const [isTallScreen, setIsTallScreen] = useState(true);
@@ -19,94 +22,46 @@ export default function FooterReveal() {
       setIsTallScreen(window.innerHeight >= 800);
     };
     checkHeight();
-    window.addEventListener('resize', checkHeight);
-    return () => window.removeEventListener('resize', checkHeight);
+    window.addEventListener("resize", checkHeight);
+    return () => window.removeEventListener("resize", checkHeight);
   }, []);
 
-  // Work & Exploration: konten pendek, footer ikut scroll normal
-  const nonStickyPaths = ['/work', '/exploration'];
-  const isStickyPage = !nonStickyPaths.some(p => location.pathname.startsWith(p)) && isTallScreen;
+  const nonStickyPaths = ["/work", "/exploration"];
+  const isStickyPage =
+    !nonStickyPaths.some((p) => location.pathname.startsWith(p)) &&
+    isTallScreen;
 
-  // Trigger calendar loading when scrolled into view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setLoadCalendar(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '200px' } // Pre-load when within 200px of viewport
-    );
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-    return () => observer.disconnect();
-  }, []);
-
-  const calApiRef = useRef(null);
-
-  // Dynamically load Cal.com SDK on demand
-  useEffect(() => {
-    if (!loadCalendar) return;
-
-    let active = true;
-    import("@calcom/embed-react")
-      .then((module) => {
-        if (!active) return;
-        setCalComponent(() => module.default);
-        
-        // Initialize API only once
-        if (!calApiRef.current) {
-          module.getCalApi({ "namespace": "30min" }).then((cal) => {
-            if (!active) return;
-            calApiRef.current = cal;
-            // Apply initial theme
-            cal("ui", {
-              "hideEventTypeDetails": false,
-              "layout": "month_view",
-              "theme": theme === 'dark' ? 'dark' : 'light'
-            });
-          });
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to load Cal.com SDK:", err);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [loadCalendar]);
-
-  // Update theme when it changes
-  useEffect(() => {
-    if (calApiRef.current && loadCalendar) {
-      calApiRef.current("ui", { "theme": theme === 'dark' ? 'dark' : 'light' });
-    }
-  }, [theme, loadCalendar]);
-
-  // Realtime Bandung Clock — separate parts for SlidingNumber
+  // Realtime Bandung Clock
   const [clockHours, setClockHours] = useState(0);
   const [clockMinutes, setClockMinutes] = useState(0);
   const [clockSeconds, setClockSeconds] = useState(0);
-  const [clockLabel, setClockLabel] = useState('');
+  const [clockLabel, setClockLabel] = useState("");
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
       const dayName = days[now.getDay()];
-      
+
       const hour = now.getHours();
-      let period = 'evening';
-      if (hour >= 5 && hour < 12) period = 'morning';
-      else if (hour >= 12 && hour < 18) period = 'afternoon';
+      let period = "evening";
+      if (hour >= 5 && hour < 12) period = "morning";
+      else if (hour >= 12 && hour < 18) period = "afternoon";
 
       setClockHours(now.getHours());
       setClockMinutes(now.getMinutes());
       setClockSeconds(now.getSeconds());
-      setClockLabel(`${dayName} ${period}`);
+      setClockLabel(
+        `${dayName} ${period.charAt(0).toUpperCase() + period.slice(1)}`,
+      );
     };
 
     updateTime();
@@ -115,109 +70,230 @@ export default function FooterReveal() {
   }, []);
 
   return (
-    <footer 
-      className={`relative z-10 w-full h-auto bg-[#FAFAFB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between border-t border-attio-border-light dark:border-attio-border-dark overflow-visible transition-colors duration-300 ${isStickyPage ? 'lg:sticky bottom-0 lg:z-0 lg:h-screen lg:overflow-hidden' : ''}`}
-    >
-      {/* Outer Wrapper Matching App.jsx Structure Exactly */}
-      <div className={`max-w-[1440px] w-full mx-auto px-0 lg:px-6 flex-1 flex flex-col justify-between overflow-visible ${isStickyPage ? 'lg:overflow-hidden' : ''}`}>
-        {/* Centered Bounded Section Sharing Left/Right Borders with Dynamic Height */}
-        <div className={`relative z-10 flex-1 border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-dot-grid flex flex-col justify-start lg:justify-center items-center text-center px-4 sm:px-6 pt-12 pb-12 lg:pt-[90px] lg:pb-0 my-0 overflow-visible ${isStickyPage ? 'lg:overflow-hidden' : ''}`}>
-          
-          {/* Larger MagicUI DotPattern Background */}
-          <DotPattern
-            width={24}
-            height={24}
-            cx={2}
-            cy={2}
-            cr={1.5}
-            className="opacity-50 dark:opacity-25 [mask-image:radial-gradient(600px_circle_at_center,white,transparent)]"
-          />
+    <>
+      <footer
+        ref={containerRef}
+        className={`relative z-10 w-full h-auto bg-[#FAFAFB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between border-t border-attio-border-light dark:border-attio-border-dark transition-colors duration-300 ${isStickyPage ? "lg:sticky bottom-0 lg:z-0 lg:h-screen lg:overflow-hidden" : ""}`}
+      >
+        {/* Part 1: Top Hero Sign Section — Attio Globe Reference Structure */}
+        <div
+          className={`max-w-[1440px] w-full mx-auto px-0 lg:px-6 flex-1 flex flex-col justify-between ${isStickyPage ? "lg:overflow-hidden" : ""}`}
+        >
+          {/* Container: centered text and particle globe */}
+          <div className="relative flex-1 min-h-[550px] lg:min-h-[640px] flex flex-col items-center justify-start lg:justify-center overflow-hidden border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-[#FAFAFB] dark:bg-[#080809]">
+            {/* Dot Grid Background */}
+            <div
+              className="absolute inset-0 z-0 opacity-75 pointer-events-none"
+              style={{
+                backgroundImage: `radial-gradient(circle, ${theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(17, 24, 39, 0.35)"} 1px, transparent 1px)`,
+                backgroundSize: "18px 18px",
+                backgroundPosition: "0 0",
+              }}
+            />
 
-          {/* CTA Headline & Description */}
-          <div className="relative z-10 max-w-2xl space-y-2 mb-4 lg:mb-6 flex-shrink-0">
-            <h2 className="font-sans text-2xl sm:text-4xl lg:text-4xl font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
-              Ready for the next challenge!
-            </h2>
-            <p className="text-sm text-attio-text-secondary-light dark:text-attio-text-secondary-dark leading-relaxed font-normal">
-              I am open to new opportunities and ready to discuss how my data-driven approach can elevate your enterprise tools.
-            </p>
-          </div>
-
-          {/* Clean Seamless Cal.com Calendar Embed Container */}
-          <div ref={containerRef} className="relative z-10 w-full max-w-[1000px] h-auto min-h-[415px] overflow-hidden rounded-xl bg-transparent flex-shrink-0">
-            {loadCalendar && CalComponent ? (
-              <div 
-                style={{ 
-                  width: "100%", 
-                  height: "auto",
-                  transform: "scale(1)", 
-                  transformOrigin: "top left" 
-                }}
-              >
-                <CalComponent 
-                  key={theme}
-                  namespace="30min"
-                  calLink="alifiahamzah/30min"
-                  style={{ width: "100%", height: "auto", overflow: "visible" }}
-                  config={{ 
-                    "layout": "month_view", 
-                    "useSlotsViewOnSmallScreen": "true", 
-                    "theme": theme === 'dark' ? 'dark' : 'light',
-                    "hideEventTypeDetails": false
-                  }}
-                />
+            {/* Title Section (Top with 20px padding on md & below, centered on lg) */}
+            <div className="relative z-20 w-full flex flex-col items-center justify-start lg:justify-center text-center pt-[45px] lg:pt-0 p-0 pointer-events-none my-0 lg:my-auto">
+              <div className="space-y-[24px] pointer-events-auto flex flex-col items-center">
+                <h2 className="text-[30px] sm:text-[36px] lg:text-[64px] leading-tight text-neutral-900 dark:text-white flex flex-col items-center">
+                  <span className="block font-geist-regular">
+                    Less distraction,
+                  </span>
+                  <DynamicWeight
+                    label="More execution."
+                    fromWeight={500}
+                    toWeight={700}
+                    strength={40}
+                    transition={{
+                      type: "tween",
+                      duration: 0.3,
+                      ease: "easeOut",
+                    }}
+                    className="block font-sans text-[30px] sm:text-[36px] lg:text-[64px] leading-tight tracking-tight text-neutral-900 dark:text-white"
+                  />
+                </h2>
+                <RainbowButton
+                  onClick={() => setIsContactModalOpen(true)}
+                  className="px-6 text-base font-semibold btn-radius-lg"
+                  style={{ height: "46px" }}
+                >
+                  <RollingText>Let's Talk</RollingText>
+                </RainbowButton>
               </div>
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center border border-dashed border-attio-border-light/20 dark:border-attio-border-dark/20 rounded-xl bg-[#FAFAFB]/50 dark:bg-zinc-950/10 min-h-[300px]">
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-6 h-6 border-2 border-neutral-400 border-t-transparent dark:border-neutral-600 dark:border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-xs text-neutral-500 font-sans">Loading Calendar...</span>
+            </div>
+
+            {/* Particle Sphere — absolute center-bottom, 50% offset below */}
+            <div className="absolute left-1/2 bottom-0 z-10 w-[720px] h-[720px] -translate-x-1/2 translate-y-[70%] pointer-events-auto select-none">
+              <ParticleSphere
+                particlesCount={6196}
+                particleScale={4}
+                scale={10}
+                speed={2}
+                smoothing={7}
+                stopOnHover={true}
+                rotationDirection="clockwise"
+                drag={true}
+                dragSpeed={5}
+                cursorOn={true}
+                cursorRadiusUI={75}
+                cursorStrengthUI={10}
+                clickForce={5}
+                sphereColor={theme === "dark" ? "#454545" : "#6B7280"}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Part 2: Separate Full-Width Section for Sitemap Cards Grid & Bottom Metadata Bar */}
+        <div className="w-full border-t border-attio-border-light dark:border-attio-border-dark bg-[#FAFAFB] dark:bg-[#080809] transition-colors duration-300 relative z-10 flex-shrink-0">
+          <div className="max-w-[1440px] w-full mx-auto px-0 lg:px-6">
+            <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark">
+              {/* Middle Sitemap Cards Grid (No gap/padding, no border radius, border-t only on < md) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 p-0 py-0 px-0 border-b border-attio-border-light dark:border-attio-border-dark">
+                {/* Card 1: NAVIGATE */}
+                <div className="flex flex-col space-y-4 p-6 sm:p-8 rounded-none border-t md:border-t-0 border-b md:border-b-0 md:border-r border-attio-border-light dark:border-attio-border-dark bg-white/40 dark:bg-zinc-900/30 backdrop-blur-sm">
+                  <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
+                    NAVIGATE
+                  </span>
+                  <div className="flex flex-col space-y-2.5">
+                    <Link
+                      to="/"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>Home</RollingText>
+                    </Link>
+                    <Link
+                      to="/about"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>About</RollingText>
+                    </Link>
+                    <Link
+                      to="/work"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>Work</RollingText>
+                    </Link>
+                    <Link
+                      to="/exploration"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>Exploration</RollingText>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Card 2: SOCIAL */}
+                <div className="flex flex-col space-y-4 p-6 sm:p-8 rounded-none border-t md:border-t-0 border-b md:border-b-0 md:border-r border-attio-border-light dark:border-attio-border-dark bg-white/40 dark:bg-zinc-900/30 backdrop-blur-sm">
+                  <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
+                    SOCIAL
+                  </span>
+                  <div className="flex flex-col space-y-2.5">
+                    <a
+                      href="https://linkedin.com/in/hamzahalifia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>LinkedIn</RollingText>
+                    </a>
+                    <a
+                      href="https://threads.net/@hamzahalifia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>Threads</RollingText>
+                    </a>
+                    <a
+                      href="https://x.com/hamzahalifia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>X</RollingText>
+                    </a>
+                    <a
+                      href="https://instagram.com/hamzahalifia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>Instagram</RollingText>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Card 3: CASE STUDIES */}
+                <div className="flex flex-col space-y-4 p-6 sm:p-8 rounded-none border-t md:border-t-0 border-attio-border-light dark:border-attio-border-dark bg-white/40 dark:bg-zinc-900/30 backdrop-blur-sm">
+                  <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
+                    CASE STUDIES
+                  </span>
+                  <div className="flex flex-col space-y-2.5">
+                    <Link
+                      to="/work/how-automation-cut-processing-time-by-96-point-83-persent-for-a-japanese-fnb-giant"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>Amigos Group</RollingText>
+                    </Link>
+                    <Link
+                      to="/work/boosted-operational-efficiency-by-40-percent-in-door-v3-timeshift-management"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>DOOR V3</RollingText>
+                    </Link>
+                    <Link
+                      to="/work/rebalancing-a-two-sided-marketplace-a-conceptual-ux-audit--landing-page-redesign-for-kontencom"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>Konten</RollingText>
+                    </Link>
+                    <Link
+                      to="/work/a-failure-analysis-and-iteration-strategy-for-jaga-sehat-telemedicine-flow"
+                      className="text-sm font-medium text-neutral-900 dark:text-white hover:text-neutral-500 dark:hover:text-neutral-400 transition-colors py-0.5"
+                    >
+                      <RollingText>Jaga Sehat</RollingText>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
 
-      {/* Bottom Information Bar Always Visible in 100vh Viewport */}
-      <div className="relative z-10 border-t border-attio-border-light dark:border-attio-border-dark bg-[#FAFAFB] dark:bg-[#080809] transition-colors duration-300 flex-shrink-0">
-        <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark py-4 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
-            {/* Stacked Location & Realtime Clock */}
-            <div className="flex flex-col items-center sm:items-start text-attio-text-secondary-light dark:text-attio-text-secondary-dark space-y-0.5">
-              <span className="font-semibold text-attio-text-primary-light dark:text-attio-text-primary-dark">
-                Based in Bandung, Indonesia
-              </span>
-              <span className="font-mono text-neutral-500 dark:text-neutral-400 flex items-center gap-0.5">
-                {clockLabel || 'Loading...'},{' '}
-                <SlidingNumber value={clockHours} padStart={true} />
-                <span className="text-neutral-400 dark:text-neutral-500">:</span>
-                <SlidingNumber value={clockMinutes} padStart={true} />
-                <span className="text-neutral-400 dark:text-neutral-500">:</span>
-                <SlidingNumber value={clockSeconds} padStart={true} />
-                <span className="ml-1">(GMT+7)</span>
-              </span>
-            </div>
+              {/* Bottom Metadata Bar (Timezone & Copyright) */}
+              <div className="py-6 px-6 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm">
+                <div className="flex flex-col items-center sm:items-start space-y-1 text-center sm:text-left">
+                  <span className="font-normal text-neutral-900 dark:text-white">
+                    Based in Bandung, Indonesia
+                  </span>
+                  <span className="font-mono text-neutral-500 dark:text-neutral-400 flex flex-wrap items-center justify-center sm:justify-start gap-1">
+                    <span>{clockLabel || "Loading..."},</span>
+                    <span className="inline-flex items-center">
+                      <SlidingNumber value={clockHours} padStart={true} />
+                      <span className="text-neutral-400 dark:text-neutral-500">
+                        :
+                      </span>
+                      <SlidingNumber value={clockMinutes} padStart={true} />
+                      <span className="text-neutral-400 dark:text-neutral-500">
+                        :
+                      </span>
+                      <SlidingNumber value={clockSeconds} padStart={true} />
+                    </span>
+                    <span>(GMT+7)</span>
+                  </span>
+                </div>
 
-            {/* Social Links with RollingText & Copyright — centered on mobile, right on sm */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 text-attio-text-secondary-light dark:text-attio-text-secondary-dark">
-              <div className="flex items-center gap-4 font-medium">
-                <a href="https://www.instagram.com/hamzahalifia" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
-                  <RollingText>Instagram</RollingText>
-                </a>
-                <a href="https://www.threads.net/@hamzahalifia" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
-                  <RollingText>Thread</RollingText>
-                </a>
-                <a href="https://www.linkedin.com/in/alifiahamzah/" target="_blank" rel="noreferrer" className="hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer py-0.5">
-                  <RollingText>LinkedIn</RollingText>
-                </a>
+                <span className="text-neutral-900 dark:text-white font-normal text-center sm:text-right">
+                  Hamzah Design © 2026
+                </span>
               </div>
-              <span className="hidden sm:inline text-neutral-300 dark:text-neutral-700">•</span>
-              <span className="text-attio-text-primary-light dark:text-attio-text-primary-dark font-medium">Hamzah Design © {new Date().getFullYear()}</span>
             </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+
+      {/* Lets Talk Contact Modal */}
+      <LetsTalkModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
+    </>
   );
 }
