@@ -6,8 +6,8 @@ import { RollingText } from "./magicui/RollingText";
 import { RainbowButton } from "./ui/rainbow-button";
 import { SlidingNumber } from "./core/sliding-number";
 import LetsTalkModal from "./LetsTalkModal";
-import ParticleSphere from "./ParticleSphere";
 import DynamicWeight from "./DynamicWeight";
+import AsciiBackground from "./AsciiBackground";
 
 export default function FooterReveal() {
   const { theme } = useTheme();
@@ -79,20 +79,18 @@ export default function FooterReveal() {
         <div
           className={`max-w-[1440px] w-full mx-auto px-0 lg:px-6 flex-1 flex flex-col justify-between ${isStickyPage ? "lg:overflow-hidden" : ""}`}
         >
-          {/* Container: centered text and particle globe */}
+          {/* Container: centered text and ASCII portrait background */}
           <div className="relative flex-1 min-h-[550px] lg:min-h-[640px] flex flex-col items-center justify-start lg:justify-center overflow-hidden border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-[#FAFAFB] dark:bg-[#080809]">
-            {/* Dot Grid Background */}
-            <div
-              className="absolute inset-0 z-0 opacity-75 pointer-events-none"
-              style={{
-                backgroundImage: `radial-gradient(circle, ${theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(17, 24, 39, 0.35)"} 1px, transparent 1px)`,
-                backgroundSize: "18px 18px",
-                backgroundPosition: "0 0",
-              }}
-            />
+            {/* ASCII Braille Background Filter */}
+            <div className="absolute inset-0 z-0 pointer-events-auto opacity-75 dark:opacity-20">
+              <AsciiBackground
+                imageSrc="/images/general/footer_acsii.webp"
+                className="invert grayscale dark:invert-0 dark:grayscale-0"
+              />
+            </div>
 
-            {/* Title Section (Top with 20px padding on md & below, centered on lg) */}
-            <div className="relative z-20 w-full flex flex-col items-center justify-start lg:justify-center text-center pt-[45px] lg:pt-0 p-0 pointer-events-none my-0 lg:my-auto">
+            {/* Title Section */}
+            <div className="relative z-20 w-full flex flex-col items-center justify-start justify-center text-center p-0 pointer-events-none my-0 my-auto">
               <div className="space-y-[24px] pointer-events-auto flex flex-col items-center">
                 <h2 className="text-[30px] sm:text-[36px] lg:text-[64px] leading-tight text-neutral-900 dark:text-white flex flex-col items-center">
                   <span className="block font-geist-regular">
@@ -120,26 +118,6 @@ export default function FooterReveal() {
                 </RainbowButton>
               </div>
             </div>
-
-            {/* Particle Sphere — absolute center-bottom, 50% offset below */}
-            <div className="absolute left-1/2 bottom-0 z-10 w-[720px] h-[720px] -translate-x-1/2 translate-y-[70%] pointer-events-auto select-none">
-              <ParticleSphere
-                particlesCount={6196}
-                particleScale={4}
-                scale={10}
-                speed={2}
-                smoothing={7}
-                stopOnHover={true}
-                rotationDirection="clockwise"
-                drag={true}
-                dragSpeed={5}
-                cursorOn={true}
-                cursorRadiusUI={75}
-                cursorStrengthUI={10}
-                clickForce={5}
-                sphereColor={theme === "dark" ? "#454545" : "#6B7280"}
-              />
-            </div>
           </div>
         </div>
 
@@ -151,7 +129,7 @@ export default function FooterReveal() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-0 p-0 py-0 px-0 border-b border-attio-border-light dark:border-attio-border-dark">
                 {/* Card 1: NAVIGATE */}
                 <div className="flex flex-col space-y-4 p-6 sm:p-8 rounded-none border-t md:border-t-0 border-b md:border-b-0 md:border-r border-attio-border-light dark:border-attio-border-dark bg-white/40 dark:bg-zinc-900/30 backdrop-blur-sm">
-                  <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
+                  <span className="text-sm font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
                     NAVIGATE
                   </span>
                   <div className="flex flex-col space-y-2.5">
@@ -184,7 +162,7 @@ export default function FooterReveal() {
 
                 {/* Card 2: SOCIAL */}
                 <div className="flex flex-col space-y-4 p-6 sm:p-8 rounded-none border-t md:border-t-0 border-b md:border-b-0 md:border-r border-attio-border-light dark:border-attio-border-dark bg-white/40 dark:bg-zinc-900/30 backdrop-blur-sm">
-                  <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
+                  <span className="text-sm font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
                     SOCIAL
                   </span>
                   <div className="flex flex-col space-y-2.5">
@@ -225,7 +203,7 @@ export default function FooterReveal() {
 
                 {/* Card 3: CASE STUDIES */}
                 <div className="flex flex-col space-y-4 p-6 sm:p-8 rounded-none border-t md:border-t-0 border-attio-border-light dark:border-attio-border-dark bg-white/40 dark:bg-zinc-900/30 backdrop-blur-sm">
-                  <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
+                  <span className="text-sm font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
                     CASE STUDIES
                   </span>
                   <div className="flex flex-col space-y-2.5">
@@ -258,7 +236,7 @@ export default function FooterReveal() {
               </div>
 
               {/* Bottom Metadata Bar (Timezone & Copyright) */}
-              <div className="py-6 px-6 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm">
+              <div className="py-6 px-6 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
                 <div className="flex flex-col items-center sm:items-start space-y-1 text-center sm:text-left">
                   <span className="font-normal text-neutral-900 dark:text-white">
                     Based in Bandung, Indonesia
@@ -281,7 +259,7 @@ export default function FooterReveal() {
                 </div>
 
                 <span className="text-neutral-900 dark:text-white font-normal text-center sm:text-right">
-                  Hamzah Design © 2026
+                  Hamzah Design © {new Date().getFullYear()}
                 </span>
               </div>
             </div>
