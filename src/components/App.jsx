@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from '../context/ThemeContext';
@@ -89,6 +89,36 @@ function AgentationWrapper() {
 }
 
 export default function App() {
+  useEffect(() => {
+    let originalTitle = document.title;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        originalTitle = document.title;
+        document.title = "Hey, Comeback!";
+      } else {
+        document.title = originalTitle;
+      }
+    };
+
+    const observer = new MutationObserver(() => {
+      if (!document.hidden) {
+        originalTitle = document.title;
+      }
+    });
+
+    const titleElement = document.querySelector('title');
+    if (titleElement) {
+      observer.observe(titleElement, { childList: true, subtree: true });
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <HelmetProvider>
       <ThemeProvider>

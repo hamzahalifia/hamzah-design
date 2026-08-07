@@ -383,21 +383,6 @@ function RollingTestimonials({ testimonials }) {
   );
 }
 
-// Function to calculate years since a specific date
-const calculateYearsSince = (startDate) => {
-  const now = new Date();
-  let years = now.getFullYear() - startDate.getFullYear();
-  const monthDifference = now.getMonth() - startDate.getMonth();
-
-  // If current month is before start month, or if it's the same month but earlier day, subtract a year
-  if (
-    monthDifference < 0 ||
-    (monthDifference === 0 && now.getDate() < startDate.getDate())
-  ) {
-    years--;
-  }
-  return years;
-};
 
 /* ─── Main Component ───────────────────────────────────── */
 
@@ -405,9 +390,7 @@ export default function About() {
   const [selectedAI, setSelectedAI] = useState(AI_OPTIONS[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Set the career start date to September 1st, 2021
-  const careerStartDate = new Date("2021-09-01T00:00:00");
-  const yearsOfExperience = calculateYearsSince(careerStartDate);
+
 
   return (
     <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
@@ -500,7 +483,7 @@ export default function About() {
                     </div>
 
                     <p className="text-base leading-6 text-[#111827] dark:text-[#E5E7EB] font-normal">
-                      Over the last {yearsOfExperience} years, I have partnered
+                      Over the last 4 years, I have partnered
                       with companies to build and scale their data-driven
                       enterprise tools using a story-data approach. My designs
                       translate complex workflows and technical datasets into

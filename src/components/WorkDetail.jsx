@@ -396,37 +396,9 @@ export default function WorkDetail() {
       >
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
           <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-white dark:bg-[#0A0A0B]">
-            <div className="w-full py-8 md:py-12">
-              {/* Breadcrumb */}
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pb-3 border-b border-dashed border-neutral-200 dark:border-neutral-800">
-                <nav
-                  className="text-sm text-neutral-500 dark:text-neutral-400"
-                  aria-label="Breadcrumb"
-                >
-                  <ol className="flex items-center gap-1.5">
-                    <li>
-                      <Link
-                        to="/work"
-                        className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-                      >
-                        Work
-                      </Link>
-                    </li>
-                    <li
-                      className="text-neutral-300 dark:text-neutral-600"
-                      aria-hidden="true"
-                    >
-                      /
-                    </li>
-                    <li className="text-neutral-900 dark:text-neutral-100 font-medium truncate max-w-[300px] sm:max-w-[500px]">
-                      {data.title}
-                    </li>
-                  </ol>
-                </nav>
-              </div>
-
+            <div className="w-full pt-4 pb-8 md:pt-6 md:pb-12">
               {/* Back + Header Actions */}
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-6 flex items-center justify-between w-full">
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-0 flex items-center justify-between w-full">
                 {/* Left Group */}
                 <div className="flex items-center gap-3.5">
                   <Link

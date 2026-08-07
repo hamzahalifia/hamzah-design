@@ -201,10 +201,10 @@ export default function FooterReveal() {
                   </div>
                 </div>
 
-                {/* Card 3: CASE STUDIES */}
+                {/* Card 3: WORK CASE STUDIES */}
                 <div className="flex flex-col space-y-4 p-6 sm:p-8 rounded-none border-t md:border-t-0 border-attio-border-light dark:border-attio-border-dark bg-white/40 dark:bg-zinc-900/30 backdrop-blur-sm">
                   <span className="text-sm font-semibold tracking-wider uppercase text-neutral-400 dark:text-neutral-500">
-                    CASE STUDIES
+                    WORK
                   </span>
                   <div className="flex flex-col space-y-2.5">
                     <Link
