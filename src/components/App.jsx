@@ -16,8 +16,9 @@ const About = lazy(() => import('./About'));
 const WorkPage = lazy(() => import('./WorkPage'));
 const WorkDetail = lazy(() => import('./WorkDetail'));
 const ExplorationPage = lazy(() => import('./ExplorationPage'));
+const ResourcesPage = lazy(() => import('./ResourcesPage'));
+const ResourceDetail = lazy(() => import('./ResourceDetail'));
 const NotFound = lazy(() => import('./NotFound'));
-// const ServerError = lazy(() => import('./components/ServerError')); // Ini tidak digunakan
 
 function AppRoutes() {
   const location = useLocation();
@@ -27,9 +28,10 @@ function AppRoutes() {
     ? location.pathname.slice(0, -1)
     : location.pathname;
 
-  const showNavbar = ['/', '/about', '/work', '/exploration'].includes(normalizedPathname) ||
+  const showNavbar = ['/', '/about', '/work', '/exploration', '/resources'].includes(normalizedPathname) ||
     /^\/work\/[^/]+$/.test(normalizedPathname) ||
-    /^\/exploration\/[^/]+$/.test(normalizedPathname);
+    /^\/exploration\/[^/]+$/.test(normalizedPathname) ||
+    /^\/resources\/[^/]+$/.test(normalizedPathname);
 
   return (
     <>
@@ -46,6 +48,8 @@ function AppRoutes() {
         <Route path="/work/:slug" element={<WorkDetail />} />
         <Route path="/exploration" element={<ExplorationPage />} />
         <Route path="/exploration/:slug" element={<ExplorationPage />} />
+        <Route path="/resources" element={<ResourcesPage />} />
+        <Route path="/resources/:slug" element={<ResourceDetail />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

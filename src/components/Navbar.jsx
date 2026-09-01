@@ -84,6 +84,18 @@ export default function Navbar({ hideNavLinks = false }) {
               >
                 <RollingText>Exploration</RollingText>
               </NavLink>
+              <NavLink
+                to="/resources"
+                className={({ isActive }) =>
+                  `text-sm py-1 ${
+                    isActive
+                      ? "text-black dark:text-white underline underline-offset-4 font-semibold"
+                      : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400"
+                  }`
+                }
+              >
+                <RollingText>Resources</RollingText>
+              </NavLink>
             </nav>
           )}
 
@@ -171,6 +183,19 @@ export default function Navbar({ hideNavLinks = false }) {
                 }
               >
                 <RollingText>Exploration</RollingText>
+              </NavLink>
+              <NavLink
+                to="/resources"
+                onClick={closeMobileMenu}
+                className={({ isActive }) =>
+                  `text-base font-medium py-2 px-3 rounded-lg transition-colors ${
+                    isActive
+                      ? "bg-neutral-100 dark:bg-neutral-800 text-black dark:text-white font-semibold"
+                      : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:bg-neutral-50 dark:hover:bg-neutral-900"
+                  }`
+                }
+              >
+                <RollingText>Resources</RollingText>
               </NavLink>
             </div>
           </motion.div>

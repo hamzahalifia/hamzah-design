@@ -1,14 +1,15 @@
 ---
 import App from '../components/App.jsx';
 import '../index.css';
-import { fetchSingleCaseStudy, fetchCaseStudies, fetchExplorations } from '../lib/cmsendpoint';
+import { fetchSingleCaseStudy, fetchCaseStudies, fetchExplorations, fetchResources, fetchSingleResource } from '../lib/cmsendpoint';
 
 export async function getStaticPaths() {
   const paths = [
     { params: { all: undefined } },
     { params: { all: 'work' } },
     { params: { all: 'about' } },
-    { params: { all: 'exploration' } }
+    { params: { all: 'exploration' } },
+    { params: { all: 'resources' } }
   ];
 
   try {
@@ -33,6 +34,17 @@ export async function getStaticPaths() {
     console.error("Error fetching explorations for static paths:", err);
   }
 
+  try {
+    const resources = await fetchResources();
+    resources.forEach((res) => {
+      if (res.slug) {
+        paths.push({ params: { all: `resources/${res.slug}` } });
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching resources for static paths:", err);
+  }
+
   return paths;
 }
 
@@ -45,6 +57,7 @@ let canonical = 'https://hamzah.design';
 
 let caseStudyList = [];
 let explorationList = [];
+let resourceList = [];
 
 try {
   caseStudyList = await fetchCaseStudies();
@@ -56,6 +69,12 @@ try {
   explorationList = await fetchExplorations();
 } catch (e) {
   console.error('Error fetching exploration list for fallback:', e);
+}
+
+try {
+  resourceList = await fetchResources();
+} catch (e) {
+  console.error('Error fetching resources list for fallback:', e);
 }
 
 if (all) {
@@ -82,6 +101,18 @@ if (all) {
     } catch (e) {
       console.error('Error fetching exploration SEO data:', e);
     }
+  } else if (all.startsWith('resources/')) {
+    const slug = all.replace('resources/', '');
+    try {
+      const res = await fetchSingleResource(slug);
+      if (res) {
+        seoTitle = res.seoTitle || res.title;
+        seoDescription = res.seoDescription || res.description;
+        ogImage = res.ogImage || res.image || ogImage;
+      }
+    } catch (e) {
+      console.error('Error fetching resource SEO data:', e);
+    }
   } else if (all === 'work') {
     seoTitle = 'Work — Alifia Hamzah';
     seoDescription = 'Case studies and product design work by Alifia Hamzah.';
@@ -91,6 +122,9 @@ if (all) {
   } else if (all === 'exploration') {
     seoTitle = 'Explorations — Alifia Hamzah';
     seoDescription = 'Design explorations, experiments, and side projects by Alifia Hamzah.';
+  } else if (all === 'resources') {
+    seoTitle = 'Resources & Templates — Alifia Hamzah';
+    seoDescription = 'Design systems, website templates, UI Kits, and components by Alifia Hamzah.';
   }
 }
 ---
@@ -146,6 +180,7 @@ if (all) {
 					<a href="/work">Work</a>
 					<a href="/about">About</a>
 					<a href="/exploration">Exploration</a>
+					<a href="/resources">Resources</a>
 				</nav>
 				<section>
 					<h2>Selected Case Studies</h2>
@@ -163,6 +198,16 @@ if (all) {
 						{explorationList.map((exp) => (
 							<li>
 								<a href={`/exploration/${exp.slug}`}>{exp.title} - {exp.description}</a>
+							</li>
+						))}
+					</ul>
+				</section>
+				<section>
+					<h2>Resources & Templates</h2>
+					<ul>
+						{resourceList.map((res) => (
+							<li>
+								<a href={`/resources/${res.slug}`}>{res.title} - {res.description}</a>
 							</li>
 						))}
 					</ul>

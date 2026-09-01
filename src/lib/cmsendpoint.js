@@ -180,6 +180,8 @@ export async function fetchCaseStudies() {
     heroImage: resolveMediaUrl(doc.heroImage),
     featured: doc.featured || false,
     publishedAt: doc.publishedAt,
+    creationType: doc.creationType || 'from-scratch',
+    externalUrl: doc.externalUrl || null,
   }));
   return sortCaseStudiesByYear(docs);
 }
@@ -199,6 +201,8 @@ export async function fetchFeaturedCaseStudies() {
     heroImage: resolveMediaUrl(doc.heroImage),
     featured: true,
     publishedAt: doc.publishedAt,
+    creationType: doc.creationType || 'from-scratch',
+    externalUrl: doc.externalUrl || null,
   }));
 }
 
@@ -238,6 +242,8 @@ export async function fetchSingleCaseStudy(slug, preview = false) {
     canonicalURL: doc.canonicalURL || null,
     keywords: doc.keywords || null,
     publishedAt: doc.publishedAt,
+    creationType: doc.creationType || 'from-scratch',
+    externalUrl: doc.externalUrl || null,
   };
 }
 
@@ -258,6 +264,8 @@ export async function fetchRelatedCaseStudies(currentId, currentSlug) {
     heroImage: resolveMediaUrl(doc.heroImage),
     year: doc.year,
     publishedAt: doc.publishedAt,
+    creationType: doc.creationType || 'from-scratch',
+    externalUrl: doc.externalUrl || null,
   }));
 }
 
@@ -305,6 +313,138 @@ export async function fetchHighlightedExplorations() {
   }));
 }
 
+/**
+ * Normalize Resource Payload document
+ */
+function normalizeResource(doc) {
+  if (!doc) return null;
+
+  const rawImage = doc.thumbnail || doc.image || doc.featuredImage || doc.heroImage || doc.media;
+  const image = resolveMediaUrl(rawImage);
+
+  let typeName = null;
+  let typeSlug = null;
+  if (doc.type) {
+    if (typeof doc.type === 'object') {
+      typeName = doc.type.name || doc.type.title || null;
+      typeSlug = doc.type.slug || null;
+    } else if (typeof doc.type === 'string') {
+      typeName = doc.type;
+    }
+  }
+
+  let platformName = null;
+  let platformLogo = null;
+  if (doc.platform) {
+    if (typeof doc.platform === 'object') {
+      platformName = doc.platform.name || doc.platform.title || null;
+      platformLogo = resolveMediaUrl(doc.platform.logo || doc.platform.icon || doc.platform.image);
+    } else if (typeof doc.platform === 'string') {
+      platformName = doc.platform;
+    }
+  }
+
+  const techStacks = (doc.techStacks || doc.techStack || []).map((tech) => {
+    if (typeof tech === 'object') {
+      return {
+        id: tech.id,
+        name: tech.name || tech.title || '',
+        logo: resolveMediaUrl(tech.logo || tech.icon || tech.image),
+      };
+    }
+    return { name: String(tech), logo: null };
+  });
+
+  let galleryImages = [];
+  if (doc.gallery && Array.isArray(doc.gallery.images)) {
+    galleryImages = doc.gallery.images.map((img) => {
+      const raw = typeof img === 'object' && img.image ? img.image : img;
+      return resolveMediaUrl(raw);
+    }).filter(Boolean);
+  }
+
+  const galleryVideo = resolveMediaUrl(doc.gallery?.video || doc.video);
+  const videoEmbedUrl = doc.gallery?.videoEmbedUrl || doc.videoEmbedUrl || '';
+
+  const priceType = doc.priceType || (doc.price ? 'paid' : 'free');
+  const price = doc.price != null ? doc.price : 0;
+
+  return {
+    id: doc.id,
+    _id: doc.id,
+    title: doc.title,
+    slug: doc.slug,
+    description: doc.description || '',
+    isFeatured: Boolean(doc.isFeatured),
+    image,
+    type: { name: typeName, slug: typeSlug },
+    platform: { name: platformName, logo: platformLogo },
+    techStacks,
+    priceType,
+    price,
+    version: doc.version || null,
+    link: doc.link || doc.externalUrl || doc.downloadUrl || null,
+    gallery: {
+      images: galleryImages,
+      video: galleryVideo,
+      videoEmbedUrl,
+    },
+    content: doc.content || null,
+    seoTitle: doc.seoTitle || doc.title,
+    seoDescription: doc.seoDescription || doc.description,
+    ogImage: resolveMediaUrl(doc.ogImage) || image,
+    createdAt: doc.createdAt,
+    publishedAt: doc.publishedAt,
+  };
+}
+
+/**
+ * Fetch resources (with optional filters)
+ */
+export async function fetchResources(options = {}) {
+  let endpoint = '/resources?depth=2&sort=-createdAt';
+  if (options.where) {
+    endpoint += `&${options.where}`;
+  }
+  if (options.limit) {
+    endpoint += `&limit=${options.limit}`;
+  }
+  const data = await payloadFetch(endpoint);
+  return (data.docs || []).map(normalizeResource);
+}
+
+/**
+ * Fetch featured resources
+ */
+export async function fetchFeaturedResources(limit = 4) {
+  const data = await payloadFetch(`/resources?where[isFeatured][equals]=true&depth=2&sort=-createdAt&limit=${limit}`);
+  return (data.docs || []).map(normalizeResource);
+}
+
+/**
+ * Fetch single resource by slug
+ */
+export async function fetchSingleResource(slug) {
+  const data = await payloadFetch(`/resources?where[slug][equals]=${encodeURIComponent(slug)}&depth=2`);
+  const doc = (data.docs || [])[0];
+  if (!doc) {
+    throw new Error(`Resource not found: ${slug}`);
+  }
+  return normalizeResource(doc);
+}
+
+/**
+ * Fetch resource types for filter tabs
+ */
+export async function fetchResourceTypes() {
+  const data = await payloadFetch('/resource-types?limit=100');
+  return (data.docs || []).map((doc) => ({
+    id: doc.id,
+    name: doc.name,
+    slug: doc.slug,
+  }));
+}
+
 // Keep these as convenience wrappers to maintain compatibility with existing components.
 // The component code imports these names; we provide equivalents using the new Payload fetchers.
 export const CASE_STUDIES_QUERY = { type: 'case-studies' };
@@ -334,6 +474,14 @@ export async function cmsFetch(query, params = {}) {
       return fetchExplorations();
     case 'highlighted-explorations':
       return fetchHighlightedExplorations();
+    case 'resources':
+      return fetchResources(params);
+    case 'featured-resources':
+      return fetchFeaturedResources(params.limit || 4);
+    case 'single-resource':
+      return fetchSingleResource(params.slug || query.slug);
+    case 'resource-types':
+      return fetchResourceTypes();
     default:
       throw new Error(`Unknown query type: ${query.type}`);
   }
