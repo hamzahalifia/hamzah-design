@@ -84,7 +84,7 @@ export default function Navbar({ hideNavLinks = false }) {
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
-  const renderCategoryIcon = (cat) => {
+  const renderCategoryIcon = (cat, iconClass = "w-5 h-5") => {
     if (cat.icon) {
       if (
         typeof cat.icon === "string" &&
@@ -94,11 +94,11 @@ export default function Navbar({ hideNavLinks = false }) {
           <img
             src={cat.icon}
             alt={cat.name}
-            className="w-8 h-8 object-contain"
+            className={`${iconClass} object-contain`}
           />
         );
       }
-      return <Icon icon={cat.icon} className="w-8 h-8" />;
+      return <Icon icon={cat.icon} className={iconClass} />;
     }
 
     const fallbackIconMap = {
@@ -118,7 +118,7 @@ export default function Navbar({ hideNavLinks = false }) {
     return (
       <Icon
         icon={fallbackIconMap[cat.slug] || "solar:folder-with-files-linear"}
-        className="w-8 h-8"
+        className={iconClass}
       />
     );
   };
@@ -148,42 +148,42 @@ export default function Navbar({ hideNavLinks = false }) {
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Desktop Navigation Items */}
           {!hideNavLinks && (
-            <nav className="hidden md:flex items-center gap-8 mr-2 relative">
+            <nav className="hidden md:flex items-center gap-6 lg:gap-8 mr-2 relative">
               <NavLink
                 to="/about"
                 className={({ isActive }) =>
-                  `text-sm py-1 font-normal transition-colors ${
+                  `text-sm py-1 font-normal whitespace-nowrap transition-colors ${
                     isActive
                       ? "text-black dark:text-white font-medium"
                       : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-black dark:hover:text-white"
                   }`
                 }
               >
-                <RollingText>About</RollingText>
+                <RollingText className="whitespace-nowrap">About</RollingText>
               </NavLink>
               <NavLink
                 to="/work"
                 className={({ isActive }) =>
-                  `text-sm py-1 font-normal transition-colors ${
+                  `text-sm py-1 font-normal whitespace-nowrap transition-colors ${
                     isActive
                       ? "text-black dark:text-white font-medium"
                       : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-black dark:hover:text-white"
                   }`
                 }
               >
-                <RollingText>Work</RollingText>
+                <RollingText className="whitespace-nowrap">Work</RollingText>
               </NavLink>
               <NavLink
                 to="/exploration"
                 className={({ isActive }) =>
-                  `text-sm py-1 font-normal transition-colors ${
+                  `text-sm py-1 font-normal whitespace-nowrap transition-colors ${
                     isActive
                       ? "text-black dark:text-white font-medium"
                       : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-black dark:hover:text-white"
                   }`
                 }
               >
-                <RollingText>Exploration</RollingText>
+                <RollingText className="whitespace-nowrap">Exploration</RollingText>
               </NavLink>
 
               {/* Resources Mega Menu Trigger */}
@@ -195,17 +195,17 @@ export default function Navbar({ hideNavLinks = false }) {
                 <NavLink
                   to="/resources"
                   className={({ isActive }) =>
-                    `text-sm py-1 flex items-center gap-1 font-normal transition-colors ${
+                    `text-sm py-1 flex items-center gap-1 font-normal whitespace-nowrap transition-colors ${
                       isActive
                         ? "text-black dark:text-white font-medium"
                         : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-black dark:hover:text-white"
                     }`
                   }
                 >
-                  <RollingText>Resources</RollingText>
+                  <RollingText className="whitespace-nowrap">Resources</RollingText>
                   <Icon
                     icon="solar:alt-arrow-down-linear"
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
                       megaMenuOpen ? "rotate-180" : ""
                     }`}
                   />
@@ -218,58 +218,56 @@ export default function Navbar({ hideNavLinks = false }) {
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                      className={`fixed left-0 right-0 top-[60px] w-full z-50 border-b border-attio-border-light dark:border-attio-border-dark shadow-2xl pointer-events-auto transition-colors duration-300 h-[40vh] min-h-[320px] max-h-[440px] flex flex-col justify-center ${
+                      transition={{ duration: 0.18, ease: "easeOut" }}
+                      className={`fixed left-0 right-0 top-[60px] w-full z-50 border-b border-attio-border-light dark:border-attio-border-dark shadow-2xl pointer-events-auto transition-colors duration-300 py-6 sm:py-7 flex items-center justify-center ${
                         theme === "dark"
                           ? "bg-[#0A0A0B] text-white"
                           : "bg-[#FAF8F5] text-neutral-900"
                       }`}
                     >
-                      <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 py-6 h-full flex flex-col justify-center">
-                        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 xl:gap-8 h-full w-full">
+                      <div className="w-full max-w-[1440px] px-4 sm:px-8 flex items-center justify-center">
+                        <div className="flex items-center justify-center gap-3.5 sm:gap-4 max-w-full">
                           
-                          {/* Left Column: 3 Categories Per Row, Full Height Grid */}
-                          <div className="flex-1 w-full h-full flex flex-col justify-center">
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4 h-full grid-rows-2">
-                              {displayCategories.map((cat) => (
-                                <Link
-                                  key={cat.slug || cat.id}
-                                  to={`/resources?type=${cat.slug}`}
-                                  onClick={() => setMegaMenuOpen(false)}
-                                  className={`group relative flex flex-col items-center justify-center p-4 sm:p-5 rounded-xl border transition-all duration-200 text-center cursor-pointer h-full ${
+                          {/* Categories: 3 Columns x 2 Rows Grid */}
+                          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+                            {displayCategories.map((cat) => (
+                              <Link
+                                key={cat.slug || cat.id}
+                                to={`/resources?type=${cat.slug}`}
+                                onClick={() => setMegaMenuOpen(false)}
+                                className={`group relative flex flex-col items-center justify-center w-[135px] sm:w-[155px] md:w-[165px] h-[92px] sm:h-[100px] rounded-xl border transition-all duration-200 text-center cursor-pointer ${
+                                  theme === "dark"
+                                    ? "bg-[#141416] hover:bg-[#1A1A1D] border-neutral-800/90 hover:border-neutral-700 text-neutral-200 hover:text-white hover:shadow-lg hover:shadow-black/20"
+                                    : "bg-white hover:bg-neutral-50/80 border-neutral-200/80 hover:border-neutral-300 hover:shadow-sm text-neutral-800 hover:text-black"
+                                }`}
+                              >
+                                <div
+                                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-200 shadow-xs ${
                                     theme === "dark"
-                                      ? "bg-[#141416]/90 hover:bg-[#1C1C1F] border-neutral-800 hover:border-neutral-700 text-neutral-200 hover:text-white"
-                                      : "bg-white/80 hover:bg-white border-neutral-200/80 hover:border-neutral-300 hover:shadow-md text-neutral-800 hover:text-black"
+                                      ? "bg-[#202024] border-neutral-700/60 text-neutral-200 group-hover:text-white"
+                                      : "bg-neutral-100/80 border-neutral-200/70 text-neutral-700 group-hover:text-black"
                                   }`}
                                 >
-                                  <div
-                                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border flex items-center justify-center mb-3 group-hover:scale-110 transition-all shadow-xs ${
-                                      theme === "dark"
-                                        ? "bg-neutral-800/90 border-neutral-700/70 text-neutral-200 group-hover:text-white"
-                                        : "bg-white border-neutral-200/80 text-neutral-800 group-hover:text-black"
-                                    }`}
-                                  >
-                                    {renderCategoryIcon(cat)}
-                                  </div>
-                                  <span className="text-xs sm:text-sm font-semibold transition-colors leading-tight line-clamp-1">
-                                    {cat.name}
-                                  </span>
-                                </Link>
-                              ))}
-                            </div>
+                                  {renderCategoryIcon(cat, "w-4.5 h-4.5 sm:w-5 sm:h-5")}
+                                </div>
+                                <span className="text-xs sm:text-[13px] font-medium transition-colors leading-tight line-clamp-1 px-2">
+                                  {cat.name}
+                                </span>
+                              </Link>
+                            ))}
                           </div>
 
-                          {/* Right Column: 1:1 Aspect Ratio Promo Card Following Height (Opens UI8 Team Link) */}
-                          <div className="h-full aspect-square flex-shrink-0 flex items-center justify-center">
+                          {/* Right Column: Matched Height Promo Card (Opens UI8 Team Link) */}
+                          <div className="h-[194px] sm:h-[212px] aspect-square flex-shrink-0">
                             <a
                               href="https://ui8.net/users/onfire-studio"
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={() => setMegaMenuOpen(false)}
-                              className={`relative h-full w-full aspect-square rounded-xl overflow-hidden border transition-all duration-300 group cursor-pointer block ${
+                              className={`relative h-full w-full rounded-xl overflow-hidden border transition-all duration-300 group cursor-pointer block ${
                                 theme === "dark"
-                                  ? "border-neutral-800 bg-[#121214]"
-                                  : "border-neutral-200 bg-neutral-100"
+                                  ? "border-neutral-800 bg-[#141416] hover:border-neutral-700"
+                                  : "border-neutral-200/80 bg-white hover:border-neutral-300"
                               }`}
                             >
                               <img
