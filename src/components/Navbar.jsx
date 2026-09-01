@@ -1,18 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../context/ThemeContext";
 import { isSoundEnabled, setSoundEnabled } from "../lib/sound";
+import { fetchResourceTypes } from "../lib/cmsendpoint";
 
 import { RollingText } from "./magicui/RollingText";
 import AnimatedThemeToggler from "./magicui/AnimatedThemeToggler";
+
+const fallbackCategories = [
+  { name: "UI Kits", slug: "ui-kit", icon: "solar:widget-5-linear" },
+  { name: "Web Templates", slug: "web-template", icon: "solar:window-frame-linear" },
+  { name: "Coded Templates", slug: "coded-templates", icon: "solar:code-square-linear" },
+  { name: "React Components", slug: "react-component", icon: "solar:atom-linear" },
+  { name: "Framer Templates", slug: "framer-template", icon: "solar:figma-linear" },
+  { name: "No-code", slug: "no-code", icon: "solar:magic-stick-linear" },
+  { name: "Mockups", slug: "mockups", icon: "solar:laptop-minimalistic-linear" },
+  { name: "3D Assets", slug: "3d-assets", icon: "solar:box-minimalistic-linear" },
+  { name: "Themes", slug: "themes", icon: "solar:palette-linear" },
+  { name: "Presentation", slug: "presentation", icon: "solar:videocamera-record-linear" },
+];
 
 export default function Navbar({ hideNavLinks = false }) {
   const { theme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
+  const [cmsCategories, setCmsCategories] = useState([]);
+
+  useEffect(() => {
+    async function loadCmsCategories() {
+      try {
+        const types = await fetchResourceTypes();
+        if (types && types.length > 0) {
+          setCmsCategories(types);
+        }
+      } catch (err) {
+        console.error("Failed to load resource types for mega menu:", err);
+      }
+    }
+    loadCmsCategories();
+  }, []);
+
+  const displayCategories = cmsCategories.length > 0 ? cmsCategories : fallbackCategories;
 
   const toggleSound = () => {
     const newState = !soundOn;
@@ -23,18 +54,30 @@ export default function Navbar({ hideNavLinks = false }) {
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
-  const megaCategories = [
-    { name: "UI Kits", slug: "ui-kit", icon: "solar:widget-5-linear" },
-    { name: "Web Templates", slug: "web-template", icon: "solar:window-frame-linear" },
-    { name: "Coded Templates", slug: "coded-templates", icon: "solar:code-square-linear" },
-    { name: "React Components", slug: "react-component", icon: "solar:atom-linear" },
-    { name: "Framer Templates", slug: "framer-template", icon: "solar:figma-linear" },
-    { name: "No-code", slug: "no-code", icon: "solar:magic-stick-linear" },
-    { name: "Mockups", slug: "mockups", icon: "solar:laptop-minimalistic-linear" },
-    { name: "3D Assets", slug: "3d-assets", icon: "solar:box-minimalistic-linear" },
-    { name: "Themes", slug: "themes", icon: "solar:palette-linear" },
-    { name: "Presentation", slug: "presentation", icon: "solar:videocamera-record-linear" },
-  ];
+  const renderCategoryIcon = (cat) => {
+    if (cat.icon) {
+      if (typeof cat.icon === "string" && (cat.icon.startsWith("http") || cat.icon.startsWith("/"))) {
+        return <img src={cat.icon} alt={cat.name} className="w-6 h-6 object-contain" />;
+      }
+      return <Icon icon={cat.icon} className="w-6 h-6" />;
+    }
+
+    const fallbackIconMap = {
+      "ui-kit": "solar:widget-5-linear",
+      "web-template": "solar:window-frame-linear",
+      "coded-templates": "solar:code-square-linear",
+      "react-component": "solar:atom-linear",
+      "framer-template": "solar:figma-linear",
+      "framer-component": "solar:figma-linear",
+      "no-code": "solar:magic-stick-linear",
+      "mockups": "solar:laptop-minimalistic-linear",
+      "3d-assets": "solar:box-minimalistic-linear",
+      "themes": "solar:palette-linear",
+      "presentation": "solar:videocamera-record-linear",
+    };
+
+    return <Icon icon={fallbackIconMap[cat.slug] || "solar:folder-with-files-linear"} className="w-6 h-6" />;
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">
@@ -65,10 +108,10 @@ export default function Navbar({ hideNavLinks = false }) {
               <NavLink
                 to="/about"
                 className={({ isActive }) =>
-                  `text-sm py-1 ${
+                  `text-sm py-1 font-normal transition-colors ${
                     isActive
-                      ? "text-black dark:text-white underline underline-offset-4 font-semibold"
-                      : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400"
+                      ? "text-black dark:text-white font-medium"
+                      : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-black dark:hover:text-white"
                   }`
                 }
               >
@@ -77,10 +120,10 @@ export default function Navbar({ hideNavLinks = false }) {
               <NavLink
                 to="/work"
                 className={({ isActive }) =>
-                  `text-sm py-1 ${
+                  `text-sm py-1 font-normal transition-colors ${
                     isActive
-                      ? "text-black dark:text-white underline underline-offset-4 font-semibold"
-                      : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400"
+                      ? "text-black dark:text-white font-medium"
+                      : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-black dark:hover:text-white"
                   }`
                 }
               >
@@ -89,10 +132,10 @@ export default function Navbar({ hideNavLinks = false }) {
               <NavLink
                 to="/exploration"
                 className={({ isActive }) =>
-                  `text-sm py-1 ${
+                  `text-sm py-1 font-normal transition-colors ${
                     isActive
-                      ? "text-black dark:text-white underline underline-offset-4 font-semibold"
-                      : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400"
+                      ? "text-black dark:text-white font-medium"
+                      : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-black dark:hover:text-white"
                   }`
                 }
               >
@@ -108,10 +151,10 @@ export default function Navbar({ hideNavLinks = false }) {
                 <NavLink
                   to="/resources"
                   className={({ isActive }) =>
-                    `text-sm py-1 flex items-center gap-1 ${
+                    `text-sm py-1 flex items-center gap-1 font-normal transition-colors ${
                       isActive
-                        ? "text-black dark:text-white underline underline-offset-4 font-semibold"
-                        : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-neutral-500 dark:hover:text-neutral-400"
+                        ? "text-black dark:text-white font-medium"
+                        : "text-attio-text-primary-light dark:text-attio-text-primary-dark hover:text-black dark:hover:text-white"
                     }`
                   }
                 >
@@ -124,43 +167,77 @@ export default function Navbar({ hideNavLinks = false }) {
                   />
                 </NavLink>
 
-                {/* Mega Menu Dropdown */}
+                {/* Full-Width Mega Menu Dropdown */}
                 <AnimatePresence>
                   {megaMenuOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: 12, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
                       transition={{ duration: 0.2, ease: "easeOut" }}
-                      className="absolute right-0 top-full pt-2 z-50 w-[680px] pointer-events-auto"
+                      className={`fixed left-0 right-0 top-[60px] w-full z-50 border-b border-attio-border-light dark:border-attio-border-dark shadow-2xl pointer-events-auto transition-colors duration-300 ${
+                        theme === "dark"
+                          ? "bg-[#0A0A0B] text-white"
+                          : "bg-white text-neutral-900"
+                      }`}
                     >
-                      <div className="bg-[#121215]/95 dark:bg-[#0A0A0C]/95 backdrop-blur-2xl border border-white/10 dark:border-neutral-800 rounded-2xl p-5 shadow-2xl text-white">
-                        <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
-                          <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">
-                            Browse Categories
-                          </span>
+                      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-6">
+                        <div
+                          className={`flex items-center justify-between pb-4 mb-6 border-b ${
+                            theme === "dark" ? "border-neutral-800/80" : "border-neutral-200"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">
+                              Browse Categories
+                            </span>
+                            <span
+                              className={`text-[11px] font-mono px-2.5 py-0.5 rounded-full font-semibold ${
+                                theme === "dark"
+                                  ? "bg-neutral-800 text-neutral-300 border border-neutral-700"
+                                  : "bg-neutral-100 text-neutral-600 border border-neutral-200"
+                              }`}
+                            >
+                              {displayCategories.length}
+                            </span>
+                          </div>
                           <Link
                             to="/resources"
                             onClick={() => setMegaMenuOpen(false)}
-                            className="text-xs font-semibold text-neutral-300 hover:text-white underline underline-offset-2 flex items-center gap-1"
+                            className={`px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-all no-underline shadow-xs cursor-pointer ${
+                              theme === "dark"
+                                ? "bg-white text-black hover:bg-neutral-200 border border-neutral-200"
+                                : "bg-neutral-900 text-white hover:bg-neutral-800 border border-neutral-800"
+                            }`}
                           >
                             <span>View All</span>
                             <Icon icon="solar:arrow-right-linear" className="w-3.5 h-3.5" />
                           </Link>
                         </div>
 
-                        <div className="grid grid-cols-5 gap-3">
-                          {megaCategories.map((cat) => (
+                        {/* UI8-Style Category Cards (Larger cards with crisp dark/light styling) */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
+                          {displayCategories.map((cat) => (
                             <Link
-                              key={cat.slug}
+                              key={cat.slug || cat.id}
                               to={`/resources?type=${cat.slug}`}
                               onClick={() => setMegaMenuOpen(false)}
-                              className="group flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all duration-200 text-center cursor-pointer"
+                              className={`group relative flex flex-col items-center justify-center p-5 rounded-2xl border transition-all duration-200 text-center cursor-pointer min-h-[120px] ${
+                                theme === "dark"
+                                  ? "bg-[#141416]/80 hover:bg-[#1C1C1F] border-neutral-800 hover:border-neutral-700 text-neutral-200 hover:text-white"
+                                  : "bg-neutral-50/80 hover:bg-white border-neutral-200/80 hover:border-neutral-300 hover:shadow-md text-neutral-800 hover:text-black"
+                              }`}
                             >
-                              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white mb-2 group-hover:scale-110 transition-transform">
-                                <Icon icon={cat.icon} className="w-5 h-5" />
+                              <div
+                                className={`w-12 h-12 rounded-xl border flex items-center justify-center mb-3 group-hover:scale-110 transition-all shadow-xs ${
+                                  theme === "dark"
+                                    ? "bg-neutral-800/90 border-neutral-700/70 text-neutral-200 group-hover:text-white"
+                                    : "bg-white border-neutral-200/80 text-neutral-800 group-hover:text-black"
+                                }`}
+                              >
+                                {renderCategoryIcon(cat)}
                               </div>
-                              <span className="text-xs font-medium text-neutral-200 group-hover:text-white leading-tight">
+                              <span className="text-xs sm:text-sm font-semibold transition-colors leading-tight line-clamp-1">
                                 {cat.name}
                               </span>
                             </Link>

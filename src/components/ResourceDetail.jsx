@@ -212,9 +212,6 @@ export default function ResourceDetail() {
                       className="w-4 h-4 text-neutral-800 dark:text-neutral-200"
                     />
                   </Link>
-                  <span className="text-sm font-normal text-neutral-900 dark:text-neutral-100 select-none">
-                    {getReadingTime(data.content)} min read
-                  </span>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -253,29 +250,13 @@ export default function ResourceDetail() {
                 </div>
               </div>
 
-              {/* Title Header */}
+              {/* Title Header - Eye-catching Category Badge Only (No Icon) */}
               <div ref={titleRef} className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6 space-y-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  {data.type?.name && (
-                    <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700">
-                      {data.type.name}
-                    </span>
-                  )}
-                  {data.version && (
-                    <span className="px-2.5 py-0.5 text-xs font-mono font-medium rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 border border-neutral-200/60 dark:border-neutral-700/60">
-                      {data.version}
-                    </span>
-                  )}
-                  <span
-                    className={`px-3 py-0.5 text-xs font-bold rounded-full font-mono border ${
-                      data.priceType === "free"
-                        ? "bg-emerald-500 text-white border-emerald-400"
-                        : "bg-black text-white dark:bg-white dark:text-black border-neutral-700 dark:border-neutral-200"
-                    }`}
-                  >
-                    {data.priceType === "free" ? "FREE" : `$${data.price}`}
-                  </span>
-                </div>
+                {data.type?.name && (
+                  <div className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold bg-neutral-900 text-white dark:bg-white dark:text-black shadow-md border border-neutral-800 dark:border-neutral-200 tracking-wide">
+                    <span>{data.type.name}</span>
+                  </div>
+                )}
 
                 <h1 className="font-serif-attio text-4xl md:text-5xl lg:text-6xl font-medium text-black dark:text-white leading-tight tracking-tight">
                   {data.title}
@@ -352,42 +333,48 @@ export default function ResourceDetail() {
                 </div>
               )}
 
-              {/* Main Content Layout */}
-              <div className="py-8 lg:py-16 px-4 sm:px-8 lg:px-16 xl:px-20 grid grid-cols-1 md:grid-cols-[1fr,240px] gap-8 lg:gap-12 max-w-[1440px] mx-auto">
-                {/* Left Column: Description, CTA, RichText Overview */}
-                <div className="min-w-0">
+              {/* Main Content Layout (Single Full Width Column, No Right Aside) */}
+              <div className="py-8 lg:py-16 px-4 sm:px-8 lg:px-16 xl:px-20 max-w-4xl mx-auto w-full">
+                <div className="min-w-0 w-full">
                   {data.description && (
-                    <p className="mb-8 text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-4xl">
+                    <p className="mb-8 text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed font-sans">
                       {data.description}
                     </p>
                   )}
 
+                  {/* CTA Button: Get Template (Free + Icon) or Buy Template · $price (Paid, No Icon) */}
                   {data.link && (
                     <RainbowButton
                       asChild
-                      className="w-full sm:w-auto text-base font-semibold btn-radius-lg mb-8"
-                      style={{ height: "46px" }}
+                      className="w-full sm:w-auto text-base font-semibold btn-radius-lg mb-10"
+                      style={{ height: "48px" }}
                     >
                       <a
                         href={data.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2"
+                        className="inline-flex items-center gap-2 px-6"
                       >
-                        <RollingText>Get Resource</RollingText>
-                        <Icon icon="solar:export-linear" className="w-4 h-4 ml-1" />
+                        <RollingText>
+                          {data.priceType === "paid" && data.price > 0
+                            ? `Buy Template · $${data.price}`
+                            : "Get Template"}
+                        </RollingText>
+                        {(data.priceType === "free" || !data.price) && (
+                          <Icon icon="solar:download-minimalistic-bold" className="w-4 h-4 ml-1" />
+                        )}
                       </a>
                     </RainbowButton>
                   )}
 
-                  {/* Metadata Summary Grid */}
-                  <div className="mb-10 grid grid-cols-2 sm:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
+                  {/* Consolidated Metadata Summary Grid */}
+                  <div className="mb-12 grid grid-cols-2 sm:grid-cols-4 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
                     {data.type?.name && (
                       <div>
-                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1.5">
                           Category
                         </span>
-                        <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                        <p className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
                           {data.type.name}
                         </p>
                       </div>
@@ -395,12 +382,12 @@ export default function ResourceDetail() {
 
                     {data.platform?.name && (
                       <div>
-                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1.5">
                           Platform
                         </span>
-                        <div className="flex items-center gap-1.5 font-medium text-neutral-900 dark:text-neutral-100">
+                        <div className="flex items-center gap-2 font-semibold text-sm text-neutral-900 dark:text-neutral-100">
                           {data.platform.logo && (
-                            <img src={data.platform.logo} alt={data.platform.name} className="w-4 h-4 object-contain" />
+                            <img src={data.platform.logo} alt={data.platform.name} className="w-6 h-6 object-contain" />
                           )}
                           <span>{data.platform.name}</span>
                         </div>
@@ -408,13 +395,43 @@ export default function ResourceDetail() {
                     )}
 
                     <div>
-                      <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1">
+                      <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1.5">
                         Price
                       </span>
-                      <p className="font-mono font-bold text-neutral-900 dark:text-neutral-100">
+                      <p className="font-mono font-bold text-sm text-neutral-900 dark:text-neutral-100">
                         {data.priceType === "free" ? "Free Download" : `$${data.price}`}
                       </p>
                     </div>
+
+                    {data.version && (
+                      <div>
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-1.5">
+                          Version
+                        </span>
+                        <p className="font-mono font-semibold text-sm text-neutral-900 dark:text-neutral-100">
+                          {data.version}
+                        </p>
+                      </div>
+                    )}
+
+                    {data.techStacks && data.techStacks.length > 0 && (
+                      <div className="col-span-2 sm:col-span-4 pt-4 border-t border-neutral-200/80 dark:border-neutral-800/80">
+                        <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-2">
+                          Tech Stack
+                        </span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {data.techStacks.map((tech, idx) => (
+                            <span
+                              key={idx}
+                              className="px-3 py-1 rounded-lg text-xs font-mono font-medium bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 flex items-center gap-2 shadow-2xs"
+                            >
+                              {tech.logo && <img src={tech.logo} alt={tech.name} className="w-5 h-5 object-contain" />}
+                              <span>{tech.name}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* RichText Overview (No TOC) */}
@@ -426,39 +443,6 @@ export default function ResourceDetail() {
 
                   <div ref={contentEndRef} />
                 </div>
-
-                {/* Right Sidebar: Tech Stacks & Key Specs */}
-                <aside className="space-y-6">
-                  {data.techStacks && data.techStacks.length > 0 && (
-                    <div className="p-5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 space-y-3">
-                      <span className="text-xs font-bold uppercase tracking-widest text-neutral-400 block">
-                        Tech Stack
-                      </span>
-                      <div className="flex flex-wrap gap-2">
-                        {data.techStacks.map((tech, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2.5 py-1 rounded-lg text-xs font-mono font-medium bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 flex items-center gap-1.5"
-                          >
-                            {tech.logo && <img src={tech.logo} alt={tech.name} className="w-3.5 h-3.5 object-contain" />}
-                            <span>{tech.name}</span>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {data.version && (
-                    <div className="p-5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 space-y-1">
-                      <span className="text-xs font-bold uppercase tracking-widest text-neutral-400 block">
-                        Current Version
-                      </span>
-                      <p className="font-mono text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                        {data.version}
-                      </p>
-                    </div>
-                  )}
-                </aside>
               </div>
             </div>
           </div>

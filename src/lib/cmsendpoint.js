@@ -321,13 +321,14 @@ function normalizeResource(doc) {
 
   const rawImage = doc.thumbnail || doc.image || doc.featuredImage || doc.heroImage || doc.media;
   const image = resolveMediaUrl(rawImage);
-
   let typeName = null;
   let typeSlug = null;
+  let typeIcon = null;
   if (doc.type) {
     if (typeof doc.type === 'object') {
       typeName = doc.type.name || doc.type.title || null;
       typeSlug = doc.type.slug || null;
+      typeIcon = typeof doc.type.icon === 'string' ? doc.type.icon.trim() : (resolveMediaUrl(doc.type.icon) || null);
     } else if (typeof doc.type === 'string') {
       typeName = doc.type;
     }
@@ -377,7 +378,7 @@ function normalizeResource(doc) {
     description: doc.description || '',
     isFeatured: Boolean(doc.isFeatured),
     image,
-    type: { name: typeName, slug: typeSlug },
+    type: { name: typeName, slug: typeSlug, icon: typeIcon },
     platform: { name: platformName, logo: platformLogo },
     techStacks,
     priceType,
@@ -390,11 +391,11 @@ function normalizeResource(doc) {
       videoEmbedUrl,
     },
     content: doc.content || null,
-    seoTitle: doc.seoTitle || doc.title,
-    seoDescription: doc.seoDescription || doc.description,
+    seoTitle: doc.seoTitle || doc.title || '',
+    seoDescription: doc.seoDescription || doc.description || '',
     ogImage: resolveMediaUrl(doc.ogImage) || image,
-    createdAt: doc.createdAt,
-    publishedAt: doc.publishedAt,
+    createdAt: doc.createdAt || doc.publishedAt || null,
+    updatedAt: doc.updatedAt || null,
   };
 }
 
@@ -442,6 +443,7 @@ export async function fetchResourceTypes() {
     id: doc.id,
     name: doc.name,
     slug: doc.slug,
+    icon: typeof doc.icon === 'string' ? doc.icon.trim() : (resolveMediaUrl(doc.icon) || null),
   }));
 }
 

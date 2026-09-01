@@ -122,7 +122,13 @@ function renderLexicalNode(node, key, context) {
 
   switch (type) {
     case 'root': return renderChildren(node.children, key, headingContext);
-    case 'paragraph': return <p key={key} className="mb-5 leading-relaxed break-words" style={style}>{renderChildren(node.children, key, headingContext)}</p>;
+    case 'paragraph': {
+      // If empty paragraph, render subtle space or break
+      if (!node.children || node.children.length === 0) {
+        return <p key={key} className="mb-4">&nbsp;</p>;
+      }
+      return <p key={key} className="mb-5 leading-relaxed break-words" style={style}>{renderChildren(node.children, key, headingContext)}</p>;
+    }
     case 'heading': {
       const { tag } = node;
       const Tag = tag || 'h2';
@@ -140,13 +146,30 @@ function renderLexicalNode(node, key, context) {
     }
     case 'quote': return <blockquote key={key} className="border-l-4 border-neutral-300 dark:border-neutral-600 pl-4 italic my-4 text-neutral-600 dark:text-neutral-400" style={style}>{renderChildren(node.children, key, headingContext)}</blockquote>;
     case 'list': {
-      const ListTag = node.tag === 'ol' ? 'ol' : 'ul';
-      return <ListTag key={key} className={`${ListTag==='ol'?'list-decimal':'list-disc'} pl-6 mb-5 space-y-1.5`}>{renderChildren(node.children, key, headingContext)}</ListTag>;
+      const isNumbered = node.listType === 'number' || node.tag === 'ol';
+      const ListTag = isNumbered ? 'ol' : 'ul';
+      return (
+        <ListTag 
+          key={key} 
+          className={`${isNumbered ? 'list-decimal' : 'list-disc'} pl-6 mb-5 space-y-2 text-neutral-800 dark:text-neutral-200`}
+        >
+          {renderChildren(node.children, key, headingContext)}
+        </ListTag>
+      );
     }
-    case 'listitem': return <li key={key} className="mb-1.5 leading-relaxed">{renderChildren(node.children, key, headingContext)}</li>;
+    case 'listitem': return <li key={key} className="mb-1 leading-relaxed">{renderChildren(node.children, key, headingContext)}</li>;
+    case 'linebreak':
+    case 'lineBreak':
+      return <br key={key} />;
+    case 'code':
+      return (
+        <pre key={key} className="p-4 rounded-xl bg-neutral-900 text-neutral-100 font-mono text-sm overflow-x-auto my-5">
+          <code>{renderChildren(node.children, key, headingContext)}</code>
+        </pre>
+      );
     case 'link': {
       const url = node.fields?.url || node.fields?.href || '';
-      return <a key={key} href={url} target={node.fields?.newTab ? '_blank' : undefined} className="text-blue-500 hover:underline">{renderChildren(node.children, key, headingContext)}</a>;
+      return <a key={key} href={url} target={node.fields?.newTab ? '_blank' : undefined} rel="noopener noreferrer" className="text-blue-500 hover:underline">{renderChildren(node.children, key, headingContext)}</a>;
     }
     case 'upload': return renderUploadNode(node, key, headingContext);
     case 'block': {
@@ -223,11 +246,30 @@ function renderUploadNode(node, key, context) {
 }
 
 function resolveTextNode(node, index) {
-  if (!node || !node.text) return null;
-  let children = node.text;
-  if (node.format & IS_BOLD) children = <strong key={`b-${index}`}>{children}</strong>;
-  if (node.format & IS_ITALIC) children = <em key={`i-${index}`}>{children}</em>;
-  return <React.Fragment key={`t-${index}`}>{children}</React.Fragment>;
+  if (!node) return null;
+  const rawText = node.text || '';
+  if (!rawText) return null;
+
+  // Split lines to properly render breaks and paragraphs from CMS
+  const lines = rawText.split('\n');
+  const formatted = lines.map((line, lIdx) => {
+    let element = line;
+    if (node.format & IS_BOLD) element = <strong key={`b-${lIdx}`}>{element}</strong>;
+    if (node.format & IS_ITALIC) element = <em key={`i-${lIdx}`}>{element}</em>;
+    if (node.format & IS_UNDERLINE) element = <u key={`u-${lIdx}`}>{element}</u>;
+    if (node.format & IS_STRIKETHROUGH) element = <s key={`s-${lIdx}`}>{element}</s>;
+    if (node.format & IS_CODE) element = <code key={`c-${lIdx}`} className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 font-mono text-xs">{element}</code>;
+    if (node.format & IS_SUBSCRIPT) element = <sub key={`sub-${lIdx}`}>{element}</sub>;
+    if (node.format & IS_SUPERSCRIPT) element = <sup key={`sup-${lIdx}`}>{element}</sup>;
+    return (
+      <React.Fragment key={`l-${lIdx}`}>
+        {lIdx > 0 && <br />}
+        {element}
+      </React.Fragment>
+    );
+  });
+
+  return <React.Fragment key={`t-${index}`}>{formatted}</React.Fragment>;
 }
 
 export function extractTableOfContents(content) {

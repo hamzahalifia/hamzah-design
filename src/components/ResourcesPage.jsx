@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Icon } from "@iconify/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import FooterReveal from "./FooterReveal";
 import { useTheme } from "../context/ThemeContext";
 import SkeletonLoader from "./ui/SkeletonLoader";
@@ -9,6 +9,7 @@ import PageMeta from "./SEO/PageMeta";
 import { cmsFetch } from "../lib/cmsendpoint";
 import OptimizedImage from "./OptimizedImage";
 import { FlickeringGrid } from "./magicui/FlickeringGrid";
+import { Cursor } from "./core/cursor";
 import {
   Pagination,
   PaginationContent,
@@ -18,7 +19,7 @@ import {
   PaginationPrevious,
 } from "./ui/pagination";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 9;
 
 export default function ResourcesPage() {
   const { theme } = useTheme();
@@ -28,12 +29,12 @@ export default function ResourcesPage() {
   const [resources, setResources] = useState([]);
   const [resourceTypes, setResourceTypes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isCursorHovering, setIsCursorHovering] = useState(false);
 
-  // Filters State
+  // Filters State - Supporting Multiple Selections
   const [search, setSearch] = useState("");
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedPriceFilter, setSelectedPriceFilter] = useState("all"); // 'all', 'free', 'paid'
-  const [sortBy, setSortBy] = useState("newest"); // 'newest', 'price-low', 'price-high'
+  const [selectedTypes, setSelectedTypes] = useState([]); // array of slugs: string[]
+  const [selectedPrices, setSelectedPrices] = useState([]); // array of 'free' | 'paid'
   const [currentPage, setCurrentPage] = useState(1);
 
   // Parse URL query parameter (e.g., /resources?type=ui-kit)
@@ -41,7 +42,8 @@ export default function ResourcesPage() {
     const params = new URLSearchParams(location.search);
     const typeParam = params.get("type");
     if (typeParam) {
-      setSelectedType(typeParam);
+      const types = typeParam.split(",").filter(Boolean);
+      setSelectedTypes(types);
     }
   }, [location.search]);
 
@@ -71,10 +73,42 @@ export default function ResourcesPage() {
     });
   }, [resourceTypes, resources]);
 
-  // Filter & Sort Logic
-  const filteredAndSortedResources = useMemo(() => {
+  const priceCounts = useMemo(() => {
+    const free = resources.filter((r) => r.priceType === "free" || r.price === 0).length;
+    const paid = resources.filter((r) => r.priceType === "paid" && r.price > 0).length;
+    return { free, paid };
+  }, [resources]);
+
+  // Toggle Category Checkbox
+  const toggleType = (slug) => {
+    let next;
+    if (selectedTypes.includes(slug)) {
+      next = selectedTypes.filter((s) => s !== slug);
+    } else {
+      next = [...selectedTypes, slug];
+    }
+    setSelectedTypes(next);
+    if (next.length > 0) {
+      navigate(`/resources?type=${next.join(",")}`, { replace: true });
+    } else {
+      navigate("/resources", { replace: true });
+    }
+  };
+
+  // Toggle Price Checkbox
+  const togglePrice = (priceVal) => {
+    if (selectedPrices.includes(priceVal)) {
+      setSelectedPrices(selectedPrices.filter((p) => p !== priceVal));
+    } else {
+      setSelectedPrices([...selectedPrices, priceVal]);
+    }
+  };
+
+  // Filter Logic
+  const filteredResources = useMemo(() => {
     let result = [...resources];
 
+    // Search filter
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
@@ -87,53 +121,48 @@ export default function ResourcesPage() {
       );
     }
 
-    if (selectedType) {
-      result = result.filter((r) => r.type?.slug === selectedType);
+    // Multiple Category Filter
+    if (selectedTypes.length > 0) {
+      result = result.filter((r) => r.type?.slug && selectedTypes.includes(r.type.slug));
     }
 
-    if (selectedPriceFilter === "free") {
-      result = result.filter((r) => r.priceType === "free" || r.price === 0);
-    } else if (selectedPriceFilter === "paid") {
-      result = result.filter((r) => r.priceType === "paid" && r.price > 0);
+    // Multiple Price Filter (Free, Paid)
+    if (selectedPrices.length > 0) {
+      result = result.filter((r) => {
+        const isFree = r.priceType === "free" || r.price === 0;
+        const isPaid = r.priceType === "paid" && r.price > 0;
+        return (
+          (selectedPrices.includes("free") && isFree) ||
+          (selectedPrices.includes("paid") && isPaid)
+        );
+      });
     }
 
-    if (sortBy === "price-low") {
-      result.sort((a, b) => (a.price || 0) - (b.price || 0));
-    } else if (sortBy === "price-high") {
-      result.sort((a, b) => (b.price || 0) - (a.price || 0));
-    } else if (sortBy === "newest") {
-      result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    }
+    // Default newest sort
+    result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
     return result;
-  }, [resources, search, selectedType, selectedPriceFilter, sortBy]);
+  }, [resources, search, selectedTypes, selectedPrices]);
 
-  const totalPages = Math.ceil(filteredAndSortedResources.length / ITEMS_PER_PAGE);
-  const paginated = filteredAndSortedResources.slice(
+  const totalPages = Math.ceil(filteredResources.length / ITEMS_PER_PAGE);
+  const paginated = filteredResources.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, selectedType, selectedPriceFilter, sortBy]);
+  }, [search, selectedTypes, selectedPrices]);
 
   const clearAllFilters = () => {
     setSearch("");
-    setSelectedType("");
-    setSelectedPriceFilter("all");
-    setSortBy("newest");
+    setSelectedTypes([]);
+    setSelectedPrices([]);
     navigate("/resources", { replace: true });
   };
 
   const activeFilterCount =
-    (search ? 1 : 0) + (selectedType ? 1 : 0) + (selectedPriceFilter !== "all" ? 1 : 0);
-
-  const selectedTypeName = useMemo(() => {
-    if (!selectedType) return null;
-    const match = resourceTypes.find((t) => t.slug === selectedType);
-    return match ? match.name : selectedType;
-  }, [selectedType, resourceTypes]);
+    (search ? 1 : 0) + selectedTypes.length + selectedPrices.length;
 
   return (
     <div className="bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark">
@@ -143,6 +172,42 @@ export default function ResourcesPage() {
         keywords="design resources marketplace, UI Kits, web templates, React components, Framer templates"
         canonical="https://hamzah.design/resources"
       />
+
+      {/* Reactive Floating Cursor */}
+      <Cursor
+        variants={{
+          initial: { scale: 0.3, opacity: 0 },
+          animate: { scale: 1, opacity: 1 },
+          exit: { scale: 0.3, opacity: 0 },
+        }}
+        springConfig={{ bounce: 0.001 }}
+        transition={{ ease: "easeInOut", duration: 0.15 }}
+      >
+        <motion.div
+          animate={{
+            width: isCursorHovering ? 135 : 0,
+            height: isCursorHovering ? 32 : 0,
+            opacity: isCursorHovering ? 1 : 0,
+            scale: isCursorHovering ? 1 : 0,
+          }}
+          className="flex items-center justify-center rounded-[24px] bg-gray-500/45 backdrop-blur-md dark:bg-gray-300/45 overflow-hidden"
+        >
+          <AnimatePresence>
+            {isCursorHovering ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                className="inline-flex w-full items-center justify-center"
+              >
+                <span className="text-xs font-semibold text-white dark:text-black whitespace-nowrap font-sans">
+                  View Resource
+                </span>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </motion.div>
+      </Cursor>
 
       <main
         aria-label="Resources page content"
@@ -167,52 +232,38 @@ export default function ResourcesPage() {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-[#0A0A0B] pointer-events-none" />
               </div>
 
-              <div className="relative z-10 space-y-4 max-w-4xl">
+              {/* Header Container - Full Width */}
+              <div className="relative z-10 space-y-5 w-full">
                 <div>
                   <h1 className="font-serif-attio text-[30px] sm:text-[36px] lg:text-[46px] leading-tight text-black dark:text-white">
                     Resources
                   </h1>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">
-                    Curated UI Kits, website templates, components, and design tools built for high-performance products.
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2 font-sans">
+                    Curated UI Kits, website templates, components, and design assets crafted for high-performance products.
                   </p>
                 </div>
 
-                {/* Top Search & Filter Toolbar */}
-                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                  <div className="relative flex-1">
-                    <Icon
-                      icon="solar:magnifer-linear"
-                      className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2"
-                    />
-                    <input
-                      type="text"
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Search resources, categories, tech stacks..."
-                      className="w-full pl-9 pr-8 py-2 rounded-lg bg-neutral-100 dark:bg-neutral-900 text-xs text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 border border-neutral-200 dark:border-neutral-800 focus:border-neutral-400 dark:focus:border-neutral-600 outline-none transition-colors"
-                    />
-                    {search && (
-                      <button
-                        onClick={() => setSearch("")}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
-                      >
-                        <Icon icon="solar:close-circle-linear" className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-neutral-400 whitespace-nowrap">Sort:</span>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="px-3 py-2 rounded-lg bg-neutral-100 dark:bg-neutral-900 text-xs font-semibold text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-800 focus:border-neutral-400 outline-none cursor-pointer"
+                {/* Search Bar - Full Width, Increased Height, No Sort */}
+                <div className="relative w-full">
+                  <Icon
+                    icon="solar:magnifer-linear"
+                    className="w-5 h-5 text-neutral-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
+                  />
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search resources, categories, tech stacks..."
+                    className="w-full h-11 sm:h-12 pl-12 pr-11 rounded-lg bg-[#F2F2F2] dark:bg-neutral-900 text-sm text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 border border-attio-border-light dark:border-attio-border-dark focus:border-neutral-400 dark:focus:border-neutral-600 outline-none transition-colors"
+                  />
+                  {search && (
+                    <button
+                      onClick={() => setSearch("")}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 cursor-pointer"
                     >
-                      <option value="newest">Newest</option>
-                      <option value="price-low">Price: Low to High</option>
-                      <option value="price-high">Price: High to Low</option>
-                    </select>
-                  </div>
+                      <Icon icon="solar:close-circle-linear" className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -221,45 +272,48 @@ export default function ResourcesPage() {
             {activeFilterCount > 0 && (
               <div className="px-5 py-3 border-b border-attio-border-light dark:border-attio-border-dark bg-neutral-50/50 dark:bg-neutral-900/30 flex items-center flex-wrap gap-2 text-xs">
                 <span className="text-neutral-500 font-medium mr-1">
-                  Active Filters ({filteredAndSortedResources.length} results):
+                  Active Filters ({filteredResources.length} results):
                 </span>
 
-                {selectedType && (
-                  <button
-                    onClick={() => {
-                      setSelectedType("");
-                      navigate("/resources", { replace: true });
-                    }}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-neutral-900 text-white dark:bg-white dark:text-black"
-                  >
-                    <span>{selectedTypeName}</span>
-                    <Icon icon="solar:close-linear" className="w-3 h-3" />
-                  </button>
-                )}
+                {selectedTypes.map((slug) => {
+                  const typeObj = resourceTypes.find((t) => t.slug === slug);
+                  const name = typeObj ? typeObj.name : slug;
+                  return (
+                    <button
+                      key={slug}
+                      onClick={() => toggleType(slug)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-neutral-200 border border-neutral-300 text-neutral-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 shadow-sm cursor-pointer hover:bg-neutral-300 dark:hover:bg-zinc-700 transition-colors"
+                    >
+                      <span>{name}</span>
+                      <Icon icon="solar:close-linear" className="w-3.5 h-3.5" />
+                    </button>
+                  );
+                })}
 
-                {selectedPriceFilter !== "all" && (
+                {selectedPrices.map((priceKey) => (
                   <button
-                    onClick={() => setSelectedPriceFilter("all")}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-neutral-900 text-white dark:bg-white dark:text-black capitalize"
+                    key={priceKey}
+                    onClick={() => togglePrice(priceKey)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-neutral-200 border border-neutral-300 text-neutral-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 shadow-sm capitalize cursor-pointer hover:bg-neutral-300 dark:hover:bg-zinc-700 transition-colors"
                   >
-                    <span>Price: {selectedPriceFilter}</span>
-                    <Icon icon="solar:close-linear" className="w-3 h-3" />
+                    <span>Price: {priceKey}</span>
+                    <Icon icon="solar:close-linear" className="w-3.5 h-3.5" />
                   </button>
-                )}
+                ))}
 
                 {search && (
                   <button
                     onClick={() => setSearch("")}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-neutral-900 text-white dark:bg-white dark:text-black"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-neutral-200 border border-neutral-300 text-neutral-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 shadow-sm cursor-pointer hover:bg-neutral-300 dark:hover:bg-zinc-700 transition-colors"
                   >
                     <span>"{search}"</span>
-                    <Icon icon="solar:close-linear" className="w-3 h-3" />
+                    <Icon icon="solar:close-linear" className="w-3.5 h-3.5" />
                   </button>
                 )}
 
                 <button
                   onClick={clearAllFilters}
-                  className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white underline underline-offset-2 ml-2 cursor-pointer"
+                  className="text-xs font-semibold text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 ml-2 transition-colors cursor-pointer"
                 >
                   Clear all
                 </button>
@@ -267,87 +321,104 @@ export default function ResourcesPage() {
             )}
 
             {/* Main Content Layout: Left Filter Sidebar + Right Collection Grid */}
-            <div className="flex flex-col lg:flex-row">
-              {/* Left Sidebar Filter Panel */}
-              <aside className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-attio-border-light dark:border-attio-border-dark p-5 space-y-6 flex-shrink-0 bg-white dark:bg-[#0A0A0B]">
-                <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-800">
+            <div className="flex flex-col lg:flex-row items-stretch min-h-[calc(100vh-240px)]">
+              {/* Left Sidebar Filter Panel - Full Height Right Border */}
+              <aside className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-attio-border-light dark:border-attio-border-dark p-5 space-y-6 flex-shrink-0 bg-white dark:bg-[#0A0A0B] self-stretch">
+                <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-neutral-900 dark:text-white tracking-widest uppercase">
                     Filters
                   </h3>
                   {activeFilterCount > 0 && (
                     <button
                       onClick={clearAllFilters}
-                      className="text-[11px] font-semibold text-neutral-500 hover:text-neutral-900 dark:hover:text-white underline cursor-pointer"
+                      className="text-xs font-semibold text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors cursor-pointer"
                     >
                       Reset
                     </button>
                   )}
                 </div>
 
-                {/* Category Filter Group */}
+                {/* Multiple Checkbox Category Filter Group (Clean Borderless Row with p-1) */}
                 <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest block">
+                  <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest block p-1">
                     Category
                   </span>
-                  <div className="space-y-0.5">
-                    <button
-                      onClick={() => {
-                        setSelectedType("");
-                        navigate("/resources", { replace: true });
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                        selectedType === ""
-                          ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white font-semibold"
-                          : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900/50"
-                      }`}
-                    >
-                      <span>All Categories</span>
-                      <span className="font-mono text-[10px] opacity-70">{resources.length}</span>
-                    </button>
+                  <div className="space-y-1">
+                    {categoriesWithCounts.map((type) => {
+                      const isChecked = selectedTypes.includes(type.slug);
+                      return (
+                        <label
+                          key={type.id}
+                          onClick={() => toggleType(type.slug)}
+                          className="w-full flex items-center justify-between p-1 rounded hover:bg-neutral-100/60 dark:hover:bg-neutral-900/60 transition-colors cursor-pointer select-none text-xs"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            {/* Checkbox box indicator */}
+                            <div
+                              className={`w-4 h-4 rounded flex items-center justify-center border transition-colors flex-shrink-0 ${
+                                isChecked
+                                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-white dark:border-white dark:text-black"
+                                  : "border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
+                              }`}
+                            >
+                              {isChecked && (
+                                <Icon icon="solar:check-read-linear" className="w-3 h-3 stroke-[3]" />
+                              )}
+                            </div>
+                            <span className={`truncate font-sans ${isChecked ? "font-semibold text-neutral-900 dark:text-white" : "text-neutral-600 dark:text-neutral-400"}`}>
+                              {type.name}
+                            </span>
+                          </div>
 
-                    {categoriesWithCounts.map((type) => (
-                      <button
-                        key={type.id}
-                        onClick={() => {
-                          setSelectedType(type.slug);
-                          navigate(`/resources?type=${type.slug}`, { replace: true });
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                          selectedType === type.slug
-                            ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white font-semibold"
-                            : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900/50"
-                        }`}
-                      >
-                        <span className="truncate">{type.name}</span>
-                        <span className="font-mono text-[10px] opacity-70">{type.count}</span>
-                      </button>
-                    ))}
+                          <span className="text-[11px] text-neutral-400 font-mono flex-shrink-0 pl-2">
+                            {type.count}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Price Filter Group */}
+                {/* Multiple Checkbox Price Filter Group (Clean Borderless Row with p-1) */}
                 <div className="space-y-2 pt-4 border-t border-neutral-100 dark:border-neutral-800">
-                  <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest block">
+                  <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest block p-1">
                     Price
                   </span>
-                  <div className="space-y-0.5">
+                  <div className="space-y-1">
                     {[
-                      { label: "All Prices", value: "all" },
-                      { label: "Free Only", value: "free" },
-                      { label: "Paid Only", value: "paid" },
-                    ].map((p) => (
-                      <button
-                        key={p.value}
-                        onClick={() => setSelectedPriceFilter(p.value)}
-                        className={`w-full flex items-center justify-between px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                          selectedPriceFilter === p.value
-                            ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white font-semibold"
-                            : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900/50"
-                        }`}
-                      >
-                        <span>{p.label}</span>
-                      </button>
-                    ))}
+                      { label: "Free", value: "free", count: priceCounts.free },
+                      { label: "Paid", value: "paid", count: priceCounts.paid },
+                    ].map((p) => {
+                      const isChecked = selectedPrices.includes(p.value);
+                      return (
+                        <label
+                          key={p.value}
+                          onClick={() => togglePrice(p.value)}
+                          className="w-full flex items-center justify-between p-1 rounded hover:bg-neutral-100/60 dark:hover:bg-neutral-900/60 transition-colors cursor-pointer select-none text-xs"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${
+                                isChecked
+                                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-white dark:border-white dark:text-black"
+                                  : "border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
+                              }`}
+                            >
+                              {isChecked && (
+                                <Icon icon="solar:check-read-linear" className="w-3 h-3 stroke-[3]" />
+                              )}
+                            </div>
+                            <span className={`font-sans ${isChecked ? "font-semibold text-neutral-900 dark:text-white" : "text-neutral-600 dark:text-neutral-400"}`}>
+                              {p.label}
+                            </span>
+                          </div>
+
+                          <span className="text-[11px] text-neutral-400 font-mono flex-shrink-0 pl-2">
+                            {p.count}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               </aside>
@@ -360,22 +431,22 @@ export default function ResourcesPage() {
                       <SkeletonLoader key={i} className="h-[320px] rounded-xl" />
                     ))}
                   </div>
-                ) : filteredAndSortedResources.length === 0 ? (
-                  <div className="border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl p-12 text-center space-y-3">
-                    <div className="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mx-auto text-neutral-400">
-                      <Icon icon="solar:box-minimalistic-linear" className="w-6 h-6" />
+                ) : filteredResources.length === 0 ? (
+                  <div className="py-20 flex flex-col items-center justify-center gap-3 text-neutral-400">
+                    <div className="w-16 h-16 rounded-2xl bg-neutral-100 dark:bg-neutral-800 border border-attio-border-light dark:border-attio-border-dark flex items-center justify-center">
+                      <Icon
+                        icon="solar:box-minimalistic-linear"
+                        className="w-8 h-8 text-neutral-300 dark:text-neutral-600"
+                      />
                     </div>
-                    <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                      No resources found
-                    </h3>
-                    <p className="text-xs text-neutral-500 max-w-xs mx-auto">
-                      Try adjusting your search query or reset active filters.
+                    <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                      No resources match your filters.
                     </p>
                     <button
                       onClick={clearAllFilters}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-black text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                      className="text-xs font-semibold text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white underline underline-offset-2 cursor-pointer"
                     >
-                      Clear Filters
+                      Clear filters
                     </button>
                   </div>
                 ) : (
@@ -385,10 +456,12 @@ export default function ResourcesPage() {
                         <Link
                           key={res.id}
                           to={`/resources/${res.slug}`}
+                          onMouseEnter={() => setIsCursorHovering(true)}
+                          onMouseLeave={() => setIsCursorHovering(false)}
                           className="group block rounded-xl border border-attio-border-light dark:border-attio-border-dark bg-white dark:bg-[#0C0C0E] hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-200 overflow-hidden cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between"
                         >
                           <div>
-                            {/* Image Container with Version Badge */}
+                            {/* Clean Thumbnail Container */}
                             <div className="w-full aspect-[16/10] bg-neutral-100 dark:bg-neutral-900 relative overflow-hidden border-b border-attio-border-light dark:border-attio-border-dark">
                               {res.image ? (
                                 <OptimizedImage
@@ -401,62 +474,71 @@ export default function ResourcesPage() {
                                   <Icon icon="solar:box-minimalistic-linear" className="w-8 h-8" />
                                 </div>
                               )}
-
-                              {/* Top Badges */}
-                              <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-                                {res.version ? (
-                                  <span className="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-black/80 text-white dark:bg-white/80 dark:text-black backdrop-blur-md">
-                                    {res.version}
-                                  </span>
-                                ) : <span />}
-
-                                <span
-                                  className={`px-2 py-0.5 text-[10px] font-bold rounded-full font-mono border backdrop-blur-md ${
-                                    res.priceType === "free"
-                                      ? "bg-emerald-500 text-white border-emerald-400"
-                                      : "bg-black/90 text-white dark:bg-white/90 dark:text-black border-neutral-700 dark:border-neutral-200"
-                                  }`}
-                                >
-                                  {res.priceType === "free" ? "FREE" : `$${res.price}`}
-                                </span>
-                              </div>
                             </div>
 
                             {/* Card Content Details */}
-                            <div className="p-4 space-y-1.5">
-                              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors leading-snug line-clamp-1">
-                                {res.title}
-                              </h3>
-                              <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-2">
+                            <div className="p-5 space-y-2.5 text-left">
+                              {/* Title on Left, Price on Right (Normal text, same font size as title) */}
+                              <div className="flex items-start justify-between gap-3">
+                                <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 group-hover:text-neutral-600 dark:group-hover:text-zinc-300 transition-colors leading-snug line-clamp-1 flex-1">
+                                  {res.title}
+                                </h3>
+                                <span className="text-base font-semibold text-neutral-900 dark:text-neutral-100 whitespace-nowrap font-mono">
+                                  {res.priceType === "free" ? "FREE" : `$${res.price}`}
+                                </span>
+                              </div>
+
+                              {/* Description */}
+                              <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-2 font-sans">
                                 {res.description}
                               </p>
+
+                              {/* Version Badge below description */}
+                              {res.version && (
+                                <div className="pt-0.5">
+                                  <span className="px-2 py-0.5 text-[11px] font-mono font-medium rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200/60 dark:border-neutral-700/60 inline-flex items-center">
+                                    {res.version}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
 
-                          {/* Card Footer: Platform & Tech Stacks */}
-                          <div className="px-4 pb-4 pt-2 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between text-xs text-neutral-500">
-                            {res.platform?.name ? (
-                              <div className="flex items-center gap-1.5 font-medium text-neutral-700 dark:text-neutral-300">
-                                {res.platform.logo && (
-                                  <img
-                                    src={res.platform.logo}
-                                    alt={res.platform.name}
-                                    className="w-3.5 h-3.5 object-contain"
-                                  />
-                                )}
-                                <span className="text-[11px]">{res.platform.name}</span>
-                              </div>
-                            ) : <span />}
+                          {/* Card Footer: 42x42 images, no padding, no radius, no border */}
+                          <div className="px-5 pb-5 pt-3 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between min-h-[58px]">
+                            {/* Platform Logo */}
+                            <div className="flex items-center">
+                              {res.platform?.logo ? (
+                                <img
+                                  src={res.platform.logo}
+                                  alt={res.platform.name || "Platform"}
+                                  className="w-[42px] h-[42px] object-contain"
+                                  title={res.platform.name}
+                                />
+                              ) : res.platform?.name ? (
+                                <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                                  {res.platform.name}
+                                </span>
+                              ) : null}
+                            </div>
 
+                            {/* Tech Stacks */}
                             {res.techStacks && res.techStacks.length > 0 && (
-                              <div className="flex items-center gap-1 flex-wrap">
-                                {res.techStacks.slice(0, 3).map((tech, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200/50 dark:border-neutral-700/50"
-                                  >
-                                    {tech.name}
-                                  </span>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                {res.techStacks.slice(0, 4).map((tech, idx) => (
+                                  <div key={idx} title={tech.name}>
+                                    {tech.logo ? (
+                                      <img
+                                        src={tech.logo}
+                                        alt={tech.name}
+                                        className="w-[42px] h-[42px] object-contain"
+                                      />
+                                    ) : (
+                                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200/60 dark:border-neutral-700/60">
+                                        {tech.name}
+                                      </span>
+                                    )}
+                                  </div>
                                 ))}
                               </div>
                             )}
