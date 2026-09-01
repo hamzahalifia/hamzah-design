@@ -144,7 +144,7 @@ function renderLexicalNode(node, key, context) {
       }
       return <Tag key={key} id={id} className={`font-bold my-4 ${Tag==='h2'?'text-3xl':'text-2xl'}`} style={style}>{renderChildren(node.children, key, headingContext)}</Tag>;
     }
-    case 'quote': return <blockquote key={key} className="border-l-4 border-neutral-300 dark:border-neutral-600 pl-4 italic my-4 text-neutral-600 dark:text-neutral-400" style={style}>{renderChildren(node.children, key, headingContext)}</blockquote>;
+    case 'quote': return <blockquote key={key} className="border-l-2 border-neutral-400 dark:border-neutral-500 pl-4 py-1 italic my-6 text-neutral-600 dark:text-neutral-300 leading-relaxed" style={style}>{renderChildren(node.children, key, headingContext)}</blockquote>;
     case 'list': {
       const isNumbered = node.listType === 'number' || node.tag === 'ol';
       const ListTag = isNumbered ? 'ol' : 'ul';

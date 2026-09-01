@@ -89,7 +89,7 @@ export default function WorkShowcase() {
   }, [explorations]);
 
   return (
-    <section className="flex-1 bg-white dark:bg-[#0A0A0B]">
+    <section className="flex-1 bg-[#FAF8F5] dark:bg-[#0A0A0B]">
       {/* Cursor */}
       <Cursor
         variants={{
@@ -185,7 +185,7 @@ export default function WorkShowcase() {
                 <div
                   onMouseEnter={() => {
                     setIsCursorHovering(true);
-                    setCursorText(isExternal ? 'Open Link' : 'Read Case Study');
+                    setCursorText(isExternal ? 'Read Externally' : 'Read Case Study');
                   }}
                   onMouseLeave={() => setIsCursorHovering(false)}
                   className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative border border-attio-border-light dark:border-attio-border-dark"
@@ -214,13 +214,10 @@ export default function WorkShowcase() {
 
                 {/* Project Details */}
                 <div className="flex-1 flex flex-col items-start justify-start space-y-2.5 pt-0.5">
-                  <h3 className="text-base font-semibold text-[#111827] dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors flex items-center gap-1.5">
+                  <h3 className="text-base font-semibold text-attio-text-primary-light dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
                     <span>{work.title}</span>
-                    {isExternal && (
-                      <Icon icon="solar:export-linear" className="w-4 h-4 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 flex-shrink-0" />
-                    )}
                   </h3>
-                  <p className="text-sm font-normal text-[#6B7280] dark:text-neutral-400 leading-relaxed line-clamp-3">
+                  <p className="text-sm font-normal text-attio-text-secondary-light dark:text-neutral-400 leading-relaxed line-clamp-3">
                     {work.description}
                   </p>
                 </div>

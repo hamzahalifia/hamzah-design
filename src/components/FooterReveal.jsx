@@ -73,14 +73,14 @@ export default function FooterReveal() {
     <>
       <footer
         ref={containerRef}
-        className={`relative z-10 w-full h-auto bg-[#FAFAFB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between border-t border-attio-border-light dark:border-attio-border-dark transition-colors duration-300 ${isStickyPage ? "lg:sticky bottom-0 lg:z-0 lg:h-screen lg:overflow-hidden" : ""}`}
+        className={`relative z-10 w-full h-auto bg-[#F2F0EB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between border-t border-attio-border-light dark:border-attio-border-dark transition-colors duration-300 ${isStickyPage ? "lg:sticky bottom-0 lg:z-0 lg:h-screen lg:overflow-hidden" : ""}`}
       >
         {/* Part 1: Top Hero Sign Section — Attio Globe Reference Structure */}
         <div
           className={`max-w-[1440px] w-full mx-auto px-0 lg:px-6 flex-1 flex flex-col justify-between ${isStickyPage ? "lg:overflow-hidden" : ""}`}
         >
           {/* Container: centered text and ASCII portrait background */}
-          <div className="relative flex-1 min-h-[550px] lg:min-h-[640px] flex flex-col items-center justify-start lg:justify-center overflow-hidden border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-[#FAFAFB] dark:bg-[#080809]">
+          <div className="relative flex-1 min-h-[550px] lg:min-h-[640px] flex flex-col items-center justify-start lg:justify-center overflow-hidden border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-[#F2F0EB] dark:bg-[#080809]">
             {/* ASCII Braille Background Filter */}
             <div className="absolute inset-0 z-0 pointer-events-auto opacity-75 dark:opacity-20">
               <AsciiBackground
@@ -122,7 +122,7 @@ export default function FooterReveal() {
         </div>
 
         {/* Part 2: Separate Full-Width Section for Sitemap Cards Grid & Bottom Metadata Bar */}
-        <div className="w-full border-t border-attio-border-light dark:border-attio-border-dark bg-[#FAFAFB] dark:bg-[#080809] transition-colors duration-300 relative z-10 flex-shrink-0">
+        <div className="w-full border-t border-attio-border-light dark:border-attio-border-dark bg-[#F2F0EB] dark:bg-[#080809] transition-colors duration-300 relative z-10 flex-shrink-0">
           <div className="max-w-[1440px] w-full mx-auto px-0 lg:px-6">
             <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark">
               {/* Middle Sitemap Cards Grid (No gap/padding, no border radius, border-t only on < md) */}

@@ -25,7 +25,7 @@ export function GlowCard({
       {...props}
     >
       <div
-        className={`rounded-[10.5px] overflow-hidden bg-[#FAFAF9] dark:bg-[#0A0A0B] h-full w-full relative z-10 ${innerClassName}`}
+        className={`rounded-[10.5px] overflow-hidden bg-[#FAF8F5] dark:bg-[#0A0A0B] h-full w-full relative z-10 ${innerClassName}`}
       >
         {children}
       </div>

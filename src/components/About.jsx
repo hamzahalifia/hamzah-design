@@ -393,7 +393,7 @@ export default function About() {
 
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
+    <div className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
       <PageMeta
         title="About Alifia Hamzah — Product Designer"
         description="Learn about Alifia Hamzah, a Product Designer based in Bandung, Indonesia, specializing in data-driven enterprise tools and story-data design methodology."
@@ -452,10 +452,10 @@ export default function About() {
 
       <main
         aria-label="About page content"
-        className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
+        className="relative z-10 bg-[#F2F0EB] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
       >
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-white dark:bg-[#0A0A0B]">
+          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-[#FAF8F5] dark:bg-[#0A0A0B]">
             <div className="w-full">
               {/* 2-Column Responsive Layout — wider right column */}
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_420px] w-full">
@@ -482,7 +482,7 @@ export default function About() {
                       </p>
                     </div>
 
-                    <p className="text-base leading-6 text-[#111827] dark:text-[#E5E7EB] font-normal">
+                    <p className="text-base leading-6 text-[#18181B] dark:text-[#E5E7EB] font-normal">
                       Over the last 4 years, I have partnered
                       with companies to build and scale their data-driven
                       enterprise tools using a story-data approach. My designs
@@ -496,7 +496,7 @@ export default function About() {
 
                   {/* Social Links — icon only, no labels, no borders */}
                   <div className="space-y-4">
-                    <p className="text-sm text-[#111827] dark:text-[#E5E7EB] leading-relaxed font-normal">
+                    <p className="text-sm text-[#18181B] dark:text-[#E5E7EB] leading-relaxed font-normal">
                       Outside of client work, I enjoy sharing interface
                       explorations and workflow insights online:
                     </p>

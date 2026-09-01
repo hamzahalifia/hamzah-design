@@ -21,7 +21,7 @@ export function AnimatedThemeToggler({ className = '', ...props }) {
     <button
       onClick={handleToggle}
       aria-label="Toggle Theme"
-      className={`p-2 rounded-full text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer relative overflow-hidden focus:outline-none ${className}`}
+      className={`w-10 h-10 flex items-center justify-center rounded-full text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer relative overflow-hidden focus:outline-none touch-manipulation ${className}`}
       {...props}
     >
       <AnimatePresence mode="wait" initial={false}>

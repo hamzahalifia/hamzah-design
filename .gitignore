@@ -22,3 +22,15 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# AI agent and IDE folders
+.agent/
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.hermes/
+.kiro/
+.opencode/
+

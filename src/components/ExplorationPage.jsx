@@ -286,7 +286,7 @@ export default function ExplorationPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
+      <div className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
         <PageMeta
           title="UI/UX Explorations — Alifia Hamzah"
           description="Browse UI/UX design explorations by Alifia Hamzah. Visual experiments, design concepts, and creative explorations in product design."
@@ -359,10 +359,10 @@ export default function ExplorationPage() {
 
         <main
           aria-label="Exploration page content"
-          className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
+          className="relative z-10 bg-[#F2F0EB] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
         >
           <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-            <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-white dark:bg-[#0A0A0B]">
+            <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-[#FAF8F5] dark:bg-[#0A0A0B]">
               <div className="w-full">
                 {/* Page Header */}
                 <div className="relative px-5 py-8 border-b border-attio-border-light dark:border-attio-border-dark overflow-hidden">

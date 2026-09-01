@@ -130,9 +130,9 @@ export default function ResourceDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809]">
+      <div className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809]">
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-white dark:bg-[#0A0A0B]">
+          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-[#FAF8F5] dark:bg-[#0A0A0B]">
             <div className="w-full py-8 md:py-12">
               <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pb-3 border-b border-dashed border-neutral-200 dark:border-neutral-800">
                 <SkeletonLoader className="w-1/4 h-4 mb-3" />
@@ -155,7 +155,7 @@ export default function ResourceDetail() {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-neutral-900 dark:text-neutral-100 flex flex-col justify-between">
+      <div className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809] text-neutral-900 dark:text-neutral-100 flex flex-col justify-between">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-24 text-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mx-auto text-neutral-400">
             <Icon icon="solar:danger-triangle-linear" className="w-8 h-8" />
@@ -178,7 +178,7 @@ export default function ResourceDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
+    <div className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
       <PageMeta
         title={data.seoTitle || `${data.title} — Resources by Alifia Hamzah`}
         description={data.seoDescription || data.description}
@@ -191,10 +191,10 @@ export default function ResourceDetail() {
 
       <main
         aria-label="Resource detail page content"
-        className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
+        className="relative z-10 bg-[#F2F0EB] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
       >
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-white dark:bg-[#0A0A0B]">
+          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-[#FAF8F5] dark:bg-[#0A0A0B]">
             <div className="w-full pt-4 pb-8 md:pt-6 md:pb-12">
               {/* Back + Header Actions */}
               <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-0 flex items-center justify-between w-full">

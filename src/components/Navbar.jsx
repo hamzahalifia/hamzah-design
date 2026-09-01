@@ -11,15 +11,43 @@ import AnimatedThemeToggler from "./magicui/AnimatedThemeToggler";
 
 const fallbackCategories = [
   { name: "UI Kits", slug: "ui-kit", icon: "solar:widget-5-linear" },
-  { name: "Web Templates", slug: "web-template", icon: "solar:window-frame-linear" },
-  { name: "Coded Templates", slug: "coded-templates", icon: "solar:code-square-linear" },
-  { name: "React Components", slug: "react-component", icon: "solar:atom-linear" },
-  { name: "Framer Templates", slug: "framer-template", icon: "solar:figma-linear" },
+  {
+    name: "Web Templates",
+    slug: "web-template",
+    icon: "solar:window-frame-linear",
+  },
+  {
+    name: "Coded Templates",
+    slug: "coded-templates",
+    icon: "solar:code-square-linear",
+  },
+  {
+    name: "React Components",
+    slug: "react-component",
+    icon: "solar:atom-linear",
+  },
+  {
+    name: "Framer Templates",
+    slug: "framer-template",
+    icon: "solar:figma-linear",
+  },
   { name: "No-code", slug: "no-code", icon: "solar:magic-stick-linear" },
-  { name: "Mockups", slug: "mockups", icon: "solar:laptop-minimalistic-linear" },
-  { name: "3D Assets", slug: "3d-assets", icon: "solar:box-minimalistic-linear" },
+  {
+    name: "Mockups",
+    slug: "mockups",
+    icon: "solar:laptop-minimalistic-linear",
+  },
+  {
+    name: "3D Assets",
+    slug: "3d-assets",
+    icon: "solar:box-minimalistic-linear",
+  },
   { name: "Themes", slug: "themes", icon: "solar:palette-linear" },
-  { name: "Presentation", slug: "presentation", icon: "solar:videocamera-record-linear" },
+  {
+    name: "Presentation",
+    slug: "presentation",
+    icon: "solar:videocamera-record-linear",
+  },
 ];
 
 export default function Navbar({ hideNavLinks = false }) {
@@ -43,7 +71,9 @@ export default function Navbar({ hideNavLinks = false }) {
     loadCmsCategories();
   }, []);
 
-  const displayCategories = cmsCategories.length > 0 ? cmsCategories : fallbackCategories;
+  const displayCategories = (
+    cmsCategories.length > 0 ? cmsCategories : fallbackCategories
+  ).slice(0, 6);
 
   const toggleSound = () => {
     const newState = !soundOn;
@@ -56,10 +86,19 @@ export default function Navbar({ hideNavLinks = false }) {
 
   const renderCategoryIcon = (cat) => {
     if (cat.icon) {
-      if (typeof cat.icon === "string" && (cat.icon.startsWith("http") || cat.icon.startsWith("/"))) {
-        return <img src={cat.icon} alt={cat.name} className="w-6 h-6 object-contain" />;
+      if (
+        typeof cat.icon === "string" &&
+        (cat.icon.startsWith("http") || cat.icon.startsWith("/"))
+      ) {
+        return (
+          <img
+            src={cat.icon}
+            alt={cat.name}
+            className="w-8 h-8 object-contain"
+          />
+        );
       }
-      return <Icon icon={cat.icon} className="w-6 h-6" />;
+      return <Icon icon={cat.icon} className="w-8 h-8" />;
     }
 
     const fallbackIconMap = {
@@ -70,17 +109,22 @@ export default function Navbar({ hideNavLinks = false }) {
       "framer-template": "solar:figma-linear",
       "framer-component": "solar:figma-linear",
       "no-code": "solar:magic-stick-linear",
-      "mockups": "solar:laptop-minimalistic-linear",
+      mockups: "solar:laptop-minimalistic-linear",
       "3d-assets": "solar:box-minimalistic-linear",
-      "themes": "solar:palette-linear",
-      "presentation": "solar:videocamera-record-linear",
+      themes: "solar:palette-linear",
+      presentation: "solar:videocamera-record-linear",
     };
 
-    return <Icon icon={fallbackIconMap[cat.slug] || "solar:folder-with-files-linear"} className="w-6 h-6" />;
+    return (
+      <Icon
+        icon={fallbackIconMap[cat.slug] || "solar:folder-with-files-linear"}
+        className="w-8 h-8"
+      />
+    );
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">
+    <header className="sticky top-0 z-50 w-full bg-[#FAF8F5]/95 dark:bg-[#0A0A0B]/95 backdrop-blur-md border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300">
       <div className="max-w-[1440px] h-[60px] mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Clickable SVG Logomark */}
         <Link
@@ -175,73 +219,67 @@ export default function Navbar({ hideNavLinks = false }) {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={{ duration: 0.2, ease: "easeOut" }}
-                      className={`fixed left-0 right-0 top-[60px] w-full z-50 border-b border-attio-border-light dark:border-attio-border-dark shadow-2xl pointer-events-auto transition-colors duration-300 ${
+                      className={`fixed left-0 right-0 top-[60px] w-full z-50 border-b border-attio-border-light dark:border-attio-border-dark shadow-2xl pointer-events-auto transition-colors duration-300 h-[40vh] min-h-[320px] max-h-[440px] flex flex-col justify-center ${
                         theme === "dark"
                           ? "bg-[#0A0A0B] text-white"
-                          : "bg-white text-neutral-900"
+                          : "bg-[#FAF8F5] text-neutral-900"
                       }`}
                     >
-                      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-6">
-                        <div
-                          className={`flex items-center justify-between pb-4 mb-6 border-b ${
-                            theme === "dark" ? "border-neutral-800/80" : "border-neutral-200"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">
-                              Browse Categories
-                            </span>
-                            <span
-                              className={`text-[11px] font-mono px-2.5 py-0.5 rounded-full font-semibold ${
-                                theme === "dark"
-                                  ? "bg-neutral-800 text-neutral-300 border border-neutral-700"
-                                  : "bg-neutral-100 text-neutral-600 border border-neutral-200"
-                              }`}
-                            >
-                              {displayCategories.length}
-                            </span>
+                      <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 py-6 h-full flex flex-col justify-center">
+                        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 xl:gap-8 h-full w-full">
+                          
+                          {/* Left Column: 3 Categories Per Row, Full Height Grid */}
+                          <div className="flex-1 w-full h-full flex flex-col justify-center">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4 h-full grid-rows-2">
+                              {displayCategories.map((cat) => (
+                                <Link
+                                  key={cat.slug || cat.id}
+                                  to={`/resources?type=${cat.slug}`}
+                                  onClick={() => setMegaMenuOpen(false)}
+                                  className={`group relative flex flex-col items-center justify-center p-4 sm:p-5 rounded-xl border transition-all duration-200 text-center cursor-pointer h-full ${
+                                    theme === "dark"
+                                      ? "bg-[#141416]/90 hover:bg-[#1C1C1F] border-neutral-800 hover:border-neutral-700 text-neutral-200 hover:text-white"
+                                      : "bg-white/80 hover:bg-white border-neutral-200/80 hover:border-neutral-300 hover:shadow-md text-neutral-800 hover:text-black"
+                                  }`}
+                                >
+                                  <div
+                                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border flex items-center justify-center mb-3 group-hover:scale-110 transition-all shadow-xs ${
+                                      theme === "dark"
+                                        ? "bg-neutral-800/90 border-neutral-700/70 text-neutral-200 group-hover:text-white"
+                                        : "bg-white border-neutral-200/80 text-neutral-800 group-hover:text-black"
+                                    }`}
+                                  >
+                                    {renderCategoryIcon(cat)}
+                                  </div>
+                                  <span className="text-xs sm:text-sm font-semibold transition-colors leading-tight line-clamp-1">
+                                    {cat.name}
+                                  </span>
+                                </Link>
+                              ))}
+                            </div>
                           </div>
-                          <Link
-                            to="/resources"
-                            onClick={() => setMegaMenuOpen(false)}
-                            className={`px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-all no-underline shadow-xs cursor-pointer ${
-                              theme === "dark"
-                                ? "bg-white text-black hover:bg-neutral-200 border border-neutral-200"
-                                : "bg-neutral-900 text-white hover:bg-neutral-800 border border-neutral-800"
-                            }`}
-                          >
-                            <span>View All</span>
-                            <Icon icon="solar:arrow-right-linear" className="w-3.5 h-3.5" />
-                          </Link>
-                        </div>
 
-                        {/* UI8-Style Category Cards (Larger cards with crisp dark/light styling) */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
-                          {displayCategories.map((cat) => (
-                            <Link
-                              key={cat.slug || cat.id}
-                              to={`/resources?type=${cat.slug}`}
+                          {/* Right Column: 1:1 Aspect Ratio Promo Card Following Height (Opens UI8 Team Link) */}
+                          <div className="h-full aspect-square flex-shrink-0 flex items-center justify-center">
+                            <a
+                              href="https://ui8.net/users/onfire-studio"
+                              target="_blank"
+                              rel="noopener noreferrer"
                               onClick={() => setMegaMenuOpen(false)}
-                              className={`group relative flex flex-col items-center justify-center p-5 rounded-2xl border transition-all duration-200 text-center cursor-pointer min-h-[120px] ${
+                              className={`relative h-full w-full aspect-square rounded-xl overflow-hidden border transition-all duration-300 group cursor-pointer block ${
                                 theme === "dark"
-                                  ? "bg-[#141416]/80 hover:bg-[#1C1C1F] border-neutral-800 hover:border-neutral-700 text-neutral-200 hover:text-white"
-                                  : "bg-neutral-50/80 hover:bg-white border-neutral-200/80 hover:border-neutral-300 hover:shadow-md text-neutral-800 hover:text-black"
+                                  ? "border-neutral-800 bg-[#121214]"
+                                  : "border-neutral-200 bg-neutral-100"
                               }`}
                             >
-                              <div
-                                className={`w-12 h-12 rounded-xl border flex items-center justify-center mb-3 group-hover:scale-110 transition-all shadow-xs ${
-                                  theme === "dark"
-                                    ? "bg-neutral-800/90 border-neutral-700/70 text-neutral-200 group-hover:text-white"
-                                    : "bg-white border-neutral-200/80 text-neutral-800 group-hover:text-black"
-                                }`}
-                              >
-                                {renderCategoryIcon(cat)}
-                              </div>
-                              <span className="text-xs sm:text-sm font-semibold transition-colors leading-tight line-clamp-1">
-                                {cat.name}
-                              </span>
-                            </Link>
-                          ))}
+                              <img
+                                src="/images/general/mega_menu_promo.webp"
+                                alt="Team Promo"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-auto select-none"
+                              />
+                            </a>
+                          </div>
+
                         </div>
                       </div>
                     </motion.div>
@@ -255,7 +293,7 @@ export default function Navbar({ hideNavLinks = false }) {
           <button
             onClick={toggleSound}
             aria-label="Toggle Sound"
-            className="p-2 rounded-full text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer"
+            className="w-10 h-10 flex items-center justify-center rounded-full text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer touch-manipulation"
           >
             <Icon
               icon={soundOn ? "pixel:sound-on-solid" : "pixel:sound-mute-solid"}
@@ -271,7 +309,7 @@ export default function Navbar({ hideNavLinks = false }) {
             <button
               onClick={toggleMobileMenu}
               aria-label="Toggle Navigation Menu"
-              className="md:hidden p-1.5 rounded-md text-attio-text-primary-light dark:text-attio-text-primary-dark hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer"
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-md text-attio-text-primary-light dark:text-attio-text-primary-dark hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer touch-manipulation"
             >
               <Icon
                 icon={

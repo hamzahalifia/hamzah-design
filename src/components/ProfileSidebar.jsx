@@ -142,7 +142,7 @@ export default function ProfileSidebar() {
   return (
     <aside
       id="about"
-      className={`w-full lg:w-[429px] flex-shrink-0 border-b lg:border-b-0 lg:border-r border-attio-border-light dark:border-attio-border-dark glow-border-b lg:glow-border-b-0 lg:glow-border-r bg-white dark:bg-[#0A0A0B] relative flex flex-col justify-between overflow-visible ${
+      className={`w-full lg:w-[429px] flex-shrink-0 border-b lg:border-b-0 lg:border-r border-attio-border-light dark:border-attio-border-dark glow-border-b lg:glow-border-b-0 lg:glow-border-r bg-[#FAF8F5] dark:bg-[#0A0A0B] relative flex flex-col justify-between overflow-visible ${
         isSticky
           ? "lg:sticky lg:top-[60px] lg:h-[calc(100vh-60px)]"
           : "lg:relative lg:h-auto"
@@ -160,7 +160,7 @@ export default function ProfileSidebar() {
           speed={0.02}
           align="right"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-[#0A0A0B] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#FAF8F5] dark:to-[#0A0A0B] pointer-events-none" />
       </div>
 
       <div className="flex-1 flex flex-col justify-between min-h-full relative z-10">
@@ -187,7 +187,7 @@ export default function ProfileSidebar() {
             </div>
 
             {/* Bio */}
-            <p className="text-base leading-6 text-[#111827] dark:text-[#E5E7EB] font-normal">
+            <p className="text-base leading-6 text-[#18181B] dark:text-[#E5E7EB] font-normal">
               Helping companies build scalable enterprise tools with a story-data approach
             </p>
           </div>
@@ -210,7 +210,7 @@ export default function ProfileSidebar() {
               href="https://drive.google.com/file/d/1Y18tRL9FbpHFL5zpf5dDPMmcg2WxcNoH/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-4 py-2.5 btn-radius-lg text-base font-semibold bg-[#F2F2F2] text-[#111827] dark:bg-neutral-800 dark:text-white dark:border-neutral-700 border border-attio-border-light hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all active:scale-95 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)] cursor-pointer w-full sm:w-auto"
+              className="inline-flex items-center justify-center px-4 py-2.5 btn-radius-lg text-base font-semibold bg-[#F2F2F2] text-[#18181B] dark:bg-neutral-800 dark:text-white dark:border-neutral-700 border border-attio-border-light hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all active:scale-95 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)] cursor-pointer w-full sm:w-auto"
             >
               <RollingText>Read Resume</RollingText>
             </a>
@@ -220,9 +220,9 @@ export default function ProfileSidebar() {
         {/* Bottom Group: Testimony then Client Logos */}
         <div className="flex-shrink-0 mt-auto">
           {/* Testimony Section */}
-          <div className="pt-3 pb-3 px-5 space-y-3 bg-white dark:bg-[#0A0A0B]">
+          <div className="pt-3 pb-3 px-5 space-y-3 bg-[#FAF8F5] dark:bg-[#0A0A0B]">
             {/* Header Description */}
-            <p className="text-base leading-6 text-[#111827] dark:text-[#E5E7EB] font-normal">
+            <p className="text-base leading-6 text-[#18181B] dark:text-[#E5E7EB] font-normal">
               I proud on delivering thoughtful, clear, and meaningful work.
               Here's client feedback from those I've worked with.
             </p>
@@ -236,7 +236,7 @@ export default function ProfileSidebar() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="h-[140px] p-4 rounded-2xl rounded-bl-none bg-[#FDFDFD] dark:bg-[#121214] border border-[#E8E8E8] dark:border-neutral-800 flex flex-col justify-between shadow-sm"
+                  className="h-[140px] p-4 rounded-2xl rounded-bl-none bg-white dark:bg-[#121214] border border-attio-border-light dark:border-neutral-800 flex flex-col justify-between shadow-xs"
                 >
                   {/* Quote Text with Framer Motion Staggered Typewriter Effect */}
                   <p className="text-sm leading-5 text-[#141414] dark:text-[#E5E7EB] font-normal overflow-hidden">

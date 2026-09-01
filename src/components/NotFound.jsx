@@ -29,10 +29,10 @@ export default function NotFound() {
         <meta name="robots" content="noindex, follow" />
       </Helmet>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
-        className="h-[100vh] w-screen flex flex-col items-center justify-center bg-[#FAFAF9] dark:bg-[#080809] text-[#111827] dark:text-[#F4F4F5] relative overflow-hidden px-6"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="h-[100vh] w-screen flex flex-col items-center justify-center bg-[#F2F0EB] dark:bg-[#080809] text-[#18181B] dark:text-[#F4F4F5] relative overflow-hidden px-6"
       >
         {/* Background Dot Pattern */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-25">
@@ -51,7 +51,7 @@ export default function NotFound() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-          className="font-geist text-[120px] sm:text-[160px] font-bold leading-none tracking-tighter text-[#111827] dark:text-[#F4F4F5] select-none"
+          className="font-geist text-[120px] sm:text-[160px] font-bold leading-none tracking-tighter text-[#18181B] dark:text-[#F4F4F5] select-none"
         >
           404
         </motion.span>
@@ -61,7 +61,7 @@ export default function NotFound() {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ delay: 0.3, duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-          className="w-16 h-[2px] bg-[#CDD1CD] dark:bg-[#27272A] my-6 origin-center"
+          className="w-16 h-[2px] bg-[#E5E5E7] dark:bg-[#27272A] my-6 origin-center"
         />
 
         {/* Headline */}
@@ -79,7 +79,7 @@ export default function NotFound() {
           initial={{ y: 12, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-          className="text-base leading-6 text-[#6B7280] dark:text-[#A1A1AA] mb-10 max-w-sm"
+          className="text-base leading-6 text-[#52525B] dark:text-[#A1A1AA] mb-10 max-w-sm"
         >
           The page you're looking for doesn't exist or has been moved. Let's get you back on track.
         </motion.p>

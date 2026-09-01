@@ -165,7 +165,7 @@ export default function ResourcesPage() {
     (search ? 1 : 0) + selectedTypes.length + selectedPrices.length;
 
   return (
-    <div className="bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark">
+    <div className="bg-[#F2F0EB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark">
       <PageMeta
         title="Resources & Templates — Alifia Hamzah"
         description="Browse UI Kits, website templates, React components, and design assets by Alifia Hamzah."
@@ -211,10 +211,10 @@ export default function ResourcesPage() {
 
       <main
         aria-label="Resources page content"
-        className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
+        className="relative z-10 bg-[#F2F0EB] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
       >
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-screen bg-white dark:bg-[#0A0A0B]">
+          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-screen bg-[#FAF8F5] dark:bg-[#0A0A0B]">
             
             {/* Header Section with Flickering Grid */}
             <div className="relative px-5 py-8 border-b border-attio-border-light dark:border-attio-border-dark overflow-hidden">
@@ -323,7 +323,7 @@ export default function ResourcesPage() {
             {/* Main Content Layout: Left Filter Sidebar + Right Collection Grid */}
             <div className="flex flex-col lg:flex-row items-stretch min-h-[calc(100vh-240px)]">
               {/* Left Sidebar Filter Panel - Full Height Right Border */}
-              <aside className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-attio-border-light dark:border-attio-border-dark p-5 space-y-6 flex-shrink-0 bg-white dark:bg-[#0A0A0B] self-stretch">
+              <aside className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-attio-border-light dark:border-attio-border-dark p-5 space-y-6 flex-shrink-0 bg-[#FAF8F5] dark:bg-[#0A0A0B] self-stretch">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-neutral-900 dark:text-white tracking-widest uppercase">
                     Filters
@@ -504,16 +504,16 @@ export default function ResourcesPage() {
                             </div>
                           </div>
 
-                          {/* Card Footer: 42x42 images, no padding, no radius, no border */}
-                          <div className="px-5 pb-5 pt-3 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between min-h-[58px]">
+                          {/* Card Footer: Compact Tech & Platform Logos */}
+                          <div className="px-5 pb-5 pt-3 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between min-h-[52px]">
                             {/* Platform Logo */}
                             <div className="flex items-center">
                               {res.platform?.logo ? (
                                 <img
                                   src={res.platform.logo}
                                   alt={res.platform.name || "Platform"}
-                                  className="w-[42px] h-[42px] object-contain"
-                                  title={res.platform.name}
+                                  title={res.platform.name || "Platform"}
+                                  className="w-5 h-5 object-contain rounded-md"
                                 />
                               ) : res.platform?.name ? (
                                 <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
@@ -524,17 +524,21 @@ export default function ResourcesPage() {
 
                             {/* Tech Stacks */}
                             {res.techStacks && res.techStacks.length > 0 && (
-                              <div className="flex items-center gap-2 flex-wrap">
+                              <div className="flex items-center gap-1.5 flex-wrap">
                                 {res.techStacks.slice(0, 4).map((tech, idx) => (
-                                  <div key={idx} title={tech.name}>
+                                  <div
+                                    key={idx}
+                                    title={tech.name}
+                                    className="flex items-center justify-center p-1 rounded-md bg-neutral-100/90 dark:bg-neutral-800/90 border border-neutral-200/60 dark:border-neutral-700/60"
+                                  >
                                     {tech.logo ? (
                                       <img
                                         src={tech.logo}
                                         alt={tech.name}
-                                        className="w-[42px] h-[42px] object-contain"
+                                        className="w-4 h-4 object-contain"
                                       />
                                     ) : (
-                                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200/60 dark:border-neutral-700/60">
+                                      <span className="px-1 text-[10px] font-mono font-medium text-neutral-600 dark:text-neutral-300">
                                         {tech.name}
                                       </span>
                                     )}

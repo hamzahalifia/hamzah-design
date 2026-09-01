@@ -29,6 +29,7 @@ export default function WorkPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isCursorHovering, setIsCursorHovering] = useState(false);
+  const [cursorText, setCursorText] = useState("Read Case Study");
 
   useEffect(() => {
     async function fetchWorks() {
@@ -82,7 +83,7 @@ export default function WorkPage() {
   }, [search, categoryFilter]);
 
   return (
-    <div className="bg-[#FAFAF9] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark">
+    <div className="bg-[#F2F0EB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark">
       <PageMeta
         title="Work & Case Studies — Alifia Hamzah"
         description="Explore case studies and projects by Alifia Hamzah, Product Designer. Enterprise UX, data-driven design, and product strategy case studies."
@@ -129,7 +130,7 @@ export default function WorkPage() {
       >
         <motion.div
           animate={{
-            width: isCursorHovering ? 140 : 0,
+            width: isCursorHovering ? (cursorText === "Read Externally" ? 140 : 140) : 0,
             height: isCursorHovering ? 32 : 0,
             opacity: isCursorHovering ? 1 : 0,
             scale: isCursorHovering ? 1 : 0,
@@ -145,7 +146,7 @@ export default function WorkPage() {
                 className="inline-flex w-full items-center justify-center"
               >
                 <div className="inline-flex items-center text-xs font-semibold text-white dark:text-black whitespace-nowrap font-sans">
-                  Read Case Study
+                  {cursorText}
                 </div>
               </motion.div>
             ) : null}
@@ -155,10 +156,10 @@ export default function WorkPage() {
 
       <main
         aria-label="Work page content"
-        className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
+        className="relative z-10 bg-[#F2F0EB] dark:bg-[#080809] flex-1 border-b border-attio-border-light dark:border-attio-border-dark transition-colors duration-300"
       >
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-white dark:bg-[#0A0A0B]">
+          <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark bg-[#FAF8F5] dark:bg-[#0A0A0B]">
             <div className="w-full">
               {/* Page Header */}
               <div className="relative px-5 py-8 border-b border-attio-border-light dark:border-attio-border-dark overflow-hidden">
@@ -187,23 +188,23 @@ export default function WorkPage() {
                     </p>
                   </div>
 
-                  {/* Category Selector Pills */}
+                  {/* Category Selector Tabs */}
                   {works.length > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-2">
+                    <div className="flex flex-wrap items-center gap-1 sm:gap-2 pt-2">
                       <button
                         onClick={() => setCategoryFilter("")}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border flex items-center gap-1.5 transition-all duration-250 cursor-pointer ${
+                        className={`relative px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer select-none ${
                           categoryFilter === ""
-                            ? "bg-neutral-200 border-neutral-300 text-neutral-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 shadow-sm"
-                            : "bg-white border-zinc-200 text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50/50 dark:bg-[#0A0A0B] dark:border-zinc-800 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-neutral-900/50"
+                            ? "text-neutral-900 dark:text-white bg-neutral-200/90 dark:bg-[#1C1C1F] shadow-xs"
+                            : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200 bg-transparent hover:bg-neutral-100/60 dark:hover:bg-neutral-800/40"
                         }`}
                       >
                         <span>All</span>
                         <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold leading-none ${
+                          className={`text-[11px] font-mono min-w-[20px] h-5 px-1.5 rounded-full inline-flex items-center justify-center border leading-none transition-colors ${
                             categoryFilter === ""
-                              ? "bg-neutral-300 text-neutral-700 dark:bg-zinc-600 dark:text-zinc-200"
-                              : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-zinc-400"
+                              ? "border-neutral-300 bg-neutral-300/60 text-neutral-800 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                              : "border-neutral-200 bg-neutral-100/80 text-neutral-500 dark:border-neutral-800/80 dark:bg-neutral-800/50 dark:text-neutral-400"
                           }`}
                         >
                           {works.length}
@@ -219,18 +220,18 @@ export default function WorkPage() {
                           <button
                             key={cat}
                             onClick={() => setCategoryFilter(cat)}
-                            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border flex items-center gap-1.5 transition-all duration-250 cursor-pointer ${
+                            className={`relative px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer select-none ${
                               isSelected
-                                ? "bg-neutral-200 border-neutral-300 text-neutral-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 shadow-sm"
-                                : "bg-white border-zinc-200 text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50/50 dark:bg-[#0A0A0B] dark:border-zinc-800 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-neutral-900/50"
+                                ? "text-neutral-900 dark:text-white bg-neutral-200/90 dark:bg-[#1C1C1F] shadow-xs"
+                                : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200 bg-transparent hover:bg-neutral-100/60 dark:hover:bg-neutral-800/40"
                             }`}
                           >
                             <span>{cat}</span>
                             <span
-                              className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold leading-none ${
+                              className={`text-[11px] font-mono min-w-[20px] h-5 px-1.5 rounded-full inline-flex items-center justify-center border leading-none transition-colors ${
                                 isSelected
-                                  ? "bg-neutral-300 text-neutral-700 dark:bg-zinc-600 dark:text-zinc-200"
-                                  : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-zinc-400"
+                                  ? "border-neutral-300 bg-neutral-300/60 text-neutral-800 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                                  : "border-neutral-200 bg-neutral-100/80 text-neutral-500 dark:border-neutral-800/80 dark:bg-neutral-800/50 dark:text-neutral-400"
                               }`}
                             >
                               {count}
@@ -305,6 +306,11 @@ export default function WorkPage() {
                           <Component
                             key={work._id}
                             {...componentProps}
+                            onMouseEnter={() => {
+                              setIsCursorHovering(true);
+                              setCursorText(isExternal ? "Read Externally" : "Read Case Study");
+                            }}
+                            onMouseLeave={() => setIsCursorHovering(false)}
                             className="group bg-white dark:bg-[#0A0A0B] hover:bg-neutral-50/40 dark:hover:bg-zinc-900/10 transition-colors flex flex-col justify-between h-full cursor-pointer"
                           >
                             <motion.div
@@ -315,8 +321,6 @@ export default function WorkPage() {
                             >
                               {/* Thumbnail */}
                               <div
-                                onMouseEnter={() => setIsCursorHovering(true)}
-                                onMouseLeave={() => setIsCursorHovering(false)}
                                 className="w-full aspect-[16/10] overflow-hidden bg-neutral-100 dark:bg-neutral-900 border-b border-zinc-150 dark:border-zinc-900/50"
                               >
                                 {work.heroImage ? (
@@ -338,11 +342,8 @@ export default function WorkPage() {
                               {/* Info */}
                               <div className="flex-1 p-6 flex flex-col justify-between space-y-4 text-left">
                                 <div className="space-y-2">
-                                  <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-zinc-300 transition-colors flex items-center gap-1.5">
+                                  <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-zinc-300 transition-colors">
                                     <span>{work.title}</span>
-                                    {isExternal && (
-                                      <Icon icon="solar:export-linear" className="w-4 h-4 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-zinc-300 flex-shrink-0" />
-                                    )}
                                   </h3>
                                   <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-3 font-sans">
                                     {work.description}

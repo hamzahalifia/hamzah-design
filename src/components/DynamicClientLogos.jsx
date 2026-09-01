@@ -83,7 +83,7 @@ export default function DynamicClientLogos() {
   }, [updateLogo]);
   
   return (
-    <div className="w-full border-t border-attio-border-light dark:border-attio-border-dark h-[80px] bg-[#FEFEFE] dark:bg-[#0A0A0B] select-none">
+    <div className="w-full border-t border-attio-border-light dark:border-attio-border-dark h-[80px] bg-[#FAF8F5] dark:bg-[#0A0A0B] select-none">
       <div className="grid grid-cols-3 w-full h-full divide-x divide-zinc-200 dark:divide-zinc-800">
         <LogoDisplay logo={activeLogos[0]} />
         <LogoDisplay logo={activeLogos[1]} />

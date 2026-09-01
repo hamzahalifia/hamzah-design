@@ -12,7 +12,7 @@ export default function HomePage() {
 
   return (
     <div 
-      className="min-h-screen bg-[#FAFAF9] dark:bg-[#080809] text-[#111827] dark:text-[#F4F4F5] transition-colors duration-300 selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-black"
+      className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809] text-[#18181B] dark:text-[#F4F4F5] transition-colors duration-300 selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-black"
     >
       <PageMeta
         title="Alifia Hamzah — Product Designer | Portfolio"
@@ -73,9 +73,9 @@ export default function HomePage() {
         }}
       />
       {/* <Navbar /> */}
-      <main aria-label="Home page content" className="relative z-10 bg-[#FAFAF9] dark:bg-[#080809] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b transition-colors duration-300">
+      <main aria-label="Home page content" className="relative z-10 bg-[#F2F0EB] dark:bg-[#080809] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
-          <div className="flex flex-col lg:flex-row gap-0 border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark lg:glow-border-l lg:glow-border-r bg-white dark:bg-[#0A0A0B]">
+          <div className="flex flex-col lg:flex-row gap-0 border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark lg:glow-border-l lg:glow-border-r bg-[#FAF8F5] dark:bg-[#0A0A0B]">
             <ProfileSidebar />
             <div className="flex-1">
               <WorkShowcase />

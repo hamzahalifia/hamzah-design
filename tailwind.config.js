@@ -48,25 +48,25 @@ export default {
         ring: "var(--ring)",
         attio: {
           bg: {
-            light: '#FFFFFF',
+            light: '#FAF8F5',
             dark: '#0A0A0B',
-            'subtle-light': '#FAFAFA',
+            'subtle-light': '#F2F0EB',
             'subtle-dark': '#121215',
-            'footer-light': '#FAFAFB',
+            'footer-light': '#F2F0EB',
             'footer-dark': '#080809',
           },
           text: {
-            'primary-light': '#111827',
+            'primary-light': '#18181B',
             'primary-dark': '#F4F4F5',
-            'secondary-light': '#6B7280',
+            'secondary-light': '#52525B',
             'secondary-dark': '#A1A1AA',
-            'muted-light': '#9CA3AF',
+            'muted-light': '#71717A',
             'muted-dark': '#52525B',
           },
           border: {
-            'light': '#CDD1CD',
+            'light': '#E4E2DC',
             'dark': '#27272A',
-            'subtle-light': '#E5E7EB',
+            'subtle-light': '#EBE9E3',
             'subtle-dark': '#18181B',
           }
         }

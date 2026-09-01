@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
  */
 export default function ClosePopup({ onClose, to, ariaLabel = 'Close' }) {
   const className =
-    "w-10 h-10 rounded-full bg-white dark:bg-[#0A0A0B] border border-[#CDD1CD] dark:border-attio-border-dark shadow-lg flex items-center justify-center text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all active:scale-90 cursor-pointer";
+    "w-10 h-10 rounded-full bg-white dark:bg-[#0A0A0B] border border-attio-border-light dark:border-attio-border-dark shadow-lg flex items-center justify-center text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all active:scale-90 cursor-pointer";
 
   // If `to` is provided, render as a Link (for UnderConstruction back button)
   if (to) {

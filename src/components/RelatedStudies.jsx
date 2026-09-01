@@ -101,11 +101,8 @@ export default function RelatedStudies({ studies }) {
                   {/* Info */}
                   <div className="flex-1 p-6 flex flex-col justify-between space-y-4 text-left">
                     <div className="space-y-2">
-                      <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-zinc-300 transition-colors flex items-center gap-1.5">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-zinc-300 transition-colors">
                         <span>{study.title}</span>
-                        {isExternal && (
-                          <Icon icon="solar:export-linear" className="w-4 h-4 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-zinc-300 flex-shrink-0" />
-                        )}
                       </h3>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-3 font-sans">
                         {study.description}
