@@ -69,14 +69,12 @@ export default function WorkShowcase() {
   useEffect(() => {
     async function loadShowcaseData() {
       try {
-        const [worksData, explorationsData, resourcesData] = await Promise.all([
+        const [worksData, explorationsData] = await Promise.all([
           cmsFetch(FEATURED_CASE_STUDIES_QUERY),
-          cmsFetch({ type: 'explorations' }),
-          cmsFetch({ type: 'featured-resources', limit: 4 })
+          cmsFetch({ type: 'explorations' })
         ]);
         setWorks(worksData || []);
         setExplorations(explorationsData || []);
-        setResources(resourcesData || []);
       } catch (err) {
         console.error("Failed to load showcase:", err);
       } finally {
@@ -232,8 +230,8 @@ export default function WorkShowcase() {
         })}
       </div>
 
-      {/* Exploration Container (Border Bottom) */}
-      <div id="exploration" className="border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
+      {/* Exploration Container (No Bottom Border) */}
+      <div id="exploration">
         {/* Section Header with Refined Smaller Heading (text-lg) */}
         <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
           <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
@@ -294,120 +292,6 @@ export default function WorkShowcase() {
                 </GlowCard>
               ))}
           </div>
-          )}
-        </div>
-      </div>
-
-      {/* Featured Resources Container */}
-      <div id="resources">
-        {/* Section Header */}
-        <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
-          <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
-            Resources
-          </h2>
-          <Link
-            to="/resources"
-            className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
-          >
-            <RollingText>More</RollingText>
-            <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
-          </Link>
-        </div>
-
-        {/* Resources Grid */}
-        <div className="p-5">
-          {loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[...Array(2)].map((_, i) => (
-                <SkeletonLoader key={i} className="h-[280px] rounded-xl" />
-              ))}
-            </div>
-          )}
-
-          {!loading && resources.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {resources.map((res) => (
-                <Link
-                  key={res.id}
-                  to={`/resources/${res.slug}`}
-                  onMouseEnter={() => { setIsCursorHovering(true); setCursorText('View Resource'); }}
-                  onMouseLeave={() => setIsCursorHovering(false)}
-                  className="group block rounded-xl border border-attio-border-light dark:border-attio-border-dark bg-white dark:bg-[#0C0C0E] hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-300 overflow-hidden cursor-pointer shadow-sm hover:shadow-md"
-                >
-                  <div className="p-4 flex flex-col h-full space-y-3">
-                    {/* Thumbnail */}
-                    <div className="w-full aspect-[16/10] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 relative border border-attio-border-light dark:border-attio-border-dark">
-                      {res.image ? (
-                        <OptimizedImage
-                          src={res.image}
-                          alt={res.title}
-                          className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-neutral-400">
-                          <Icon icon="solar:box-minimalistic-linear" className="w-8 h-8" />
-                        </div>
-                      )}
-
-                      {/* Top Badges */}
-                      <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-                        {res.type?.name ? (
-                          <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-white/90 dark:bg-neutral-900/90 text-neutral-800 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 backdrop-blur-md">
-                            {res.type.name}
-                          </span>
-                        ) : <span />}
-
-                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full font-mono border backdrop-blur-md ${
-                          res.priceType === 'free'
-                            ? 'bg-emerald-500/90 text-white border-emerald-400'
-                            : 'bg-black/90 text-white dark:bg-white/90 dark:text-black border-neutral-700 dark:border-neutral-200'
-                        }`}>
-                          {res.priceType === 'free' ? 'FREE' : `$${res.price}`}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Content Details */}
-                    <div className="flex-1 flex flex-col justify-between space-y-2 pt-1">
-                      <div className="space-y-1">
-                        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors leading-snug line-clamp-1">
-                          {res.title}
-                        </h3>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-2">
-                          {res.description}
-                        </p>
-                      </div>
-
-                      {/* Platform & Tech Stacks Footer */}
-                      <div className="flex items-center justify-between pt-2 border-t border-neutral-100 dark:border-neutral-800/80 text-[11px] text-neutral-500 dark:text-neutral-400">
-                        {res.platform?.name ? (
-                          <div className="flex items-center gap-1.5 font-medium">
-                            {res.platform.logo && (
-                              <img src={res.platform.logo} alt={res.platform.name} className="w-3.5 h-3.5 object-contain" />
-                            )}
-                            <span>{res.platform.name}</span>
-                          </div>
-                        ) : <span />}
-
-                        {res.techStacks && res.techStacks.length > 0 && (
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            {res.techStacks.slice(0, 3).map((tech, idx) => (
-                              <span key={idx} className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200/50 dark:border-neutral-700/50">
-                                {tech.name}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {!loading && resources.length === 0 && (
-            <p className="text-xs text-neutral-400 py-4">No featured resources available.</p>
           )}
         </div>
       </div>
