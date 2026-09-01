@@ -2,9 +2,17 @@ import React from 'react';
 
 // Your ImageKit URL Endpoint
 const IMAGEKIT_ENDPOINT = 'https://ik.imagekit.io/nr1gjsmwr/';
-const CMS_BASE =
+const DEFAULT_CMS_BASE = 'https://hamzah-design-cms.vercel.app';
+
+function sanitizeCmsUrl(url = '') {
+  if (!url) return '';
+  return String(url).replace(/https?:\/\/hamzah-design-cms\.onrender\.com/g, DEFAULT_CMS_BASE);
+}
+
+const RAW_CMS_BASE =
   import.meta.env.PUBLIC_PAYLOAD_BASE_URL ||
-  'https://hamzah-design-cms.vercel.app';
+  DEFAULT_CMS_BASE;
+const CMS_BASE = sanitizeCmsUrl(RAW_CMS_BASE) || DEFAULT_CMS_BASE;
 const R2_ENDPOINT =
   import.meta.env.PUBLIC_R2_ENDPOINT ||
   '';
@@ -48,18 +56,19 @@ const OptimizedImage = ({
   fetchpriority,
   ...props
 }) => {
-  if (!src) {
+  const sanitizedSrc = sanitizeCmsUrl(src);
+  if (!sanitizedSrc) {
     return null;
   }
 
   // If the src is not from our CMS, use it as is (e.g., local images, SVGs).
   const optimizableBases = getOptimizableBases();
-  const shouldOptimize = optimizableBases.some((base) => src.startsWith(base));
+  const shouldOptimize = optimizableBases.some((base) => sanitizedSrc.startsWith(base));
 
   if (!shouldOptimize) {
     return (
       <img
-        src={src}
+        src={sanitizedSrc}
         alt={alt}
         width={width}
         height={height}
@@ -75,11 +84,11 @@ const OptimizedImage = ({
   let imagePath;
   try {
     // Works for absolute URLs like "https://..."
-    const urlObject = new URL(src);
+    const urlObject = new URL(sanitizedSrc);
     imagePath = urlObject.pathname;
   } catch (e) {
     // Falls back for relative paths like "/media/image.webp"
-    imagePath = src;
+    imagePath = sanitizedSrc;
   }
   
   // Define ImageKit transformations

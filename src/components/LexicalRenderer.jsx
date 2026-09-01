@@ -11,7 +11,15 @@ const IS_CODE = 16;
 const IS_SUBSCRIPT = 32;
 const IS_SUPERSCRIPT = 64;
 
-const CMS_BASE = import.meta.env.PUBLIC_PAYLOAD_BASE_URL || 'https://hamzah-design-cms.vercel.app';
+const DEFAULT_CMS_BASE = 'https://hamzah-design-cms.vercel.app';
+
+function sanitizeCmsUrl(url = '') {
+  if (!url) return '';
+  return String(url).replace(/https?:\/\/hamzah-design-cms\.onrender\.com/g, DEFAULT_CMS_BASE);
+}
+
+const RAW_CMS_BASE = import.meta.env.PUBLIC_PAYLOAD_BASE_URL || DEFAULT_CMS_BASE;
+const CMS_BASE = sanitizeCmsUrl(RAW_CMS_BASE) || DEFAULT_CMS_BASE;
 const R2_ENDPOINT = import.meta.env.PUBLIC_R2_ENDPOINT || '';
 const R2_BUCKET = import.meta.env.PUBLIC_R2_BUCKET || '';
 
@@ -36,14 +44,15 @@ function extractMediaFilename(url) {
 
 function toAbsoluteUrl(url) {
   if (!url) return null;
-  if (url.startsWith('http')) return url;
+  const sanitized = sanitizeCmsUrl(url);
+  if (sanitized.startsWith('http')) return sanitized;
   if (R2_ENDPOINT) {
-    const filename = extractMediaFilename(url);
-    const r2Url = buildR2MediaUrl(filename || url);
+    const filename = extractMediaFilename(sanitized);
+    const r2Url = buildR2MediaUrl(filename || sanitized);
     if (r2Url) return r2Url;
   }
-  if (url.startsWith('/')) return `${CMS_BASE}${url}`;
-  return buildR2MediaUrl(url) || `${CMS_BASE}/${trimSlashes(url)}`;
+  if (sanitized.startsWith('/')) return `${CMS_BASE}${sanitized}`;
+  return buildR2MediaUrl(sanitized) || `${CMS_BASE}/${trimSlashes(sanitized)}`;
 }
 
 function firstDefined(...values) { return values.find((value) => value !== undefined && value !== null && value !== ''); }

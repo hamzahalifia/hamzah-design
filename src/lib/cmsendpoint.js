@@ -1,10 +1,19 @@
 const DEFAULT_CMS_BASE = 'https://hamzah-design-cms.vercel.app';
 const DEFAULT_CMS_API_BASE = `${DEFAULT_CMS_BASE}/api`;
 
-const CMS_API_BASE = import.meta.env.PUBLIC_PAYLOAD_API_URL || DEFAULT_CMS_API_BASE;
-const CMS_BASE =
+function sanitizeCmsUrl(url = '') {
+  if (!url) return '';
+  return String(url).replace(/https?:\/\/hamzah-design-cms\.onrender\.com/g, DEFAULT_CMS_BASE);
+}
+
+const RAW_CMS_API_BASE = import.meta.env.PUBLIC_PAYLOAD_API_URL || DEFAULT_CMS_API_BASE;
+const CMS_API_BASE = sanitizeCmsUrl(RAW_CMS_API_BASE) || DEFAULT_CMS_API_BASE;
+
+const RAW_CMS_BASE =
   import.meta.env.PUBLIC_PAYLOAD_BASE_URL ||
   (CMS_API_BASE ? CMS_API_BASE.replace(/\/api\/?$/, '') : DEFAULT_CMS_BASE);
+const CMS_BASE = sanitizeCmsUrl(RAW_CMS_BASE) || DEFAULT_CMS_BASE;
+
 const R2_ENDPOINT = import.meta.env.PUBLIC_R2_ENDPOINT || '';
 const R2_BUCKET = import.meta.env.PUBLIC_R2_BUCKET || '';
 
@@ -40,19 +49,20 @@ function extractMediaFilename(url) {
   return filename ? decodeURIComponent(filename) : null;
 }
 
-/** Resolve relative media URLs to absolute */
+/** Resolve relative media URLs to absolute (with automatic Render to Vercel migration) */
 function resolveMediaUrl(media) {
   if (!media) return null;
 
   if (typeof media === 'string') {
-    if (media.startsWith('http')) return media;
+    const sanitized = sanitizeCmsUrl(media);
+    if (sanitized.startsWith('http')) return sanitized;
     if (R2_ENDPOINT) {
-      const filename = extractMediaFilename(media);
-      const r2Url = buildR2MediaUrl(filename || media);
+      const filename = extractMediaFilename(sanitized);
+      const r2Url = buildR2MediaUrl(filename || sanitized);
       if (r2Url) return r2Url;
     }
-    if (media.startsWith('/')) return `${CMS_BASE}${media}`;
-    return buildR2MediaUrl(media) || `${CMS_BASE}/${trimSlashes(media)}`;
+    if (sanitized.startsWith('/')) return `${CMS_BASE}${sanitized}`;
+    return buildR2MediaUrl(sanitized) || `${CMS_BASE}/${trimSlashes(sanitized)}`;
   }
 
   const fallbackPath =
@@ -73,8 +83,9 @@ function resolveMediaUrl(media) {
     media.sizes?.hero?.url;
 
   if (directUrl) {
-    if (directUrl.startsWith('http')) return directUrl;
-    if (directUrl.startsWith('/')) return `${CMS_BASE}${directUrl}`;
+    const sanitized = sanitizeCmsUrl(directUrl);
+    if (sanitized.startsWith('http')) return sanitized;
+    if (sanitized.startsWith('/')) return `${CMS_BASE}${sanitized}`;
   }
 
   return null;
@@ -139,7 +150,7 @@ function isPublishedCaseStudy(doc) {
  */
 async function payloadFetch(endpoint, options = {}) {
   try {
-    const url = `${CMS_API_BASE}${endpoint}`;
+    const url = sanitizeCmsUrl(`${CMS_API_BASE}${endpoint}`);
     const res = await fetch(url, {
       headers: { 'Content-Type': 'application/json', ...options.headers },
       ...options,
