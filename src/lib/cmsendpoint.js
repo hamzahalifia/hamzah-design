@@ -1,4 +1,4 @@
-const DEFAULT_CMS_BASE = 'https://hamzah-design-cms.onrender.com';
+const DEFAULT_CMS_BASE = 'https://hamzah-design-cms.vercel.app';
 const DEFAULT_CMS_API_BASE = `${DEFAULT_CMS_BASE}/api`;
 
 const CMS_API_BASE = import.meta.env.PUBLIC_PAYLOAD_API_URL || DEFAULT_CMS_API_BASE;

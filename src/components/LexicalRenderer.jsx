@@ -11,7 +11,7 @@ const IS_CODE = 16;
 const IS_SUBSCRIPT = 32;
 const IS_SUPERSCRIPT = 64;
 
-const CMS_BASE = import.meta.env.PUBLIC_PAYLOAD_BASE_URL || 'https://hamzah-design-cms.onrender.com';
+const CMS_BASE = import.meta.env.PUBLIC_PAYLOAD_BASE_URL || 'https://hamzah-design-cms.vercel.app';
 const R2_ENDPOINT = import.meta.env.PUBLIC_R2_ENDPOINT || '';
 const R2_BUCKET = import.meta.env.PUBLIC_R2_BUCKET || '';
 

@@ -4,7 +4,7 @@ import React from 'react';
 const IMAGEKIT_ENDPOINT = 'https://ik.imagekit.io/nr1gjsmwr/';
 const CMS_BASE =
   import.meta.env.PUBLIC_PAYLOAD_BASE_URL ||
-  'https://hamzah-design-cms.onrender.com';
+  'https://hamzah-design-cms.vercel.app';
 const R2_ENDPOINT =
   import.meta.env.PUBLIC_R2_ENDPOINT ||
   '';
