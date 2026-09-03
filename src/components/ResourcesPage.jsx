@@ -18,6 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination";
+import { Checkbox } from "./base/checkbox/checkbox";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -347,33 +348,20 @@ export default function ResourcesPage() {
                     {categoriesWithCounts.map((type) => {
                       const isChecked = selectedTypes.includes(type.slug);
                       return (
-                        <label
+                        <div
                           key={type.id}
-                          onClick={() => toggleType(type.slug)}
-                          className="w-full flex items-center justify-between p-1 rounded hover:bg-neutral-100/60 dark:hover:bg-neutral-900/60 transition-colors cursor-pointer select-none text-xs"
+                          className="w-full flex items-center justify-between p-1 rounded hover:bg-neutral-100/60 dark:hover:bg-neutral-900/60 transition-colors"
                         >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            {/* Checkbox box indicator */}
-                            <div
-                              className={`w-4 h-4 rounded flex items-center justify-center border transition-colors flex-shrink-0 ${
-                                isChecked
-                                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-white dark:border-white dark:text-black"
-                                  : "border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
-                              }`}
-                            >
-                              {isChecked && (
-                                <Icon icon="solar:check-read-linear" className="w-3 h-3 stroke-[3]" />
-                              )}
-                            </div>
-                            <span className={`truncate font-sans ${isChecked ? "font-semibold text-neutral-900 dark:text-white" : "text-neutral-600 dark:text-neutral-400"}`}>
-                              {type.name}
-                            </span>
-                          </div>
-
-                          <span className="text-[11px] text-neutral-400 font-mono flex-shrink-0 pl-2">
+                          <Checkbox
+                            isSelected={isChecked}
+                            onChange={() => toggleType(type.slug)}
+                            label={type.name}
+                            className="flex-1 min-w-0"
+                          />
+                          <span className="text-[11px] text-neutral-400 font-mono flex-shrink-0 pl-2 select-none">
                             {type.count}
                           </span>
-                        </label>
+                        </div>
                       );
                     })}
                   </div>
@@ -391,32 +379,20 @@ export default function ResourcesPage() {
                     ].map((p) => {
                       const isChecked = selectedPrices.includes(p.value);
                       return (
-                        <label
+                        <div
                           key={p.value}
-                          onClick={() => togglePrice(p.value)}
-                          className="w-full flex items-center justify-between p-1 rounded hover:bg-neutral-100/60 dark:hover:bg-neutral-900/60 transition-colors cursor-pointer select-none text-xs"
+                          className="w-full flex items-center justify-between p-1 rounded hover:bg-neutral-100/60 dark:hover:bg-neutral-900/60 transition-colors"
                         >
-                          <div className="flex items-center gap-2.5">
-                            <div
-                              className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${
-                                isChecked
-                                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-white dark:border-white dark:text-black"
-                                  : "border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
-                              }`}
-                            >
-                              {isChecked && (
-                                <Icon icon="solar:check-read-linear" className="w-3 h-3 stroke-[3]" />
-                              )}
-                            </div>
-                            <span className={`font-sans ${isChecked ? "font-semibold text-neutral-900 dark:text-white" : "text-neutral-600 dark:text-neutral-400"}`}>
-                              {p.label}
-                            </span>
-                          </div>
-
-                          <span className="text-[11px] text-neutral-400 font-mono flex-shrink-0 pl-2">
+                          <Checkbox
+                            isSelected={isChecked}
+                            onChange={() => togglePrice(p.value)}
+                            label={p.label}
+                            className="flex-1 min-w-0"
+                          />
+                          <span className="text-[11px] text-neutral-400 font-mono flex-shrink-0 pl-2 select-none">
                             {p.count}
                           </span>
-                        </label>
+                        </div>
                       );
                     })}
                   </div>
@@ -504,7 +480,7 @@ export default function ResourcesPage() {
                             </div>
                           </div>
 
-                          {/* Card Footer: Compact Tech & Platform Logos */}
+                          {/* Card Footer: Platform and Tech Stack Logos */}
                           <div className="px-5 pb-5 pt-3 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between min-h-[52px]">
                             {/* Platform Logo */}
                             <div className="flex items-center">
@@ -513,7 +489,7 @@ export default function ResourcesPage() {
                                   src={res.platform.logo}
                                   alt={res.platform.name || "Platform"}
                                   title={res.platform.name || "Platform"}
-                                  className="w-5 h-5 object-contain rounded-md"
+                                  className="w-[26px] h-[26px] object-contain rounded-sm"
                                 />
                               ) : res.platform?.name ? (
                                 <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
@@ -524,25 +500,17 @@ export default function ResourcesPage() {
 
                             {/* Tech Stacks */}
                             {res.techStacks && res.techStacks.length > 0 && (
-                              <div className="flex items-center gap-1.5 flex-wrap">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 {res.techStacks.slice(0, 4).map((tech, idx) => (
-                                  <div
-                                    key={idx}
-                                    title={tech.name}
-                                    className="flex items-center justify-center p-1 rounded-md bg-neutral-100/90 dark:bg-neutral-800/90 border border-neutral-200/60 dark:border-neutral-700/60"
-                                  >
-                                    {tech.logo ? (
-                                      <img
-                                        src={tech.logo}
-                                        alt={tech.name}
-                                        className="w-4 h-4 object-contain"
-                                      />
-                                    ) : (
-                                      <span className="px-1 text-[10px] font-mono font-medium text-neutral-600 dark:text-neutral-300">
-                                        {tech.name}
-                                      </span>
-                                    )}
-                                  </div>
+                                  tech.logo ? (
+                                    <img
+                                      key={idx}
+                                      src={tech.logo}
+                                      alt={tech.name}
+                                      title={tech.name}
+                                      className="w-[26px] h-[26px] object-contain rounded-sm"
+                                    />
+                                  ) : null
                                 ))}
                               </div>
                             )}

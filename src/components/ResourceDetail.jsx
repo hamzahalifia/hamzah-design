@@ -9,7 +9,7 @@ import SkeletonLoader from "./ui/SkeletonLoader";
 import OptimizedImage from "./OptimizedImage";
 import { fetchSingleResource } from "../lib/cmsendpoint";
 import { cn } from "../lib/utils";
-import { buttonVariants } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import ScrollProgress from "./ScrollProgress";
 import { RainbowButton } from "./ui/rainbow-button";
 import { RollingText } from "./magicui/RollingText";
@@ -89,22 +89,23 @@ export default function ResourceDetail() {
     }
   };
 
-  // Compile media slides for carousel (Thumbnail + Gallery Images + Gallery Video)
+  // Compile media slides for carousel (Gallery Images + Gallery Video)
   const slides = useMemo(() => {
     if (!data) return [];
     const list = [];
-    if (data.image) {
-      list.push({ type: "image", url: data.image, title: data.title });
-    }
     if (data.gallery?.images && data.gallery.images.length > 0) {
       data.gallery.images.forEach((imgUrl, i) => {
-        if (imgUrl && imgUrl !== data.image) {
+        if (imgUrl) {
           list.push({ type: "image", url: imgUrl, title: `${data.title} screenshot ${i + 1}` });
         }
       });
     }
     if (data.gallery?.video) {
       list.push({ type: "video", url: data.gallery.video, title: `${data.title} video` });
+    }
+    // Fallback to image only if no gallery media exists at all
+    if (list.length === 0 && data.image) {
+      list.push({ type: "image", url: data.image, title: data.title });
     }
     return list;
   }, [data]);
@@ -198,7 +199,7 @@ export default function ResourceDetail() {
             <div className="w-full pt-4 pb-8 md:pt-6 md:pb-12">
               {/* Back + Header Actions */}
               <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-0 flex items-center justify-between w-full">
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-3">
                   <Link
                     to="/resources"
                     className={cn(
@@ -212,6 +213,11 @@ export default function ResourceDetail() {
                       className="w-4 h-4 text-neutral-800 dark:text-neutral-200"
                     />
                   </Link>
+                  {data.type?.name && (
+                    <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 select-none">
+                      {data.type.name}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -250,14 +256,8 @@ export default function ResourceDetail() {
                 </div>
               </div>
 
-              {/* Title Header - Eye-catching Category Badge Only (No Icon) */}
-              <div ref={titleRef} className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6 space-y-3">
-                {data.type?.name && (
-                  <div className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold bg-neutral-900 text-white dark:bg-white dark:text-black shadow-md border border-neutral-800 dark:border-neutral-200 tracking-wide">
-                    <span>{data.type.name}</span>
-                  </div>
-                )}
-
+              {/* Title Header */}
+              <div ref={titleRef} className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6">
                 <h1 className="font-serif-attio text-4xl md:text-5xl lg:text-6xl font-medium text-black dark:text-white leading-tight tracking-tight">
                   {data.title}
                 </h1>
@@ -279,22 +279,48 @@ export default function ResourceDetail() {
                       transition={{ duration: 0.35, ease: "easeInOut" }}
                       className="w-full h-full relative"
                     >
-                      {slides[currentSlide].type === "video" ? (
-                        <video
-                          src={slides[currentSlide].url}
-                          controls
-                          autoPlay
-                          muted
-                          loop
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <OptimizedImage
-                          src={slides[currentSlide].url}
-                          alt={slides[currentSlide].title}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
+                      {/* Blurred ambient background */}
+                      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+                        {slides[currentSlide].type === "video" ? (
+                          <video
+                            src={slides[currentSlide].url}
+                            muted
+                            loop
+                            autoPlay
+                            playsInline
+                            className="w-full h-full object-cover scale-125 blur-2xl opacity-40 dark:opacity-30"
+                          />
+                        ) : (
+                          <OptimizedImage
+                            src={slides[currentSlide].url}
+                            alt=""
+                            aria-hidden="true"
+                            className="w-full h-full object-cover scale-125 blur-2xl opacity-50 dark:opacity-35"
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-black/10 dark:bg-black/30 backdrop-blur-sm" />
+                      </div>
+
+                      {/* Foreground media (Fit / Object Contain) */}
+                      <div className="relative z-10 w-full h-full flex items-center justify-center">
+                        {slides[currentSlide].type === "video" ? (
+                          <video
+                            src={slides[currentSlide].url}
+                            controls
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            className="w-full h-full object-contain drop-shadow-md"
+                          />
+                        ) : (
+                          <OptimizedImage
+                            src={slides[currentSlide].url}
+                            alt={slides[currentSlide].title}
+                            className="w-full h-full object-contain drop-shadow-md"
+                          />
+                        )}
+                      </div>
                     </motion.div>
                   </AnimatePresence>
 
@@ -303,21 +329,21 @@ export default function ResourceDetail() {
                     <>
                       <button
                         onClick={handlePrevSlide}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md transition-all cursor-pointer opacity-0 group-hover:opacity-100"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md transition-all cursor-pointer opacity-0 group-hover:opacity-100"
                         title="Previous Slide"
                       >
                         <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" />
                       </button>
                       <button
                         onClick={handleNextSlide}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md transition-all cursor-pointer opacity-0 group-hover:opacity-100"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md transition-all cursor-pointer opacity-0 group-hover:opacity-100"
                         title="Next Slide"
                       >
                         <Icon icon="solar:alt-arrow-right-linear" className="w-5 h-5" />
                       </button>
 
                       {/* Carousel Slide Indicators */}
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full">
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full">
                         {slides.map((_, idx) => (
                           <button
                             key={idx}
@@ -342,29 +368,52 @@ export default function ResourceDetail() {
                     </p>
                   )}
 
-                  {/* CTA Button: Get Template (Free + Icon) or Buy Template · $price (Paid, No Icon) */}
-                  {data.link && (
-                    <RainbowButton
-                      asChild
-                      className="w-full sm:w-auto text-base font-semibold btn-radius-lg mb-10"
-                      style={{ height: "48px" }}
-                    >
-                      <a
-                        href={data.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6"
-                      >
-                        <RollingText>
-                          {data.priceType === "paid" && data.price > 0
-                            ? `Buy Template · $${data.price}`
-                            : "Get Template"}
-                        </RollingText>
-                        {(data.priceType === "free" || !data.price) && (
-                          <Icon icon="solar:download-minimalistic-bold" className="w-4 h-4 ml-1" />
-                        )}
-                      </a>
-                    </RainbowButton>
+                  {/* Action Buttons: Get / Buy Template (Rainbow) + Live Preview (Secondary Button) */}
+                  {(data.link || data.previewLink) && (
+                    <div className="flex flex-wrap items-center gap-3 mb-10">
+                      {data.link && (
+                        <RainbowButton
+                          asChild
+                          className="w-full sm:w-auto text-base font-semibold btn-radius-lg"
+                          style={{ height: "48px" }}
+                        >
+                          <a
+                            href={data.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6"
+                          >
+                            <RollingText>
+                              {data.priceType === "paid" && data.price > 0
+                                ? `Buy Template · $${data.price}`
+                                : "Get Template"}
+                            </RollingText>
+                            {(data.priceType === "free" || !data.price) && (
+                              <Icon icon="solar:download-minimalistic-bold" className="w-4 h-4 ml-1" />
+                            )}
+                          </a>
+                        </RainbowButton>
+                      )}
+
+                      {data.previewLink && (
+                        <Button
+                          asChild
+                          variant="secondary"
+                          className="w-full sm:w-auto text-base font-semibold btn-radius-lg border border-attio-border-light dark:border-attio-border-dark btn-attio-secondary cursor-pointer"
+                          style={{ height: "48px" }}
+                        >
+                          <a
+                            href={data.previewLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6"
+                          >
+                            <RollingText>Live Preview</RollingText>
+                            <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
+                          </a>
+                        </Button>
+                      )}
+                    </div>
                   )}
 
                   {/* Consolidated Metadata Summary Grid */}
@@ -387,7 +436,7 @@ export default function ResourceDetail() {
                         </span>
                         <div className="flex items-center gap-2 font-semibold text-sm text-neutral-900 dark:text-neutral-100">
                           {data.platform.logo && (
-                            <img src={data.platform.logo} alt={data.platform.name} className="w-6 h-6 object-contain" />
+                            <img src={data.platform.logo} alt={data.platform.name} className="w-6 h-6 object-contain rounded-sm" />
                           )}
                           <span>{data.platform.name}</span>
                         </div>
@@ -419,15 +468,21 @@ export default function ResourceDetail() {
                         <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-2">
                           Tech Stack
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-4">
                           {data.techStacks.map((tech, idx) => (
-                            <span
+                            <div
                               key={idx}
-                              className="px-3 py-1 rounded-lg text-xs font-mono font-medium bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 flex items-center gap-2 shadow-2xs"
+                              className="flex items-center gap-2 text-sm font-medium text-neutral-900 dark:text-neutral-100"
                             >
-                              {tech.logo && <img src={tech.logo} alt={tech.name} className="w-5 h-5 object-contain" />}
+                              {tech.logo && (
+                                <img
+                                  src={tech.logo}
+                                  alt={tech.name}
+                                  className="w-5 h-5 object-contain rounded-sm"
+                                />
+                              )}
                               <span>{tech.name}</span>
-                            </span>
+                            </div>
                           ))}
                         </div>
                       </div>

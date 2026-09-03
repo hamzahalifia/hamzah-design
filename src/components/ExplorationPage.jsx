@@ -28,6 +28,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination";
+import { Badge } from "./base/badges/badges";
 import PageMeta from "./SEO/PageMeta";
 import { cmsFetch } from "../lib/cmsendpoint";
 import ZoomableImage from "./ZoomableImage";
@@ -701,15 +702,23 @@ export default function ExplorationPage() {
                                   Keywords
                                 </span>
                                 <div className="flex flex-wrap gap-1.5">
-                                  {selectedItem.keywords
-                                    .split(",")
+                                  {(Array.isArray(selectedItem.keywords)
+                                    ? selectedItem.keywords
+                                    : typeof selectedItem.keywords === "string"
+                                    ? selectedItem.keywords.split(",")
+                                    : []
+                                  )
+                                    .map((kw) => (typeof kw === "string" ? kw.trim() : String(kw)))
+                                    .filter(Boolean)
                                     .map((kw, i) => (
-                                      <span
+                                      <Badge
                                         key={i}
-                                        className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-medium text-neutral-300 border border-white/5 hover:bg-white/10 transition-colors"
+                                        size="sm"
+                                        color="gray"
+                                        type="color"
                                       >
-                                        {kw.trim()}
-                                      </span>
+                                        {kw}
+                                      </Badge>
                                     ))}
                                 </div>
                               </div>

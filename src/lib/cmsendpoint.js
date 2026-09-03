@@ -396,6 +396,7 @@ function normalizeResource(doc) {
     price,
     version: doc.version || null,
     link: doc.link || doc.externalUrl || doc.downloadUrl || null,
+    previewLink: doc.previewLink || doc.preview_link || null,
     gallery: {
       images: galleryImages,
       video: galleryVideo,

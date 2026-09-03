@@ -12,6 +12,7 @@ import OptimizedImage from './OptimizedImage';
 import { toast } from 'sonner';
 import { MediaPreview } from './ExplorationPage';
 import GlowCard from './core/GlowCard';
+import { Badge } from './base/badges/badges';
 
 export default function WorkShowcase() {
   const navigate = useNavigate();
@@ -439,14 +440,24 @@ export default function WorkShowcase() {
                           <div className="space-y-1.5 pt-1.5 border-t border-white/5">
                             <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest block">Keywords</span>
                             <div className="flex flex-wrap gap-1.5">
-                              {selectedExploration.keywords.split(',').map((kw, i) => (
-                                <span
-                                  key={i}
-                                  className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-medium text-neutral-300 border border-white/5 hover:bg-white/10 transition-colors"
-                                >
-                                  {kw.trim()}
-                                </span>
-                              ))}
+                              {(Array.isArray(selectedExploration.keywords)
+                                ? selectedExploration.keywords
+                                : typeof selectedExploration.keywords === "string"
+                                ? selectedExploration.keywords.split(",")
+                                : []
+                              )
+                                .map((kw) => (typeof kw === "string" ? kw.trim() : String(kw)))
+                                .filter(Boolean)
+                                .map((kw, i) => (
+                                  <Badge
+                                    key={i}
+                                    size="sm"
+                                    color="gray"
+                                    type="color"
+                                  >
+                                    {kw}
+                                  </Badge>
+                                ))}
                             </div>
                           </div>
                         )}
