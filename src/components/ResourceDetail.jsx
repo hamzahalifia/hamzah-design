@@ -468,7 +468,7 @@ export default function ResourceDetail() {
                         <span className="block text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mb-2">
                           Tech Stack
                         </span>
-                        <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex flex-wrap items-center gap-4 pt-2">
                           {data.techStacks.map((tech, idx) => (
                             <div
                               key={idx}

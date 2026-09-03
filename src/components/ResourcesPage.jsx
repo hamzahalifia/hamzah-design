@@ -19,6 +19,7 @@ import {
   PaginationPrevious,
 } from "./ui/pagination";
 import { Checkbox } from "./base/checkbox/checkbox";
+import { Badge } from "./base/badges/badges";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -472,9 +473,14 @@ export default function ResourcesPage() {
                               {/* Version Badge below description */}
                               {res.version && (
                                 <div className="pt-0.5">
-                                  <span className="px-2 py-0.5 text-[11px] font-mono font-medium rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200/60 dark:border-neutral-700/60 inline-flex items-center">
+                                  <Badge
+                                    size="sm"
+                                    color="gray"
+                                    type="color"
+                                    className="font-mono text-[11px]"
+                                  >
                                     {res.version}
-                                  </span>
+                                  </Badge>
                                 </div>
                               )}
                             </div>
