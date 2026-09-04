@@ -200,11 +200,9 @@ export async function fetchCaseStudies() {
 /**
  * Fetch featured case studies (up to 4)
  */
-export async function fetchFeaturedCaseStudies() {
-  const data = await payloadFetch('/case-studies?where[featured][equals]=true&depth=1&sort=-publishedAt&limit=4');
-  return data.docs
-    .filter(isPublishedCaseStudy)
-    .map((doc) => ({
+function normalizeFeaturedCaseStudy(doc) {
+  if (!doc) return null;
+  return {
     _id: doc.id,
     title: doc.title,
     slug: doc.slug,
@@ -214,7 +212,23 @@ export async function fetchFeaturedCaseStudies() {
     publishedAt: doc.publishedAt,
     creationType: doc.creationType || 'from-scratch',
     externalUrl: doc.externalUrl || null,
-  }));
+  };
+}
+
+export async function fetchFeaturedCaseStudies() {
+  try {
+    const settings = await fetchHomepageSettings();
+    if (Array.isArray(settings?.featuredCaseStudies) && settings.featuredCaseStudies.length > 0) {
+      return settings.featuredCaseStudies;
+    }
+  } catch (e) {
+    console.warn('Error checking homepage settings for featured case studies:', e);
+  }
+
+  const data = await payloadFetch('/case-studies?where[featured][equals]=true&depth=1&sort=-publishedAt&limit=4');
+  return data.docs
+    .filter(isPublishedCaseStudy)
+    .map(normalizeFeaturedCaseStudy);
 }
 
 /**
@@ -305,9 +319,9 @@ export async function fetchExplorations() {
 /**
  * Fetch highlighted explorations
  */
-export async function fetchHighlightedExplorations() {
-  const data = await payloadFetch('/explorations?where[isHighlighted][equals]=true&depth=1&sort=-createdAt');
-  return data.docs.map((doc) => ({
+function normalizeExploration(doc) {
+  if (!doc) return null;
+  return {
     id: doc.id,
     slug: doc.slug,
     title: doc.title,
@@ -321,7 +335,21 @@ export async function fetchHighlightedExplorations() {
     keywords: doc.keywords || '',
     is_highlighted: 1,
     created_at: doc.createdAt || doc.publishedAt,
-  }));
+  };
+}
+
+export async function fetchHighlightedExplorations() {
+  try {
+    const settings = await fetchHomepageSettings();
+    if (Array.isArray(settings?.highlightedExplorations) && settings.highlightedExplorations.length > 0) {
+      return settings.highlightedExplorations;
+    }
+  } catch (e) {
+    console.warn('Error checking homepage settings for highlighted explorations:', e);
+  }
+
+  const data = await payloadFetch('/explorations?where[isHighlighted][equals]=true&depth=1&sort=-createdAt');
+  return data.docs.map(normalizeExploration);
 }
 
 /**
@@ -459,10 +487,47 @@ export async function fetchResourceTypes() {
   }));
 }
 
+/**
+ * Fetch homepage settings (section ordering, etc.)
+ */
+export async function fetchHomepageSettings() {
+  try {
+    const data = await payloadFetch('/globals/homepage?depth=2');
+    let featuredCaseStudies = null;
+    let highlightedExplorations = null;
+
+    if (Array.isArray(data?.featuredCaseStudies) && data.featuredCaseStudies.length > 0) {
+      featuredCaseStudies = data.featuredCaseStudies
+        .filter((cs) => cs && typeof cs === 'object' && isPublishedCaseStudy(cs))
+        .map(normalizeFeaturedCaseStudy);
+    }
+
+    if (Array.isArray(data?.highlightedExplorations) && data.highlightedExplorations.length > 0) {
+      highlightedExplorations = data.highlightedExplorations
+        .filter((exp) => exp && typeof exp === 'object')
+        .map(normalizeExploration);
+    }
+
+    return {
+      sectionOrder: data?.sectionOrder || 'case-studies-first',
+      featuredCaseStudies,
+      highlightedExplorations,
+    };
+  } catch (err) {
+    console.warn('Failed to fetch homepage settings from Payload CMS, defaulting:', err);
+    return {
+      sectionOrder: 'case-studies-first',
+      featuredCaseStudies: null,
+      highlightedExplorations: null,
+    };
+  }
+}
+
 // Keep these as convenience wrappers to maintain compatibility with existing components.
 // The component code imports these names; we provide equivalents using the new Payload fetchers.
 export const CASE_STUDIES_QUERY = { type: 'case-studies' };
 export const FEATURED_CASE_STUDIES_QUERY = { type: 'featured-case-studies' };
+export const HOMEPAGE_SETTINGS_QUERY = { type: 'homepage-settings' };
 export function SINGLE_CASE_STUDY_QUERY(slug) {
   return { type: 'single-case-study', slug };
 }
@@ -480,6 +545,8 @@ export async function cmsFetch(query, params = {}) {
       return fetchCaseStudies();
     case 'featured-case-studies':
       return fetchFeaturedCaseStudies();
+    case 'homepage-settings':
+      return fetchHomepageSettings();
     case 'single-case-study':
       return fetchSingleCaseStudy(params.slug || query.slug, params.preview || false);
     case 'related-case-studies':

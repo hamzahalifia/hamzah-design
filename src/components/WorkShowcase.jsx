@@ -1,37 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { Icon } from '@iconify/react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { RollingText } from './magicui/RollingText';
-import ClosePopup from './ClosePopup';
-import { Cursor } from './core/cursor';
-import SkeletonLoader from './ui/SkeletonLoader';
-import { cmsFetch, FEATURED_CASE_STUDIES_QUERY } from '../lib/cmsendpoint';
-import OptimizedImage from './OptimizedImage';
-import { toast } from 'sonner';
-import { MediaPreview } from './ExplorationPage';
-import GlowCard from './core/GlowCard';
-import { Badge } from './base/badges/badges';
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Icon } from "@iconify/react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
+import { RollingText } from "./magicui/RollingText";
+import ClosePopup from "./ClosePopup";
+import { Cursor } from "./core/cursor";
+import SkeletonLoader from "./ui/SkeletonLoader";
+import { cmsFetch, FEATURED_CASE_STUDIES_QUERY, HOMEPAGE_SETTINGS_QUERY } from "../lib/cmsendpoint";
+import OptimizedImage from "./OptimizedImage";
+import { toast } from "sonner";
+import { MediaPreview } from "./ExplorationPage";
+import GlowCard from "./core/GlowCard";
+import { Badge } from "./base/badges/badges";
 
 export default function WorkShowcase() {
   const navigate = useNavigate();
   const [selectedExploration, setSelectedExploration] = useState(null);
   const [works, setWorks] = useState([]);
   const [explorations, setExplorations] = useState([]);
+  const [sectionOrder, setSectionOrder] = useState("case-studies-first");
+  const [customExplorations, setCustomExplorations] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isCursorHovering, setIsCursorHovering] = useState(false);
-  const [cursorText, setCursorText] = useState('View Detail');
+  const [cursorText, setCursorText] = useState("View Detail");
   const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     if (selectedExploration) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [selectedExploration]);
 
@@ -62,7 +64,7 @@ export default function WorkShowcase() {
     navigator.clipboard.writeText(url).then(() => {
       toast.success("Link copied to clipboard");
     }).catch((err) => {
-      console.error('Failed to copy: ', err);
+      console.error("Failed to copy: ", err);
       toast.error("Failed to copy link");
     });
   };
@@ -70,12 +72,15 @@ export default function WorkShowcase() {
   useEffect(() => {
     async function loadShowcaseData() {
       try {
-        const [worksData, explorationsData] = await Promise.all([
+        const [worksData, explorationsData, settingsData] = await Promise.all([
           cmsFetch(FEATURED_CASE_STUDIES_QUERY),
-          cmsFetch({ type: 'explorations' })
+          cmsFetch({ type: "explorations" }),
+          cmsFetch(HOMEPAGE_SETTINGS_QUERY),
         ]);
-        setWorks(worksData || []);
+        setWorks(settingsData?.featuredCaseStudies || worksData || []);
         setExplorations(explorationsData || []);
+        setCustomExplorations(settingsData?.highlightedExplorations || null);
+        setSectionOrder(settingsData?.sectionOrder || "case-studies-first");
       } catch (err) {
         console.error("Failed to load showcase:", err);
       } finally {
@@ -86,8 +91,175 @@ export default function WorkShowcase() {
   }, []);
 
   const highlightedExplorations = React.useMemo(() => {
+    if (Array.isArray(customExplorations) && customExplorations.length > 0) {
+      return customExplorations;
+    }
     return explorations.filter(exp => exp.is_highlighted === 1);
-  }, [explorations]);
+  }, [customExplorations, explorations]);
+
+  const renderFeaturedWork = (hasBottomBorder = true) => (
+    <div id="work" className={hasBottomBorder ? "border-b border-attio-border-light dark:border-attio-border-dark glow-border-b" : ""}>
+      {/* Section Header with Refined Smaller Heading (text-lg) */}
+      <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
+        <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
+          Featured Work
+        </h2>
+        <Link
+          to="/work"
+          className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
+        >
+          <RollingText>More</RollingText>
+          <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
+        </Link>
+      </div>
+
+      {/* Loading Spinner */}
+      {loading && (
+        <div className="divide-y divide-attio-border-light dark:divide-attio-border-dark">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="p-5 flex flex-col md:flex-row items-start justify-start gap-4">
+              <SkeletonLoader className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg flex-shrink-0" />
+              <div className="flex-1 flex flex-col items-start justify-start space-y-3 pt-0.5">
+                <SkeletonLoader className="w-3/4 h-5 rounded-md" />
+                <SkeletonLoader className="w-full h-4 rounded-md" />
+                <SkeletonLoader className="w-full h-4 rounded-md" />
+                <SkeletonLoader className="w-1/2 h-4 rounded-md" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Featured Work Flush Cards */}
+      {!loading && works.map((work, index) => {
+        const isExternal = work.creationType === "external-link" && Boolean(work.externalUrl);
+        const Component = isExternal ? "a" : Link;
+        const componentProps = isExternal
+          ? { href: work.externalUrl, target: "_blank", rel: "noopener noreferrer" }
+          : { to: `/work/${work.slug}` };
+
+        return (
+          <Component key={work._id} {...componentProps} className="block group">
+            <motion.div
+              initial={{ opacity: 0.9, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className={`p-5 flex flex-col md:flex-row items-start justify-start gap-4 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer ${index < works.length - 1 ? "border-b border-attio-border-light dark:border-attio-border-dark glow-border-b" : ""}`}
+            >
+              {/* Project Image Preview */}
+              <div
+                onMouseEnter={() => {
+                  setIsCursorHovering(true);
+                  setCursorText(isExternal ? "Read Externally" : "Read Case Study");
+                }}
+                onMouseLeave={() => setIsCursorHovering(false)}
+                className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative border border-attio-border-light dark:border-attio-border-dark"
+              >
+                {work.heroImage && (work.heroImage.endsWith(".mp4") || work.heroImage.toLowerCase().includes(".mp4")) ? (
+                  <video
+                    src={work.heroImage}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04] pointer-events-auto"
+                  />
+                ) : (
+                  <OptimizedImage
+                    src={work.heroImage}
+                    alt={work.title}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchpriority={index === 0 ? "high" : undefined}
+                    width={360}
+                    height={270}
+                    className="w-full h-full object-cover transform-gpu will-change-transform pointer-events-auto"
+                  />
+                )}
+              </div>
+
+              {/* Project Details */}
+              <div className="flex-1 flex flex-col items-start justify-start space-y-2.5 pt-0.5">
+                <h3 className="text-base font-semibold text-attio-text-primary-light dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
+                  <span>{work.title}</span>
+                </h3>
+                <p className="text-sm font-normal text-attio-text-secondary-light dark:text-neutral-400 leading-relaxed line-clamp-3">
+                  {work.description}
+                </p>
+              </div>
+            </motion.div>
+          </Component>
+        );
+      })}
+    </div>
+  );
+
+  const renderExplorations = (hasBottomBorder = false) => (
+    <div id="exploration" className={hasBottomBorder ? "border-b border-attio-border-light dark:border-attio-border-dark glow-border-b" : ""}>
+      {/* Section Header with Refined Smaller Heading (text-lg) */}
+      <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
+        <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
+          Exploration
+        </h2>
+        <Link
+          to="/exploration"
+          className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
+        >
+          <RollingText>More</RollingText>
+          <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
+        </Link>
+      </div>
+
+      {/* 2x2 Grid Seamless Cards */}
+      <div className="p-5">
+        {loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <SkeletonLoader key={i} className="h-[230px] rounded-lg" />
+            ))}
+          </div>
+        )}
+        
+        {!loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {highlightedExplorations.map((exp) => (
+              <GlowCard
+                key={exp.id}
+                onClick={() => setSelectedExploration(exp)}
+                onMouseEnter={() => { setIsCursorHovering(true); setCursorText("View Detail"); }}
+                onMouseLeave={() => setIsCursorHovering(false)}
+                className="h-[230px]"
+                innerClassName="relative group cursor-pointer w-full h-full"
+              >
+                <motion.div
+                  initial={{ opacity: 0.9 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="w-full h-full"
+                >
+                  <motion.img
+                    src={exp.image}
+                    alt={exp.title}
+                    loading="lazy"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+                    className="w-full h-full object-cover transform-gpu will-change-transform"
+                  />
+                  {/* Hover overlay with title */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 pointer-events-none">
+                    <h4 className="text-sm font-semibold text-white leading-tight line-clamp-2">
+                      {exp.title}
+                    </h4>
+                  </div>
+                </motion.div>
+              </GlowCard>
+            ))}
+        </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <section className="flex-1 bg-[#FAF8F5] dark:bg-[#0A0A0B]">
@@ -102,13 +274,13 @@ export default function WorkShowcase() {
           bounce: 0.001,
         }}
         transition={{
-          ease: 'easeInOut',
+          ease: "easeInOut",
           duration: 0.15,
         }}
       >
         <motion.div
           animate={{
-            width: isCursorHovering ? (cursorText === 'Read Case Study' ? 140 : 96) : 0,
+            width: isCursorHovering ? (cursorText === "Read Case Study" ? 140 : 96) : 0,
             height: isCursorHovering ? 32 : 0,
             opacity: isCursorHovering ? 1 : 0,
             scale: isCursorHovering ? 1 : 0,
@@ -132,170 +304,21 @@ export default function WorkShowcase() {
         </motion.div>
       </Cursor>
 
-      {/* Featured Work Container */}
-      <div id="work" className="border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
-        {/* Section Header with Refined Smaller Heading (text-lg) */}
-        <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
-          <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
-            Featured Work
-          </h2>
-          <Link
-            to="/work"
-            className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
-          >
-            <RollingText>More</RollingText>
-            <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
-          </Link>
-        </div>
-
-        {/* Loading Spinner */}
-        {loading && (
-          <div className="divide-y divide-attio-border-light dark:divide-attio-border-dark">
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="p-5 flex flex-col md:flex-row items-start justify-start gap-4">
-                <SkeletonLoader className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg flex-shrink-0" />
-                <div className="flex-1 flex flex-col items-start justify-start space-y-3 pt-0.5">
-                  <SkeletonLoader className="w-3/4 h-5 rounded-md" />
-                  <SkeletonLoader className="w-full h-4 rounded-md" />
-                  <SkeletonLoader className="w-full h-4 rounded-md" />
-                  <SkeletonLoader className="w-1/2 h-4 rounded-md" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Featured Work Flush Cards */}
-        {!loading && works.map((work, index) => {
-          const isExternal = work.creationType === 'external-link' && Boolean(work.externalUrl);
-          const Component = isExternal ? 'a' : Link;
-          const componentProps = isExternal
-            ? { href: work.externalUrl, target: '_blank', rel: 'noopener noreferrer' }
-            : { to: `/work/${work.slug}` };
-
-          return (
-            <Component key={work._id} {...componentProps} className="block group">
-              <motion.div
-                initial={{ opacity: 0.9, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className={`p-5 flex flex-col md:flex-row items-start justify-start gap-4 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer ${index < works.length - 1 ? 'border-b border-attio-border-light dark:border-attio-border-dark glow-border-b' : ''}`}
-              >
-                {/* Project Image Preview */}
-                <div
-                  onMouseEnter={() => {
-                    setIsCursorHovering(true);
-                    setCursorText(isExternal ? 'Read Externally' : 'Read Case Study');
-                  }}
-                  onMouseLeave={() => setIsCursorHovering(false)}
-                  className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative border border-attio-border-light dark:border-attio-border-dark"
-                >
-                  {work.heroImage && (work.heroImage.endsWith('.mp4') || work.heroImage.toLowerCase().includes('.mp4')) ? (
-                    <video
-                      src={work.heroImage}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04] pointer-events-auto"
-                    />
-                  ) : (
-                    <OptimizedImage
-                      src={work.heroImage}
-                      alt={work.title}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      fetchpriority={index === 0 ? "high" : undefined}
-                      width={360}
-                      height={270}
-                      className="w-full h-full object-cover transform-gpu will-change-transform pointer-events-auto"
-                    />
-                  )}
-                </div>
-
-                {/* Project Details */}
-                <div className="flex-1 flex flex-col items-start justify-start space-y-2.5 pt-0.5">
-                  <h3 className="text-base font-semibold text-attio-text-primary-light dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
-                    <span>{work.title}</span>
-                  </h3>
-                  <p className="text-sm font-normal text-attio-text-secondary-light dark:text-neutral-400 leading-relaxed line-clamp-3">
-                    {work.description}
-                  </p>
-                </div>
-              </motion.div>
-            </Component>
-          );
-        })}
-      </div>
-
-      {/* Exploration Container (No Bottom Border) */}
-      <div id="exploration">
-        {/* Section Header with Refined Smaller Heading (text-lg) */}
-        <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
-          <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
-            Exploration
-          </h2>
-          <Link
-            to="/exploration"
-            className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
-          >
-            <RollingText>More</RollingText>
-            <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
-          </Link>
-        </div>
-
-        {/* 2x2 Grid Seamless Cards */}
-        <div className="p-5">
-          {loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <SkeletonLoader key={i} className="h-[230px] rounded-lg" />
-              ))}
-            </div>
-          )}
-          
-          {!loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {highlightedExplorations.map((exp) => (
-                <GlowCard
-                  key={exp.id}
-                  onClick={() => setSelectedExploration(exp)}
-                  onMouseEnter={() => { setIsCursorHovering(true); setCursorText('View Detail'); }}
-                  onMouseLeave={() => setIsCursorHovering(false)}
-                  className="h-[230px]"
-                  innerClassName="relative group cursor-pointer w-full h-full"
-                >
-                  <motion.div
-                    initial={{ opacity: 0.9 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="w-full h-full"
-                  >
-                    <motion.img
-                      src={exp.image}
-                      alt={exp.title}
-                      loading="lazy"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                      className="w-full h-full object-cover transform-gpu will-change-transform"
-                    />
-                    {/* Hover overlay with title */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 pointer-events-none">
-                      <h4 className="text-sm font-semibold text-white leading-tight line-clamp-2">
-                        {exp.title}
-                      </h4>
-                    </div>
-                  </motion.div>
-                </GlowCard>
-              ))}
-          </div>
-          )}
-        </div>
-      </div>
+      {/* Dynamic Section Ordering */}
+      {sectionOrder === "explorations-first" ? (
+        <>
+          {renderExplorations(true)}
+          {renderFeaturedWork(false)}
+        </>
+      ) : (
+        <>
+          {renderFeaturedWork(true)}
+          {renderExplorations(false)}
+        </>
+      )}
 
       {/* Detail Popup — portaled to body */}
-      {typeof document !== 'undefined' && createPortal(
+      {typeof document !== "undefined" && createPortal(
         <AnimatePresence>
           {selectedExploration && (
             <motion.div
@@ -305,7 +328,7 @@ export default function WorkShowcase() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-[9999] bg-[#09090b] flex flex-col justify-between text-white font-sans"
-              style={{ backgroundColor: 'rgba(9, 9, 11, 0.98)' }}
+              style={{ backgroundColor: "rgba(9, 9, 11, 0.98)" }}
             >
               
               {/* TOP BAR */}
@@ -368,7 +391,7 @@ export default function WorkShowcase() {
                 {/* Horizontal Scrollable Thumbnail Pagination */}
                 <div 
                   className="w-full max-w-[85vw] md:max-w-[70vw] overflow-x-auto py-1"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                   <div className="flex justify-start md:justify-center items-center gap-2 mx-auto w-max px-4">
                     {explorations.map((exp) => {
@@ -378,7 +401,7 @@ export default function WorkShowcase() {
                           key={exp.id}
                           onClick={(e) => { e.stopPropagation(); setSelectedExploration(exp); }}
                           className={`w-14 h-10 rounded-md overflow-hidden bg-neutral-800 border-2 transition-all flex-shrink-0 cursor-pointer ${
-                            isActive ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-40 hover:opacity-80'
+                            isActive ? "border-white scale-110 shadow-lg" : "border-transparent opacity-40 hover:opacity-80"
                           }`}
                         >
                           <img src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
@@ -406,8 +429,8 @@ export default function WorkShowcase() {
                     onClick={(e) => { e.stopPropagation(); setShowInfo(!showInfo); }}
                     className={`p-2 rounded-full transition-all cursor-pointer flex items-center justify-center ${
                       showInfo 
-                        ? 'bg-white text-[#09090b] hover:bg-neutral-200' 
-                        : 'hover:bg-white/10 text-neutral-300 hover:text-white'
+                        ? "bg-white text-[#09090b] hover:bg-neutral-200" 
+                        : "hover:bg-white/10 text-neutral-300 hover:text-white"
                     }`}
                     title="Toggle Info"
                   >
@@ -420,9 +443,9 @@ export default function WorkShowcase() {
                   {showInfo && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
                       className="w-[92%] max-w-md bg-[#121215]/95 border border-white/10 rounded-2xl text-left shadow-2xl z-30 overflow-hidden font-sans"
                     >
                       <div className="p-5 space-y-3">
