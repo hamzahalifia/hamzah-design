@@ -514,7 +514,7 @@ export default function About() {
                         Alifia Hamzah
                       </h1>
                       <p className="text-base sm:text-lg text-neutral-500 dark:text-neutral-400 font-light">
-                        Enterprise & Mobile Product Designer
+                        Enterprise Product Designer
                       </p>
                     </div>
 
