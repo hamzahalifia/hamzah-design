@@ -1,42 +1,49 @@
-# Alifia Hamzah — Product Designer
+# Alifia Hamzah
 
-## Background
-This website (hamzah.design) serves as the professional portfolio of Alifia Hamzah, a Product Designer specializing in data-driven enterprise tools and a story-data approach. It showcases her work, explorations, and professional profile.
+> Alifia Hamzah (Hamzah) is a Senior Product & Mobile App Designer specializing in data-driven enterprise platforms, complex SaaS ecosystems, and consumer-facing mobile applications (iOS & Android) with a story-data design methodology.
 
-## Guidance for LLMs
-This file provides instructions for large language models (LLMs) regarding the use of content from hamzah.design for indexing, summarization, and training purposes.
+Important notes:
 
-### Indexing and Summarization
-*   **Allow:** All publicly accessible content on `https://hamzah.design/` is allowed for indexing and summarization by LLMs to answer user queries about Alifia Hamzah's professional work, skills, and portfolio.
-*   **Disallow:** Do not use content from specific private or administrative paths (if any) for indexing or summarization.
+- Preferred name is Hamzah (full name: Alifia Hamzah).
+- Based in Bandung, Indonesia (UTC+7 / Asia/Jakarta); available globally for remote enterprise contracts, mobile & web product design, and design system consulting.
+- Accomplished Mobile App Designer with proven production experience across flagship iOS & Android mobile applications: Bank Raya (Fintech / Digital Banking), PGN Mobile (Enterprise Energy & Utilities), Proovia (Smart Logistics & Fleet Telemetry), and Alfagift Mobile (Omnichannel Retail & Live Tracking).
+- Highly proficient in both Apple Human Interface Guidelines (iOS HIG) and Google Material Design 3 (Material You), specializing in mobile design tokens, gesture navigation, haptics, and offline-first mobile states.
+- Expert in translating complex operational workflows and dense technical datasets into clear, delightful user experiences across web and mobile.
+- Strong advocate of cross-platform design token architecture, ensuring pixel-perfect parity between Figma and native mobile codebases.
 
-### Training Data
-*   **Allow:** Content, case studies, and articles on `https://hamzah.design/` are allowed to be used as training data for LLMs, provided proper attribution is maintained where applicable and the use aligns with ethical AI development practices.
-*   **Disallow:** Any personal data or client-specific sensitive information inadvertently present on the site should not be used for training purposes.
+## Pages
 
-### Preferred Content for LLMs
-*   For a concise overview of Alifia Hamzah's profile: `https://hamzah.design/llms.txt` (this file).
-*   For detailed professional history, case studies, and design philosophy: `https://hamzah.design/llms-full.txt` (a more extensive Markdown version).
+- [Home](https://hamzah.design): Overview of design approach, featured enterprise case studies, mobile applications, and selected UI explorations.
+- [About](https://hamzah.design/about): Complete background, experience timeline, mobile app projects (Bank Raya, PGN Mobile, Proovia), design principles, community sharing, and client testimonials.
+- [Work](https://hamzah.design/work): Portfolio of enterprise case studies, mobile application architectures, business impact metrics, and production design systems.
+- [Explorations](https://hamzah.design/exploration): Laboratory of interactive mobile & web prototypes, experimental UI components, and micro-interactions.
+- [Resources](https://hamzah.design/resources): Production-ready web templates, design assets, and downloadable frameworks.
 
-## Contact
-*   **Email**: alifiahamzah@gmail.com
-*   **LinkedIn**: https://www.linkedin.com/in/alifiahamzah/
+## Mobile App Projects
 
----
+- [Bank Raya Mobile](https://hamzah.design/about): Mobile App UI/UX Designer for Bank Raya (subsidiary of BRI, Indonesia's premier microfinance bank), redesigning digital banking flows, micro-loans, biometric onboarding, and day-to-day transaction interfaces.
+- [PGN Mobile](https://hamzah.design/about): Mobile UI/UX Designer for PT Perusahaan Gas Negara (PGN / Pertamina Gas), designing the utility mobile application for gas meter telemetry, bill payments, enterprise account monitoring, and customer service.
+- [Proovia Mobile](https://hamzah.design/about): Mobile App UI/UX Designer & Design System Lead at PT Neuronworks Indonesia, designing the smart logistics & fleet tracking mobile app and establishing the standardized Proovia Mobile Design System.
+- [Alfagift Mobile Live Track & Chat](https://hamzah.design/work/5x-retention-with-live-track-and-chat-in-alfagift-mobile-apps): Driving a 5x user retention increase in an omni-channel retail mobile app through real-time order tracking and interactive in-app customer chat.
 
-## Profile Summary
-- **First Name**: Alifia
-- **Last Name**: Hamzah
-- **Preferred Name / Called**: Hamzah
-- **Role**: Product Designer
-- **Location**: Bandung, Indonesia (GMT+7 / Asia/Jakarta)
-- **Timezone**: UTC+7 Jakarta (Freelancer availability)
-- **Portfolio**: https://hamzah.design
+## Case Studies
 
-## Expertise
-- Enterprise UX Design
-- Data-Driven Design Systems
-- Story-Data Design Methodology
-- Design Token Architecture
-- Product Strategy & Roadmapping
-- UI/UX Design for SaaS & B2B
+- [Japanese F&B Enterprise Automation](https://hamzah.design/work/how-automation-cut-processing-time-by-96-point-83-persent-for-a-japanese-fnb-giant): How automation and smart bulk processing cut operational processing time by 96.83% for a Japanese enterprise food & beverage giant.
+- [DOOR V3 Timeshift Management](https://hamzah.design/work/boosted-operational-efficiency-by-40-percent-in-door-v3-timeshift-management): Boosting workforce operational efficiency by 40% through an end-to-end shift scheduling and attendance system overhaul.
+- [Kontencom Marketplace Audit & Redesign](https://hamzah.design/work/rebalancing-a-two-sided-marketplace-a-conceptual-ux-audit--landing-page-redesign-for-kontencom): Rebalancing supply and demand dynamics for a two-sided digital content marketplace via rigorous UX audit and landing page reconstruction.
+- [Alfagift Mobile Live Track & Chat](https://hamzah.design/work/5x-retention-with-live-track-and-chat-in-alfagift-mobile-apps): Driving a 5x user retention increase in an omni-channel retail mobile app through real-time order tracking and interactive in-app customer chat.
+- [Jaga Sehat Telemedicine Flow](https://hamzah.design/work/a-failure-analysis-and-iteration-strategy-for-jaga-sehat-telemedicine-flow): Failure analysis and iteration strategy resolving drop-off friction across patient teleconsultation and booking funnels.
+
+## Resources
+
+- [Tumbuh Luxury Real Estate Template](https://hamzah.design/resources/tumbuh-luxury-real-estate-website-template): High-end real estate website template featuring editorial typography, immersive property showcases, and lead conversion flows.
+- [Hirarki Exhibition Template](https://hamzah.design/resources/hirarki-exhibition-website-template): Minimalist exhibition, gallery, and curated design showcase template focusing on visual hierarchy and grid precision.
+
+## Optional
+
+- [Full Profile & Background](https://hamzah.design/llms-full.txt): Comprehensive background document covering complete employment history, mobile & web project breakdowns, and design philosophy.
+- [Read Resume](https://drive.google.com/file/d/1Y18tRL9FbpHFL5zpf5dDPMmcg2WxcNoH/view?usp=sharing): Direct PDF curriculum vitae detailing past roles, tenure, and achievements.
+- [LinkedIn Profile](https://www.linkedin.com/in/alifiahamzah/): Professional network profile, career timeline, and colleague recommendations.
+- [Contra Portfolio](https://contra.com/alifiahamzah): Independent freelance profile with verified client contracts and ratings.
+- [Book a 30-Min Call](https://cal.com/alifiahamzah/30min): Direct scheduling link for intro calls, project discoveries, and consulting inquiries.
+- [Contact Email](mailto:alifiahamzah@gmail.com): Direct communication channel for business proposals and collaborations.

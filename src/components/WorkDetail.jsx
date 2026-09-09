@@ -298,38 +298,58 @@ export default function WorkDetail() {
       <div className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809]">
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
           <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-[#FAF8F5] dark:bg-[#0A0A0B]">
-            <div className="w-full py-8 md:py-12">
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pb-3 border-b border-dashed border-neutral-200 dark:border-neutral-800">
-                <SkeletonLoader className="w-1/4 h-4 mb-3" />
+            <div className="w-full pb-8 md:pb-12">
+              {/* Skeleton Block 1: Actions Bar */}
+              <div className="border-b border-neutral-200 dark:border-neutral-800 py-3.5 sm:py-4 px-4 sm:px-8 lg:px-16 xl:px-20 flex items-center justify-between w-full">
+                <div className="flex items-center gap-3.5">
+                  <SkeletonLoader className="w-9 h-9 rounded-md" />
+                  <SkeletonLoader className="w-20 h-4" />
+                </div>
+                <div className="flex items-center gap-3">
+                  <SkeletonLoader className="w-9 h-9 rounded-md" />
+                  <SkeletonLoader className="w-9 h-9 rounded-md" />
+                </div>
               </div>
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-6 flex items-center gap-3">
-                <SkeletonLoader className="w-9 h-9 rounded-full" />
-                <SkeletonLoader className="w-24 h-7" />
-              </div>
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6">
+
+              {/* Skeleton Block 2: Title */}
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10">
                 <SkeletonLoader className="w-3/4 h-12 mb-2" />
                 <SkeletonLoader className="w-1/2 h-8" />
               </div>
-              <SkeletonLoader className="aspect-video w-full h-auto mb-8" />
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20">
-                <SkeletonLoader className="w-full h-6 mb-2" />
-                <SkeletonLoader className="w-full h-6 mb-2" />
-                <SkeletonLoader className="w-3/4 h-6 mb-8" />
-                <div className="mb-10 grid grid-cols-2 md:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
-                  <div className="space-y-2">
-                    <SkeletonLoader className="w-1/3 h-4" />
-                    <SkeletonLoader className="w-2/3 h-5" />
+
+              {/* Skeleton Block 3: Thumbnail */}
+              <SkeletonLoader className="aspect-video w-full h-auto border-y border-neutral-200 dark:border-neutral-800" />
+              <div className="grid grid-cols-1 md:grid-cols-[1fr,260px] lg:grid-cols-[1fr,300px] xl:grid-cols-[1fr,320px]">
+                <div className="py-6 sm:py-8 lg:py-12 xl:py-16 px-4 sm:px-8 lg:px-12 xl:px-16">
+                  <SkeletonLoader className="w-full h-6 mb-2" />
+                  <SkeletonLoader className="w-full h-6 mb-2" />
+                  <SkeletonLoader className="w-3/4 h-6 mb-8" />
+                  <div className="mb-10 grid grid-cols-2 md:grid-cols-3 gap-6 p-6 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-900/50">
+                    <div className="space-y-2">
+                      <SkeletonLoader className="w-1/3 h-4" />
+                      <SkeletonLoader className="w-2/3 h-5" />
+                    </div>
+                    <div className="space-y-2">
+                      <SkeletonLoader className="w-1/3 h-4" />
+                      <SkeletonLoader className="w-2/3 h-5" />
+                    </div>
+                    <div className="space-y-2">
+                      <SkeletonLoader className="w-1/3 h-4" />
+                      <SkeletonLoader className="w-2/3 h-5" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <SkeletonLoader className="w-1/3 h-4" />
-                    <SkeletonLoader className="w-2/3 h-5" />
-                  </div>
-                  <div className="space-y-2">
-                    <SkeletonLoader className="w-1/3 h-4" />
-                    <SkeletonLoader className="w-2/3 h-5" />
-                  </div>
+                  <SkeletonLoader className="w-full h-80 mb-8" />
                 </div>
-                <SkeletonLoader className="w-full h-80 mb-8" />
+                <aside className="hidden md:block border-l border-neutral-200 dark:border-neutral-800 min-h-full p-6 lg:p-8">
+                  <SkeletonLoader className="w-28 h-4 mb-6" />
+                  <div className="space-y-3">
+                    <SkeletonLoader className="w-full h-4" />
+                    <SkeletonLoader className="w-4/5 h-4" />
+                    <SkeletonLoader className="w-3/4 h-4" />
+                    <SkeletonLoader className="w-5/6 h-4" />
+                    <SkeletonLoader className="w-2/3 h-4" />
+                  </div>
+                </aside>
               </div>
             </div>
           </div>
@@ -396,9 +416,9 @@ export default function WorkDetail() {
       >
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
           <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-[#FAF8F5] dark:bg-[#0A0A0B]">
-            <div className="w-full pt-4 pb-8 md:pt-6 md:pb-12">
-              {/* Back + Header Actions */}
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-0 flex items-center justify-between w-full">
+            <div className="w-full pb-8 md:pb-12">
+              {/* BLOCK 1: Back + Header Actions Bar */}
+              <div className="border-b border-neutral-200 dark:border-neutral-800 py-3.5 sm:py-4 px-4 sm:px-8 lg:px-16 xl:px-20 flex items-center justify-between w-full">
                 {/* Left Group */}
                 <div className="flex items-center gap-3.5">
                   <Link
@@ -462,10 +482,10 @@ export default function WorkDetail() {
                 </div>
               </div>
 
-              {/* Title — scroll start anchor */}
+              {/* BLOCK 2: Title — scroll start anchor */}
               <div
                 ref={titleRef}
-                className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6"
+                className="px-4 sm:px-8 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10"
               >
                 <h1 className="font-serif-attio text-4xl md:text-5xl lg:text-6xl font-medium text-black dark:text-white leading-tight tracking-tight">
                   {data.title}
@@ -476,14 +496,21 @@ export default function WorkDetail() {
               <div className="relative aspect-video bg-neutral-100 dark:bg-neutral-900 border-y border-neutral-200 dark:border-neutral-800">
                 <img
                   src={data.heroImage}
-                  alt={data.title}
+                  alt={data.title || "Case study hero image"}
                   className="w-full h-full object-cover"
                 />
               </div>
 
-              {/* Content — Grid layout */}
-              <div className="py-3 sm:py-8 lg:py-16 xl:py-20 px-4 sm:px-8 lg:px-16 xl:px-20 grid grid-cols-1 md:grid-cols-[1fr,200px] lg:grid-cols-[1fr,240px] gap-8 lg:gap-12 max-w-[1440px] mx-auto">
-                <div className="min-w-0">
+              {/* Content — 2-Column Block Grid layout */}
+              <div
+                className={cn(
+                  "grid grid-cols-1 max-w-[1440px] mx-auto",
+                  tableOfContents.length > 0 &&
+                    "md:grid-cols-[1fr,260px] lg:grid-cols-[1fr,300px] xl:grid-cols-[1fr,320px]"
+                )}
+              >
+                {/* Left Block: Reading Content */}
+                <div className="min-w-0 py-6 sm:py-8 lg:py-12 xl:py-16 px-4 sm:px-8 lg:px-12 xl:px-16">
                   {data.description && (
                     <p className="mb-8 text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-4xl">
                       {data.description}
@@ -566,12 +593,12 @@ export default function WorkDetail() {
                               >
                                 <img
                                   src={m.photo}
-                                  alt={m.fullName}
+                                  alt={m.fullName || "Team member"}
                                   className="w-full h-full object-cover"
                                 />
                               </a>
                               {/* Tooltip */}
-                              <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-[10px] leading-tight text-white dark:text-neutral-900 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
+                              <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-xs leading-tight text-white dark:text-neutral-900 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
                                 {m.fullName}
                               </span>
                             </div>
@@ -580,6 +607,9 @@ export default function WorkDetail() {
                       </div>
                     )}
                   </div>
+
+                  {/* Edge-to-edge section divider separating overview metadata and article content */}
+                  <hr className="my-10 md:my-14 -mx-4 sm:-mx-8 lg:-mx-12 xl:-mx-16 border-0 border-t border-neutral-200 dark:border-neutral-800" />
 
                   {/* Main Lexical Content */}
                   <div ref={contentEndRef}>
@@ -590,15 +620,17 @@ export default function WorkDetail() {
                   </div>
                 </div>
 
-                {/* ToC Sidebar */}
+                {/* Right Block: ToC Sidebar Column (Full-height with continuous border-l) */}
                 {tableOfContents.length > 0 && (
-                  <div className="hidden md:block sticky top-28 self-start">
-                    <TableOfContents
-                      items={tableOfContents}
-                      activeId={activeTocId}
-                      onItemClick={handleTocClick}
-                    />
-                  </div>
+                  <aside className="hidden md:block border-l border-neutral-200 dark:border-neutral-800 min-h-full">
+                    <div className="sticky top-24 p-6 lg:p-8">
+                      <TableOfContents
+                        items={tableOfContents}
+                        activeId={activeTocId}
+                        onItemClick={handleTocClick}
+                      />
+                    </div>
+                  </aside>
                 )}
               </div>
 
@@ -638,12 +670,12 @@ export default function WorkDetail() {
                       className="w-8 h-8 rounded-full object-cover border border-white/20"
                     />
                     <div className="text-left">
-                      <span className="text-xs font-bold text-white block">
+                      <p className="text-xs font-bold text-white">
                         Alifia Hamzah
-                      </span>
-                      <span className="text-[10px] text-neutral-400 block font-medium">
+                      </p>
+                      <p className="text-xs text-neutral-400 font-medium">
                         Product Designer
-                      </span>
+                      </p>
                     </div>
                   </div>
 

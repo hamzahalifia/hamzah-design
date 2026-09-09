@@ -77,7 +77,7 @@ function renderEmbedCard({ key, title, description, href, icon, meta }) {
     <a key={key} href={href} target="_blank" rel="noreferrer noopener" className="not-prose my-6 flex items-start gap-4 rounded-2xl border border-neutral-200 bg-white p-5 no-underline shadow-sm transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950">
       <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"><span className="text-lg">{icon}</span></div>
       <div className="min-w-0 flex-1">
-        {meta ? <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500">{meta}</div> : null}
+        {meta ? <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500">{meta}</p> : null}
         <div className="truncate text-base font-semibold text-neutral-900 dark:text-white">{title || href}</div>
         {description ? <p className="mt-1 mb-0 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">{description}</p> : null}
         <div className="mt-3 truncate text-sm text-blue-600 dark:text-blue-400">{href}</div>
@@ -218,7 +218,13 @@ function renderLexicalNode(node, key, context) {
       });
       return null;
     }
-    case 'horizontalrule': return <hr key={key} className="my-8 border-neutral-200 dark:border-neutral-800" />;
+    case 'horizontalrule':
+      return (
+        <hr
+          key={key}
+          className="my-12 md:my-16 -mx-4 sm:-mx-8 lg:-mx-12 xl:-mx-16 border-0 border-t border-neutral-200 dark:border-neutral-800"
+        />
+      );
     case 'text': return resolveTextNode(node, key);
     default: return node.children?.length ? <React.Fragment key={key}>{renderChildren(node.children, key, headingContext)}</React.Fragment> : null;
   }
@@ -242,7 +248,7 @@ function renderUploadNode(node, key, context) {
     <figure key={key} className="not-prose my-8">
       <img 
         src={url} 
-        alt={value.alt || 'Image'} 
+        alt={value.alt || 'Case study illustration'} 
         className={`w-full rounded-2xl border border-neutral-200 shadow-sm dark:border-neutral-800 ${
           !isGif && onImageClick ? 'cursor-zoom-in hover:opacity-95 transition-all duration-300 hover:shadow-md' : ''
         }`}

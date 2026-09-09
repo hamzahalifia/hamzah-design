@@ -50,8 +50,8 @@ export async function getStaticPaths() {
 
 const { all } = Astro.params;
 
-let seoTitle = 'Alifia Hamzah — Product Designer';
-let seoDescription = 'Portfolio of Alifia Hamzah, Product Designer specializing in data-driven enterprise tools and story-data approach.';
+let seoTitle = 'Alifia Hamzah — Product & Mobile App Designer';
+let seoDescription = 'Portfolio of Alifia Hamzah, Senior Product & Mobile App Designer specializing in data-driven enterprise platforms and iOS/Android applications.';
 let ogImage = 'https://hamzah.design/images/general/og-image.png';
 let canonical = 'https://hamzah.design';
 
@@ -114,11 +114,11 @@ if (all) {
       console.error('Error fetching resource SEO data:', e);
     }
   } else if (all === 'work') {
-    seoTitle = 'Work — Alifia Hamzah';
-    seoDescription = 'Case studies and product design work by Alifia Hamzah.';
+    seoTitle = 'Work — Alifia Hamzah | Enterprise & Mobile Case Studies';
+    seoDescription = 'Enterprise case studies and mobile app design portfolio by Alifia Hamzah.';
   } else if (all === 'about') {
-    seoTitle = 'About — Alifia Hamzah';
-    seoDescription = 'About Alifia Hamzah, Product Designer.';
+    seoTitle = 'About — Alifia Hamzah | Product & Mobile App Designer';
+    seoDescription = 'About Alifia Hamzah, Senior Product & Mobile App Designer specializing in enterprise platforms and native iOS/Android applications.';
   } else if (all === 'exploration') {
     seoTitle = 'Explorations — Alifia Hamzah';
     seoDescription = 'Design explorations, experiments, and side projects by Alifia Hamzah.';

@@ -10,6 +10,12 @@ export default function RelatedStudies({ studies }) {
   
   const [isCursorHovering, setIsCursorHovering] = useState(false);
   const displayStudies = studies.slice(0, 3);
+  const gridColsClass =
+    displayStudies.length === 1
+      ? 'grid-cols-1'
+      : displayStudies.length === 2
+      ? 'grid-cols-1 md:grid-cols-2'
+      : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
 
   return (
     <section className="py-16 border-t border-neutral-200 dark:border-neutral-800">
@@ -56,7 +62,7 @@ export default function RelatedStudies({ studies }) {
 
       <div className="px-4 sm:px-8 lg:px-16 xl:px-20">
         <h2 className="text-xl font-bold mb-8 text-neutral-900 dark:text-neutral-100">Related Case Studies</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-200 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
+        <div className={`grid ${gridColsClass} gap-px bg-zinc-200 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm`}>
           {displayStudies.map((study) => {
             const isExternal = study.creationType === 'external-link' && Boolean(study.externalUrl);
             const Component = isExternal ? 'a' : Link;
@@ -85,7 +91,7 @@ export default function RelatedStudies({ studies }) {
                     {study.heroImage ? (
                       <OptimizedImage
                         src={study.heroImage}
-                        alt={study.title}
+                        alt={study.title || "Related case study thumbnail"}
                         className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
                       />
                     ) : (
@@ -110,8 +116,10 @@ export default function RelatedStudies({ studies }) {
                     </div>
 
                     {/* Footer details */}
-                    <div className="text-[10px] text-neutral-400 dark:text-neutral-500 font-mono font-medium flex items-center gap-1.5 uppercase tracking-wider select-none">
-                      <span>{study.year || "2024"}</span>
+                    <div className="flex items-center gap-1.5 select-none">
+                      <p className="text-xs text-neutral-400 dark:text-neutral-500 font-mono font-medium uppercase tracking-wider">
+                        {study.year || "2024"}
+                      </p>
                     </div>
                   </div>
                 </motion.div>

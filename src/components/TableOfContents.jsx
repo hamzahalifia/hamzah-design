@@ -52,7 +52,7 @@ export default function TableOfContents({ items, onTocClick, activeId }) {
           On this page
         </h4>
       </div>
-      <div className="border-l border-neutral-200 dark:border-neutral-800 pl-4 pr-2 overflow-auto max-h-[calc(100vh-8rem)]">
+      <div className="overflow-y-auto max-h-[calc(100vh-10rem)] pr-2">
         <ul className="space-y-0.5">
           {items.map((section) => (
             <TocLink

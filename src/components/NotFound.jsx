@@ -32,7 +32,7 @@ export default function NotFound() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="h-[100vh] w-screen flex flex-col items-center justify-center bg-[#F2F0EB] dark:bg-[#080809] text-[#18181B] dark:text-[#F4F4F5] relative overflow-hidden px-6"
+        className="h-[100vh] w-screen flex flex-col items-center justify-center bg-[#F2F0EB] dark:bg-[#080809] text-app-main relative overflow-hidden px-6"
       >
         {/* Background Dot Pattern */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-25">
@@ -51,7 +51,7 @@ export default function NotFound() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-          className="font-geist text-[120px] sm:text-[160px] font-bold leading-none tracking-tighter text-[#18181B] dark:text-[#F4F4F5] select-none"
+          className="font-geist text-[120px] sm:text-[160px] font-bold leading-none tracking-tighter text-app-main select-none"
         >
           404
         </motion.span>

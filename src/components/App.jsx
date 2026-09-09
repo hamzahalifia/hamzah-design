@@ -7,7 +7,6 @@ import ErrorBoundary from './ErrorBoundary';
 import { Agentation } from 'agentation';
 import SoundManager from './SoundManager';
 import { Toaster } from './ui/sonner';
-import GlowInitializer from './core/GlowInitializer';
 
 // Lazy load components
 const Navbar = lazy(() => import('./Navbar'));
@@ -126,7 +125,6 @@ export default function App() {
   return (
     <HelmetProvider>
       <ThemeProvider>
-        <GlowInitializer />
         <SoundManager />
         <Toaster position="bottom-center" />
         <BrowserRouter>

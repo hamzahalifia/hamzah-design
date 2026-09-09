@@ -570,133 +570,66 @@
   scrollbar-width: none; /* Firefox */
 }
 
-/* ─── Glow Border Spotlight Styles ─────────────────────────── */
-:root {
-  --glow-color: rgba(24, 24, 27, 0.08);
-  --glow-size: 320px;
-  --glow-border-width: 1.5px;
-}
-
-.dark {
-  --glow-color: rgba(255, 255, 255, 0.55);
-}
-
-.glow-border-b,
-.glow-border-r,
-.glow-border-l,
-.glow-border-t {
-  position: relative;
-}
-
-.glow-border-b::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--glow-border-width);
-  background: radial-gradient(
-    var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
-    var(--glow-color),
-    transparent 80%
-  );
-  pointer-events: none;
-  z-index: 10;
-  transition: opacity 0.3s ease;
-}
-
-.glow-border-r::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: var(--glow-border-width);
-  background: radial-gradient(
-    var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
-    var(--glow-color),
-    transparent 80%
-  );
-  pointer-events: none;
-  z-index: 10;
-  transition: opacity 0.3s ease;
-}
-
-.glow-border-l::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: var(--glow-border-width);
-  background: radial-gradient(
-    var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
-    var(--glow-color),
-    transparent 80%
-  );
-  pointer-events: none;
-  z-index: 10;
-  transition: opacity 0.3s ease;
-}
-
-.glow-border-t::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: var(--glow-border-width);
-  background: radial-gradient(
-    var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
-    var(--glow-color),
-    transparent 80%
-  );
-  pointer-events: none;
-  z-index: 10;
-  transition: opacity 0.3s ease;
-}
-
-@media (min-width: 1024px) {
-  .lg\:glow-border-l,
-  .lg\:glow-border-r {
-    position: relative;
+/* ─── Reusable Text & Theme Color Utilities ──────────────────────────────── */
+@layer utilities {
+  .text-primary-body {
+    color: #18181b;
+  }
+  .dark .text-primary-body {
+    color: #e5e7eb;
   }
 
-  .lg\:glow-border-l::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: var(--glow-border-width);
-    background: radial-gradient(
-      var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
-      var(--glow-color),
-      transparent 80%
-    );
-    pointer-events: none;
-    z-index: 10;
-    transition: opacity 0.3s ease;
+  .text-primary-title {
+    color: #18181b;
+  }
+  .dark .text-primary-title {
+    color: #ffffff;
   }
 
-  .lg\:glow-border-r::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    width: var(--glow-border-width);
-    background: radial-gradient(
-      var(--glow-size) circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
-      var(--glow-color),
-      transparent 80%
-    );
-    pointer-events: none;
-    z-index: 10;
-    transition: opacity 0.3s ease;
+  .text-app-main {
+    color: #18181b;
+  }
+  .dark .text-app-main {
+    color: #f4f4f5;
   }
 
-  .lg\:glow-border-b-0::after {
-    display: none !important;
+  .text-quote-body {
+    color: #141414;
+  }
+  .dark .text-quote-body {
+    color: #e5e7eb;
+  }
+
+  .text-muted-label {
+    color: #545454;
+  }
+  .dark .text-muted-label {
+    color: #d4d4d8;
   }
 }
+
+/* ─── Seamless Infinite Testimonial Rolling Animation ─────────────────────── */
+@keyframes roll-testimonials {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-roll-testimonials {
+  animation: roll-testimonials 38s linear infinite;
+  will-change: transform;
+}
+
+.animate-roll-testimonials:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-roll-testimonials {
+    animation: none;
+  }
+}
+

@@ -17,31 +17,31 @@ const AI_OPTIONS = [
     id: "chatgpt",
     label: "Chat GPT",
     icon: "simple-icons:openai",
-    url: "https://chatgpt.com/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
+    url: "https://chatgpt.com/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20Product%20%26%20Mobile%20App%20Design%20partner%3F%20Based%20on%20public%20information%20from%20https%3A%2F%2Fhamzah.design%2C%20summarize%20his%20experience%20(including%20mobile%20apps%20like%20Bank%20Raya%2C%20PGN%20Mobile%2C%20Proovia%2C%20Alfagift)%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
   },
   {
     id: "perplexity",
     label: "Perplexity",
     icon: "simple-icons:perplexity",
-    url: "https://www.perplexity.ai/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
+    url: "https://www.perplexity.ai/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20Product%20%26%20Mobile%20App%20Design%20partner%3F%20Based%20on%20public%20information%20from%20https%3A%2F%2Fhamzah.design%2C%20summarize%20his%20experience%20(including%20mobile%20apps%20like%20Bank%20Raya%2C%20PGN%20Mobile%2C%20Proovia%2C%20Alfagift)%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
   },
   {
     id: "claude",
     label: "Claude",
     icon: "logos:claude-icon",
-    url: "https://claude.ai/new?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
+    url: "https://claude.ai/new?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20Product%20%26%20Mobile%20App%20Design%20partner%3F%20Based%20on%20public%20information%20from%20https%3A%2F%2Fhamzah.design%2C%20summarize%20his%20experience%20(including%20mobile%20apps%20like%20Bank%20Raya%2C%20PGN%20Mobile%2C%20Proovia%2C%20Alfagift)%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
   },
   {
     id: "grok",
     label: "Grok",
     icon: "selfhst:grok",
-    url: "https://grok.com/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
+    url: "https://grok.com/?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20Product%20%26%20Mobile%20App%20Design%20partner%3F%20Based%20on%20public%20information%20from%20https%3A%2F%2Fhamzah.design%2C%20summarize%20his%20experience%20(including%20mobile%20apps%20like%20Bank%20Raya%2C%20PGN%20Mobile%2C%20Proovia%2C%20Alfagift)%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%20him",
   },
   {
     id: "gemini",
     label: "Gemini",
     icon: "vscode-icons:file-type-gemini",
-    url: "https://gemini.google.com/app?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20UI%2FUX%20design%20partner%20for%20a%20B2B%20SaaS%20startup%3F%20Based%20on%20public%20information%20from%20https://hamzah.design%2C%20summarize%20his%20experience%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%2520him",
+    url: "https://gemini.google.com/app?q=Would%20Alifia%20Hamzah%20be%20a%20strong%20Product%20%26%20Mobile%20App%20Design%20partner%3F%20Based%20on%20public%20information%20from%20https%3A%2F%2Fhamzah.design%2C%20summarize%20his%20experience%20(including%20mobile%20apps%20like%20Bank%20Raya%2C%20PGN%20Mobile%2C%20Proovia%2C%20Alfagift)%2C%20portfolio%2C%20strengths%2C%20differentiators%2C%20ideal%20client%20fit%2C%20and%20any%20considerations%20before%20hiring%2520him",
   },
 ];
 
@@ -193,11 +193,56 @@ const PROJECTS = [
     dotColor: "bg-green-500",
   },
   {
+    name: "DOOR V3",
+    role: "Product Designer",
+    year: "2025",
+    url: "restricted",
+    logo: "/images/projects/door.svg",
+    link: "",
+    dotColor: "bg-yellow-500",
+  },
+  {
+    name: "PGN Mobile",
+    role: "Mobile UI/UX Designer",
+    year: "2025",
+    url: "pgn.co.id",
+    logo: "/images/projects/pgn.svg",
+    link: "https://apps.apple.com/id/app/pgn-mobile/id6473000677",
+    dotColor: "bg-green-500",
+  },
+  {
+    name: "PGN RBI",
+    role: "UI/UX Designer",
+    year: "2025",
+    url: "restricted",
+    logo: "/images/projects/pgn-rbi.svg",
+    link: "",
+    dotColor: "bg-yellow-500",
+  },
+  {
+    name: "PGAS Indonesia",
+    role: "UI Designer",
+    year: "2025",
+    url: "pgas.id",
+    logo: "/images/projects/gaskita.svg",
+    link: "https://pgas.id",
+    dotColor: "bg-green-500",
+  },
+  {
     name: "Marqet Finance",
     role: "WEB3 Product Designer",
     year: "2025",
     url: "restricted",
     logo: "/images/projects/marqetfi.svg",
+    link: "",
+    dotColor: "bg-yellow-500",
+  },
+  {
+    name: "Proovia",
+    role: "Product Designer",
+    year: "2025",
+    url: "restricted",
+    logo: "/images/projects/proovia.svg",
     link: "",
     dotColor: "bg-yellow-500",
   },
@@ -227,6 +272,15 @@ const PROJECTS = [
     logo: "/images/projects/arumaya.svg",
     link: "https://thearumaya.co.id",
     dotColor: "bg-green-500",
+  },
+  {
+    name: "Starclick One",
+    role: "UI/UX Designer & Front End Developer",
+    year: "2024",
+    url: "restricted",
+    logo: "/images/projects/telkomindonesia.svg",
+    link: "",
+    dotColor: "bg-yellow-500",
   },
 ];
 
@@ -308,89 +362,71 @@ const COMMUNITY_PHOTOS = [
   },
 ];
 
-function RollingTestimonials({ testimonials }) {
-  const containerRef = useRef(null);
-
-  // Triple the testimonials for smooth infinite scroll
-  const allTestimonials = [...testimonials, ...testimonials, ...testimonials];
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    let scrollPos = 0;
-    const singleSetHeight = container.scrollHeight / 3;
-    const speed = 0.12; // pixels per frame — slow and readable
-
-    let animationId;
-
-    const animate = () => {
-      scrollPos += speed;
-      if (scrollPos >= singleSetHeight) {
-        scrollPos -= singleSetHeight;
-      }
-      container.scrollTop = scrollPos;
-      animationId = requestAnimationFrame(animate);
-    };
-
-    // Small initial scroll to trigger
-    scrollPos = 1;
-    container.scrollTop = scrollPos;
-    animationId = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animationId);
-  }, []);
-
+function TestimonialItem({ t }) {
   return (
-    <div className="relative">
-      <div
-        ref={containerRef}
-        className="overflow-hidden max-h-[460px]"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <div className="space-y-4">
-          {allTestimonials.map((t, idx) => (
-            <div key={`${t.id}-${idx}`} className="space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-[20px] h-[20px] rounded-full bg-white dark:bg-black border border-neutral-200 dark:border-neutral-700 overflow-hidden flex items-center justify-center">
-                  <img
-                    src={t.image}
-                    alt={t.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="text-sm font-semibold text-neutral-800 dark:text-white">
-                  {t.name.split(" ")[0]},{" "}
-                  <span className="font-normal text-neutral-500 dark:text-neutral-400">
-                    {t.role}
-                  </span>
-                </div>
-              </div>
-              <div className="p-4 rounded-2xl rounded-l-none bg-[#FDFDFD] dark:bg-[#121214] border border-[#E8E8E8] dark:border-neutral-800 shadow-sm">
-                <p className="text-sm leading-5 text-[#141414] dark:text-[#E5E7EB] font-normal">
-                  "{t.quote}"
-                </p>
-              </div>
-            </div>
-          ))}
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <div className="w-[20px] h-[20px] rounded-full bg-white dark:bg-black border border-neutral-200 dark:border-neutral-700 overflow-hidden flex items-center justify-center shrink-0">
+          <img
+            src={t.image}
+            alt={t.name || "Testimonial author"}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="text-sm font-semibold text-neutral-800 dark:text-white">
+          {t.name.split(" ")[0]},{" "}
+          <span className="font-normal text-neutral-500 dark:text-neutral-400">
+            {t.role}
+          </span>
         </div>
       </div>
-
-      {/* Progressive Blur Overlays */}
-      <ProgressiveBlur direction="top" className="h-16" />
-      <ProgressiveBlur direction="bottom" className="h-16" />
+      <div className="p-4 rounded-2xl rounded-l-none bg-[#FDFDFD] dark:bg-[#121214] border border-[#E8E8E8] dark:border-neutral-800 shadow-sm">
+        <p className="text-sm leading-5 text-quote-body font-normal">
+          "{t.quote}"
+        </p>
+      </div>
     </div>
   );
 }
 
+function RollingTestimonials({ testimonials }) {
+  return (
+    <div className="relative">
+      <div
+        className="overflow-hidden max-h-[460px] select-none"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        <div className="animate-roll-testimonials flex flex-col">
+          {/* First set of testimonials */}
+          <div className="flex flex-col gap-4 pb-4 shrink-0">
+            {testimonials.map((t, idx) => (
+              <TestimonialItem key={`primary-${t.id}-${idx}`} t={t} />
+            ))}
+          </div>
+          {/* Cloned set for seamless infinite loop */}
+          <div className="flex flex-col gap-4 pb-4 shrink-0" aria-hidden="true">
+            {testimonials.map((t, idx) => (
+              <TestimonialItem key={`clone-${t.id}-${idx}`} t={t} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Progressive Blur Overlays */}
+      <ProgressiveBlur direction="top" className="h-16 pointer-events-none" />
+      <ProgressiveBlur
+        direction="bottom"
+        className="h-16 pointer-events-none"
+      />
+    </div>
+  );
+}
 
 /* ─── Main Component ───────────────────────────────────── */
 
 export default function About() {
   const [selectedAI, setSelectedAI] = useState(AI_OPTIONS[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-
 
   return (
     <div className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809] text-attio-text-primary-light dark:text-attio-text-primary-dark flex flex-col justify-between">
@@ -478,25 +514,26 @@ export default function About() {
                         Alifia Hamzah
                       </h1>
                       <p className="text-base sm:text-lg text-neutral-500 dark:text-neutral-400 font-light">
-                        Enterprise Product Designer
+                        Enterprise & Mobile Product Designer
                       </p>
                     </div>
 
-                    <p className="text-base leading-6 text-[#18181B] dark:text-[#E5E7EB] font-normal">
-                      Over the last 4 years, I have partnered
-                      with companies to build and scale their data-driven
-                      enterprise tools using a story-data approach. My designs
-                      translate complex workflows and technical datasets into
-                      highly functional, clear user experiences that team
-                      members actually love using. I focus on bridging product
-                      requirements, operations, and visual clarity to build
-                      dashboard and analytics systems that scale.
+                    <p className="text-base leading-6 text-primary-body font-normal">
+                      Over the last 4 years, I have partnered with companies to
+                      build and scale data-driven enterprise platforms and
+                      top-tier mobile applications (iOS & Android) using a
+                      story-data approach. My designs translate complex
+                      workflows and technical datasets into highly functional,
+                      clear user experiences that team members and consumers
+                      actually love using. I focus on bridging product
+                      requirements, operations, and visual clarity across web
+                      platforms, mobile apps, and scalable design systems.
                     </p>
                   </div>
 
                   {/* Social Links — icon only, no labels, no borders */}
                   <div className="space-y-4">
-                    <p className="text-sm text-[#18181B] dark:text-[#E5E7EB] leading-relaxed font-normal">
+                    <p className="text-base text-primary-body leading-relaxed font-normal">
                       Outside of client work, I enjoy sharing interface
                       explorations and workflow insights online:
                     </p>
@@ -542,7 +579,7 @@ export default function About() {
                                   <div className="w-5 h-5 rounded overflow-hidden shrink-0 flex items-center justify-center bg-neutral-100 dark:bg-neutral-800">
                                     <img
                                       src={item.logo}
-                                      alt={item.company}
+                                      alt={item.company || "Company logo"}
                                       className="w-full h-full object-contain"
                                     />
                                   </div>
@@ -561,7 +598,7 @@ export default function About() {
                                     icon={iconName}
                                     className="w-3.5 h-3.5"
                                   />
-                                  <span className="pointer-events-none absolute -top-1.5 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-[10px] leading-tight text-white dark:text-neutral-900 opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-150 shadow-lg z-50">
+                                  <span className="pointer-events-none absolute -top-1.5 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-xs leading-tight text-white dark:text-neutral-900 opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-150 shadow-lg z-50">
                                     {item.location}
                                   </span>
                                 </div>
@@ -616,7 +653,7 @@ export default function About() {
                                   <div className="w-5 h-5 rounded overflow-hidden shrink-0 flex items-center justify-center bg-neutral-100 dark:bg-neutral-800">
                                     <img
                                       src={item.logo}
-                                      alt={item.name}
+                                      alt={item.name || "Award logo"}
                                       className="w-full h-full object-contain"
                                     />
                                   </div>
@@ -681,7 +718,7 @@ export default function About() {
                                   <div className="w-5 h-5 rounded overflow-hidden shrink-0 flex items-center justify-center bg-neutral-100 dark:bg-neutral-800">
                                     <img
                                       src={item.logo}
-                                      alt={item.org}
+                                      alt={item.org || "Organization logo"}
                                       className="w-full h-full object-contain"
                                     />
                                   </div>
@@ -702,7 +739,7 @@ export default function About() {
                                         icon={volIconName}
                                         className="w-3.5 h-3.5"
                                       />
-                                      <span className="pointer-events-none absolute -top-1.5 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-[10px] leading-tight text-white dark:text-neutral-900 opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-150 shadow-lg z-50">
+                                      <span className="pointer-events-none absolute -top-1.5 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-neutral-900 dark:bg-neutral-100 px-2 py-1 text-xs leading-tight text-white dark:text-neutral-900 opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-150 shadow-lg z-50">
                                         {item.location}
                                       </span>
                                     </div>
@@ -750,7 +787,10 @@ export default function About() {
                                   <div className="w-5 h-5 rounded overflow-hidden shrink-0 flex items-center justify-center bg-neutral-100 dark:bg-neutral-800">
                                     <img
                                       src={item.logo}
-                                      alt={item.school}
+                                      alt={
+                                        item.school ||
+                                        "Education institution logo"
+                                      }
                                       className="w-full h-full object-contain"
                                     />
                                   </div>
@@ -790,7 +830,7 @@ export default function About() {
                   </div>
                   {/* Community Section */}
                   <div className="space-y-5 w-full">
-                    <p className="text-sm leading-relaxed font-normal">
+                    <p className="text-base text-primary-body leading-relaxed font-normal">
                       I enjoy engaging with the wider design and developer
                       community, discussing workflow solutions, and sharing
                       insights about enterprise product design.
@@ -803,7 +843,7 @@ export default function About() {
                         >
                           {/* Bubble Chat Tooltip */}
                           <div className="absolute bottom-[104%] left-1/2 -translate-x-1/2 opacity-0 translate-y-1 pointer-events-none transition-all duration-250 group-hover:opacity-100 group-hover:translate-y-0 z-50 select-none">
-                            <div className="relative bg-white dark:bg-zinc-800 text-neutral-800 dark:text-zinc-100 text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full border border-neutral-200 dark:border-zinc-700/80 shadow-md dark:shadow-black/50 whitespace-nowrap">
+                            <div className="relative bg-white dark:bg-zinc-800 text-neutral-800 dark:text-zinc-100 text-xs font-semibold px-3 py-1.5 rounded-full border border-neutral-200 dark:border-zinc-700/80 shadow-md dark:shadow-black/50 whitespace-nowrap">
                               {photo.label}
                               {/* Triangle pointer */}
                               <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[5px] w-2.5 h-2.5 rotate-45 bg-white dark:bg-zinc-800 border-r border-b border-neutral-200 dark:border-zinc-700/80" />
@@ -814,7 +854,7 @@ export default function About() {
                           <div className="w-full aspect-square overflow-hidden bg-neutral-50 dark:bg-zinc-950 border border-neutral-100 dark:border-zinc-800/60 rounded-[1px]">
                             <img
                               src={photo.src}
-                              alt={photo.alt}
+                              alt={photo.alt || "Community photo"}
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
@@ -861,7 +901,7 @@ export default function About() {
 
                   {/* Download buttons */}
                   <div className="space-y-4 w-full">
-                    <p className="text-[13px] text-neutral-700 dark:text-zinc-200">
+                    <p className="text-base text-primary-body">
                       For a more detailed look at my experience, work history,
                       and achievements:
                     </p>
@@ -870,12 +910,8 @@ export default function About() {
                         href="https://drive.google.com/file/d/1Y18tRL9FbpHFL5zpf5dDPMmcg2WxcNoH/view?usp=sharing"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-[#1A1A1A] dark:bg-white text-white dark:text-black hover:opacity-95 transition-all active:scale-95 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)] cursor-pointer"
+                        className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-semibold bg-[#1A1A1A] dark:bg-white text-white dark:text-black hover:opacity-95 transition-all active:scale-95 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)] cursor-pointer"
                       >
-                        <Icon
-                          icon="solar:download-square-bold"
-                          className="w-4 h-4"
-                        />
                         <RollingText>Read Resume</RollingText>
                       </a>
                     </div>
@@ -911,7 +947,7 @@ export default function About() {
                             <button
                               type="button"
                               onClick={() => setDropdownOpen(!dropdownOpen)}
-                              className="flex items-center justify-between sm:justify-start gap-1.5 px-3 h-[46px] w-full sm:w-auto lg:w-full xl:w-auto rounded-xl bg-neutral-200/50 dark:bg-zinc-800 border border-neutral-300/30 dark:border-zinc-700/50 text-[#545454] dark:text-neutral-300 text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer select-none"
+                              className="flex items-center justify-between sm:justify-start gap-1.5 px-3 h-[46px] w-full sm:w-auto lg:w-full xl:w-auto rounded-xl bg-neutral-200/50 dark:bg-zinc-800 border border-neutral-300/30 dark:border-zinc-700/50 text-muted-label text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-all cursor-pointer select-none"
                             >
                               <div className="flex items-center gap-1.5">
                                 <Icon
@@ -944,7 +980,7 @@ export default function About() {
                                       className={`w-full flex items-center justify-between px-2.5 py-2 text-left text-xs rounded-lg transition-colors cursor-pointer ${
                                         selectedAI.id === opt.id
                                           ? "bg-neutral-100 dark:bg-zinc-800 text-neutral-900 dark:text-white font-semibold"
-                                          : "text-[#545454] dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-zinc-900"
+                                          : "text-muted-label hover:bg-neutral-50 dark:hover:bg-zinc-900"
                                       }`}
                                     >
                                       <div className="flex items-center gap-2">
@@ -971,7 +1007,7 @@ export default function About() {
                           <div className="flex justify-end w-full sm:w-auto lg:w-full xl:w-auto">
                             <Button
                               asChild
-                              className="btn-radius-lg h-[46px] w-full sm:w-auto lg:w-full xl:w-auto px-4 font-semibold text-white dark:text-[#111827]"
+                              className="btn-radius-lg h-[46px] w-full sm:w-auto lg:w-full xl:w-auto px-4 font-semibold"
                               variant="primary"
                             >
                               <a

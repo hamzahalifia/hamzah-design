@@ -57,7 +57,7 @@ export default function LetsTalkModal({ isOpen, onClose }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 24 }}
               transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="bg-white dark:bg-[#0A0A0B] text-[#18181B] dark:text-white 
+              className="bg-white dark:bg-[#0A0A0B] text-primary-title 
                          border border-attio-border-light dark:border-attio-border-dark
                          rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col"
             >
@@ -88,10 +88,10 @@ export default function LetsTalkModal({ isOpen, onClose }) {
 
                 {/* Heading + subtitle */}
                 <div className="space-y-1 pt-1">
-                  <h3 className="font-serif-attio text-[30px] leading-tight text-[#18181B] dark:text-white">
+                  <h3 className="font-serif-attio text-[30px] leading-tight text-primary-title">
                     Let's Talk
                   </h3>
-                  <p className="text-base leading-6 text-[#18181B] dark:text-[#E5E7EB] font-normal">
+                  <p className="text-base leading-6 text-primary-body font-normal">
                     Which way do you prefer to communicate?
                   </p>
                 </div>
@@ -116,7 +116,7 @@ export default function LetsTalkModal({ isOpen, onClose }) {
                     </div>
                     <Icon icon="lucide:arrow-up-right" className="w-4 h-4 text-neutral-400 group-hover:text-black dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                   </div>
-                  <span className="text-base font-semibold text-[#18181B] dark:text-white">
+                  <span className="text-base font-semibold text-primary-title">
                     <RollingText>WhatsApp</RollingText>
                   </span>
                 </a>
@@ -133,7 +133,7 @@ export default function LetsTalkModal({ isOpen, onClose }) {
                     <Icon icon="logos:telegram" className="w-7 h-7 group-hover:scale-110 transition-transform duration-200" />
                     <Icon icon="lucide:arrow-up-right" className="w-4 h-4 text-neutral-400 group-hover:text-black dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                   </div>
-                  <span className="text-base font-semibold text-[#18181B] dark:text-white">
+                  <span className="text-base font-semibold text-primary-title">
                     <RollingText>Telegram</RollingText>
                   </span>
                 </a>
@@ -149,7 +149,7 @@ export default function LetsTalkModal({ isOpen, onClose }) {
               >
                 <div className="flex flex-row items-center justify-center gap-4 mx-auto">
                   <Icon icon="logos:google-meet" className="w-6 h-5 group-hover:scale-110 transition-transform duration-200" />
-                  <span className="text-base font-semibold text-[#18181B] dark:text-white">
+                  <span className="text-base font-semibold text-primary-title">
                     <RollingText>Schedule 30-min Call</RollingText>
                   </span>
                 </div>
@@ -165,7 +165,7 @@ export default function LetsTalkModal({ isOpen, onClose }) {
                 <span className="text-sm sm:text-base font-normal text-[#52525B] dark:text-neutral-400">
                   Or send an email to
                 </span>
-                <span className="text-sm sm:text-base font-semibold text-[#18181B] dark:text-white underline decoration-neutral-300 dark:decoration-neutral-600 group-hover:decoration-black dark:group-hover:decoration-white transition-colors">
+                <span className="text-sm sm:text-base font-semibold text-primary-title underline decoration-neutral-300 dark:decoration-neutral-600 group-hover:decoration-black dark:group-hover:decoration-white transition-colors">
                   <RollingText>alifiahamzah@gmail.com</RollingText>
                 </span>
               </a>

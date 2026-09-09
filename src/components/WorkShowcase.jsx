@@ -11,7 +11,6 @@ import { cmsFetch, FEATURED_CASE_STUDIES_QUERY, HOMEPAGE_SETTINGS_QUERY } from "
 import OptimizedImage from "./OptimizedImage";
 import { toast } from "sonner";
 import { MediaPreview } from "./ExplorationPage";
-import GlowCard from "./core/GlowCard";
 import { Badge } from "./base/badges/badges";
 
 export default function WorkShowcase() {
@@ -98,15 +97,15 @@ export default function WorkShowcase() {
   }, [customExplorations, explorations]);
 
   const renderFeaturedWork = (hasBottomBorder = true) => (
-    <div id="work" className={hasBottomBorder ? "border-b border-attio-border-light dark:border-attio-border-dark glow-border-b" : ""}>
+    <div id="work" className={hasBottomBorder ? "border-b border-attio-border-light dark:border-attio-border-dark" : ""}>
       {/* Section Header with Refined Smaller Heading (text-lg) */}
-      <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
+      <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark">
         <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
           Featured Work
         </h2>
         <Link
           to="/work"
-          className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
+          className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-muted-label hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
         >
           <RollingText>More</RollingText>
           <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
@@ -145,7 +144,7 @@ export default function WorkShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className={`p-5 flex flex-col md:flex-row items-start justify-start gap-4 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer ${index < works.length - 1 ? "border-b border-attio-border-light dark:border-attio-border-dark glow-border-b" : ""}`}
+              className={`p-5 flex flex-col md:flex-row items-start justify-start gap-4 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer ${index < works.length - 1 ? "border-b border-attio-border-light dark:border-attio-border-dark" : ""}`}
             >
               {/* Project Image Preview */}
               <div
@@ -168,7 +167,7 @@ export default function WorkShowcase() {
                 ) : (
                   <OptimizedImage
                     src={work.heroImage}
-                    alt={work.title}
+                    alt={work.title || "Showcase case study"}
                     loading={index === 0 ? "eager" : "lazy"}
                     fetchpriority={index === 0 ? "high" : undefined}
                     width={360}
@@ -195,15 +194,15 @@ export default function WorkShowcase() {
   );
 
   const renderExplorations = (hasBottomBorder = false) => (
-    <div id="exploration" className={hasBottomBorder ? "border-b border-attio-border-light dark:border-attio-border-dark glow-border-b" : ""}>
+    <div id="exploration" className={hasBottomBorder ? "border-b border-attio-border-light dark:border-attio-border-dark" : ""}>
       {/* Section Header with Refined Smaller Heading (text-lg) */}
-      <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark glow-border-b">
+      <div className="p-5 flex items-center justify-between bg-attio-bg-light dark:bg-[#0A0A0B] border-b border-attio-border-light dark:border-attio-border-dark">
         <h2 className="font-sans text-lg font-semibold tracking-tight text-attio-text-primary-light dark:text-attio-text-primary-dark">
           Exploration
         </h2>
         <Link
           to="/exploration"
-          className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-[#545454] dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
+          className="inline-flex items-center gap-1 text-xs font-semibold pl-4 pr-3 py-2 btn-radius-lg border border-attio-border-light dark:border-attio-border-dark bg-[#F2F2F2] dark:bg-neutral-800 text-muted-label hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all btn-attio-secondary cursor-pointer"
         >
           <RollingText>More</RollingText>
           <Icon icon="solar:arrow-right-up-linear" className="w-4 h-4 ml-0.5" />
@@ -223,13 +222,12 @@ export default function WorkShowcase() {
         {!loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {highlightedExplorations.map((exp) => (
-              <GlowCard
+              <div
                 key={exp.id}
                 onClick={() => setSelectedExploration(exp)}
                 onMouseEnter={() => { setIsCursorHovering(true); setCursorText("View Detail"); }}
                 onMouseLeave={() => setIsCursorHovering(false)}
-                className="h-[230px]"
-                innerClassName="relative group cursor-pointer w-full h-full"
+                className="h-[230px] relative rounded-xl overflow-hidden border border-attio-border-light dark:border-attio-border-dark group cursor-pointer w-full bg-[#FAF8F5] dark:bg-[#0A0A0B]"
               >
                 <motion.div
                   initial={{ opacity: 0.9 }}
@@ -253,7 +251,7 @@ export default function WorkShowcase() {
                     </h4>
                   </div>
                 </motion.div>
-              </GlowCard>
+              </div>
             ))}
         </div>
         )}
@@ -341,8 +339,8 @@ export default function WorkShowcase() {
                     className="w-8 h-8 rounded-full object-cover border border-white/20"
                   />
                   <div className="text-left">
-                    <span className="text-xs font-bold text-white block">Alifia Hamzah</span>
-                    <span className="text-[10px] text-neutral-400 block font-medium">Product Designer</span>
+                    <p className="text-xs font-bold text-white">Alifia Hamzah</p>
+                    <p className="text-xs text-neutral-400 font-medium">Product Designer</p>
                   </div>
                 </div>
 
@@ -404,7 +402,7 @@ export default function WorkShowcase() {
                             isActive ? "border-white scale-110 shadow-lg" : "border-transparent opacity-40 hover:opacity-80"
                           }`}
                         >
-                          <img src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
+                          <img src={exp.image} alt={exp.title || "Exploration thumbnail"} className="w-full h-full object-cover" />
                         </button>
                       );
                     })}
@@ -461,7 +459,7 @@ export default function WorkShowcase() {
                         {/* Keywords Tags */}
                         {selectedExploration.keywords && (
                           <div className="space-y-1.5 pt-1.5 border-t border-white/5">
-                            <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest block">Keywords</span>
+                            <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">Keywords</p>
                             <div className="flex flex-wrap gap-1.5">
                               {(Array.isArray(selectedExploration.keywords)
                                 ? selectedExploration.keywords

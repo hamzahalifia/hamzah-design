@@ -17,7 +17,6 @@ import { GridPattern } from "./magicui/GridPattern";
 import ClosePopup from "./ClosePopup";
 import { FlickeringGrid } from "./magicui/FlickeringGrid";
 import { Cursor } from "./core/cursor";
-import GlowCard from './core/GlowCard';
 import SkeletonLoader from "./ui/SkeletonLoader";
 import ReactPlayer from "react-player";
 import {
@@ -155,7 +154,7 @@ function ExplorationCard({ exp, isHovering, onHoverChange, targetRef }) {
       >
         <img
           src={exp.image}
-          alt={exp.title}
+          alt={exp.title || "Exploration media"}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
@@ -435,13 +434,12 @@ export default function ExplorationPage() {
                           }
 
                           return (
-                            <GlowCard
+                            <div
                               key={exp.id}
                               onClick={() => setSelectedItem(exp)}
                               onMouseEnter={() => setIsCursorHovering(true)}
                               onMouseLeave={() => setIsCursorHovering(false)}
-                              className={itemClasses}
-                              innerClassName="relative group cursor-pointer w-full h-full"
+                              className={`${itemClasses} relative rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 group cursor-pointer bg-white dark:bg-[#0A0A0B]`}
                             >
                               <motion.div
                                 initial={{ opacity: 0 }}
@@ -451,7 +449,7 @@ export default function ExplorationPage() {
                               >
                                 <img
                                   src={exp.image}
-                                  alt={exp.title}
+                                  alt={exp.title || "Exploration media"}
                                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                   loading="lazy"
                                 />
@@ -463,7 +461,7 @@ export default function ExplorationPage() {
                                   </h4>
                                 </div>
                               </motion.div>
-                            </GlowCard>
+                            </div>
                           );
                         })}
                       </div>
@@ -545,12 +543,12 @@ export default function ExplorationPage() {
                         className="w-8 h-8 rounded-full object-cover border border-white/20"
                       />
                       <div className="text-left">
-                        <span className="text-xs font-bold text-white block">
+                        <p className="text-xs font-bold text-white">
                           Alifia Hamzah
-                        </span>
-                        <span className="text-[10px] text-neutral-400 block font-medium">
+                        </p>
+                        <p className="text-xs text-neutral-400 font-medium">
                           Product Designer
-                        </span>
+                        </p>
                       </div>
                     </div>
 
@@ -635,7 +633,7 @@ export default function ExplorationPage() {
                             >
                               <img
                                 src={exp.image}
-                                alt={exp.title}
+                                alt={exp.title || "Exploration thumbnail"}
                                 className="w-full h-full object-cover"
                               />
                             </button>
@@ -698,9 +696,9 @@ export default function ExplorationPage() {
                             {/* Keywords Tags */}
                             {selectedItem.keywords && (
                               <div className="space-y-1.5 pt-1.5 border-t border-white/5">
-                                <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest block">
+                                <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">
                                   Keywords
-                                </span>
+                                </p>
                                 <div className="flex flex-wrap gap-1.5">
                                   {(Array.isArray(selectedItem.keywords)
                                     ? selectedItem.keywords

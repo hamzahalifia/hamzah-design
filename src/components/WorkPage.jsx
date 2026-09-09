@@ -201,7 +201,7 @@ export default function WorkPage() {
                       >
                         <span>All</span>
                         <span
-                          className={`text-[11px] font-mono min-w-[20px] h-5 px-1.5 rounded-full inline-flex items-center justify-center border leading-none transition-colors ${
+                          className={`text-xs font-mono min-w-[20px] h-5 px-1.5 rounded-full inline-flex items-center justify-center border leading-none transition-colors ${
                             categoryFilter === ""
                               ? "border-neutral-300 bg-neutral-300/60 text-neutral-800 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                               : "border-neutral-200 bg-neutral-100/80 text-neutral-500 dark:border-neutral-800/80 dark:bg-neutral-800/50 dark:text-neutral-400"
@@ -228,7 +228,7 @@ export default function WorkPage() {
                           >
                             <span>{cat}</span>
                             <span
-                              className={`text-[11px] font-mono min-w-[20px] h-5 px-1.5 rounded-full inline-flex items-center justify-center border leading-none transition-colors ${
+                              className={`text-xs font-mono min-w-[20px] h-5 px-1.5 rounded-full inline-flex items-center justify-center border leading-none transition-colors ${
                                 isSelected
                                   ? "border-neutral-300 bg-neutral-300/60 text-neutral-800 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                                   : "border-neutral-200 bg-neutral-100/80 text-neutral-500 dark:border-neutral-800/80 dark:bg-neutral-800/50 dark:text-neutral-400"
@@ -326,7 +326,7 @@ export default function WorkPage() {
                                 {work.heroImage ? (
                                   <OptimizedImage
                                     src={work.heroImage}
-                                    alt={work.title}
+                                    alt={work.title || "Case study thumbnail"}
                                     className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
                                   />
                                 ) : (
@@ -351,8 +351,10 @@ export default function WorkPage() {
                                 </div>
 
                                 {/* Footer details */}
-                                <div className="text-[10px] text-neutral-400 dark:text-neutral-500 font-mono font-medium flex items-center gap-1.5 uppercase tracking-wider select-none">
-                                  <span>{work.year || "2024"}</span>
+                                <div className="flex items-center gap-1.5 select-none">
+                                  <p className="text-xs text-neutral-400 dark:text-neutral-500 font-mono font-medium uppercase tracking-wider">
+                                    {work.year || "2024"}
+                                  </p>
                                 </div>
                               </div>
                             </motion.div>

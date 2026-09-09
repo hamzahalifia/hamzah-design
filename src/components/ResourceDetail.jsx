@@ -316,7 +316,7 @@ export default function ResourceDetail() {
                         ) : (
                           <OptimizedImage
                             src={slides[currentSlide].url}
-                            alt={slides[currentSlide].title}
+                            alt={slides[currentSlide].title || data.title || "Resource preview"}
                             className="w-full h-full object-contain drop-shadow-md"
                           />
                         )}
@@ -436,7 +436,7 @@ export default function ResourceDetail() {
                         </span>
                         <div className="flex items-center gap-2 font-semibold text-sm text-neutral-900 dark:text-neutral-100">
                           {data.platform.logo && (
-                            <img src={data.platform.logo} alt={data.platform.name} className="w-6 h-6 object-contain rounded-sm" />
+                            <img src={data.platform.logo} alt={data.platform.name || "Platform logo"} className="w-6 h-6 object-contain rounded-sm" />
                           )}
                           <span>{data.platform.name}</span>
                         </div>
@@ -477,7 +477,7 @@ export default function ResourceDetail() {
                               {tech.logo && (
                                 <img
                                   src={tech.logo}
-                                  alt={tech.name}
+                                  alt={tech.name || "Tech stack logo"}
                                   className="w-5 h-5 object-contain rounded-sm"
                                 />
                               )}

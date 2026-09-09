@@ -93,7 +93,7 @@ export default function Navbar({ hideNavLinks = false }) {
         return (
           <img
             src={cat.icon}
-            alt={cat.name}
+            alt={cat.name || "Category icon"}
             className={`${iconClass} object-contain`}
           />
         );

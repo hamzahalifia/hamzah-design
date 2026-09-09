@@ -276,11 +276,21 @@ export async function fetchSingleCaseStudy(slug, preview = false) {
  * Fetch related case studies, excluding the current one
  */
 export async function fetchRelatedCaseStudies(currentId, currentSlug) {
+  const filters = [];
+  if (currentId) {
+    filters.push(`where[and][${filters.length}][id][not_equals]=${encodeURIComponent(currentId)}`);
+  }
+  if (currentSlug) {
+    filters.push(`where[and][${filters.length}][slug][not_equals]=${encodeURIComponent(currentSlug)}`);
+  }
+  const queryStr = filters.length > 0 ? `&${filters.join('&')}` : '';
+
   const data = await payloadFetch(
-    `/case-studies?where[and][0][id][not_equals]=${encodeURIComponent(currentId)}&where[and][1][slug][not_equals]=${encodeURIComponent(currentSlug)}&depth=1&sort=-publishedAt&limit=3`
+    `/case-studies?depth=1&sort=-publishedAt&limit=10${queryStr}`
   );
   return data.docs
     .filter(isPublishedCaseStudy)
+    .slice(0, 3)
     .map((doc) => ({
     _id: doc.id,
     title: doc.title,

@@ -367,8 +367,8 @@ const CustomVideoPlayer = ({ src, chapters = [] }) => {
                 zIndex: 50
               }}
             >
-              {hoverTitle && <span className="font-semibold text-neutral-100 max-w-[240px] truncate">{hoverTitle}</span>}
-              <span className="font-mono text-neutral-400 text-[10px]">{formatTime(hoverTime)}</span>
+              {hoverTitle && <p className="font-semibold text-neutral-100 max-w-[240px] truncate">{hoverTitle}</p>}
+              <p className="font-mono text-neutral-400 text-xs">{formatTime(hoverTime)}</p>
             </div>
           )}
 

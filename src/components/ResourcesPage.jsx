@@ -342,9 +342,9 @@ export default function ResourcesPage() {
 
                 {/* Multiple Checkbox Category Filter Group (Clean Borderless Row with p-1) */}
                 <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest block p-1">
+                  <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest p-1">
                     Category
-                  </span>
+                  </p>
                   <div className="space-y-1">
                     {categoriesWithCounts.map((type) => {
                       const isChecked = selectedTypes.includes(type.slug);
@@ -359,9 +359,9 @@ export default function ResourcesPage() {
                             label={type.name}
                             className="flex-1 min-w-0"
                           />
-                          <span className="text-[11px] text-neutral-400 font-mono flex-shrink-0 pl-2 select-none">
+                          <p className="text-xs text-neutral-400 font-mono flex-shrink-0 pl-2 select-none">
                             {type.count}
-                          </span>
+                          </p>
                         </div>
                       );
                     })}
@@ -370,9 +370,9 @@ export default function ResourcesPage() {
 
                 {/* Multiple Checkbox Price Filter Group (Clean Borderless Row with p-1) */}
                 <div className="space-y-2 pt-4 border-t border-neutral-100 dark:border-neutral-800">
-                  <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest block p-1">
+                  <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest p-1">
                     Price
-                  </span>
+                  </p>
                   <div className="space-y-1">
                     {[
                       { label: "Free", value: "free", count: priceCounts.free },
@@ -390,9 +390,9 @@ export default function ResourcesPage() {
                             label={p.label}
                             className="flex-1 min-w-0"
                           />
-                          <span className="text-[11px] text-neutral-400 font-mono flex-shrink-0 pl-2 select-none">
+                          <p className="text-xs text-neutral-400 font-mono flex-shrink-0 pl-2 select-none">
                             {p.count}
-                          </span>
+                          </p>
                         </div>
                       );
                     })}
@@ -443,7 +443,7 @@ export default function ResourcesPage() {
                               {res.image ? (
                                 <OptimizedImage
                                   src={res.image}
-                                  alt={res.title}
+                                  alt={res.title || "Resource thumbnail"}
                                   className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
                                 />
                               ) : (
@@ -477,7 +477,7 @@ export default function ResourcesPage() {
                                     size="sm"
                                     color="gray"
                                     type="color"
-                                    className="font-mono text-[11px]"
+                                    className="font-mono text-xs"
                                   >
                                     {res.version}
                                   </Badge>
@@ -493,7 +493,7 @@ export default function ResourcesPage() {
                               {res.platform?.logo ? (
                                 <img
                                   src={res.platform.logo}
-                                  alt={res.platform.name || "Platform"}
+                                  alt={res.platform.name || "Platform logo"}
                                   title={res.platform.name || "Platform"}
                                   className="w-[26px] h-[26px] object-contain rounded-sm"
                                 />
@@ -512,7 +512,7 @@ export default function ResourcesPage() {
                                     <img
                                       key={idx}
                                       src={tech.logo}
-                                      alt={tech.name}
+                                      alt={tech.name || "Tech stack logo"}
                                       title={tech.name}
                                       className="w-[26px] h-[26px] object-contain rounded-sm"
                                     />
