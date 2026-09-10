@@ -54,8 +54,12 @@ const OptimizedImage = ({
   className,
   loading = 'lazy',
   fetchpriority,
+  fetchPriority,
+  version,
+  updatedAt,
   ...props
 }) => {
+  const effectiveFetchPriority = fetchPriority || fetchpriority;
   const sanitizedSrc = sanitizeCmsUrl(src);
   if (!sanitizedSrc) {
     return null;
@@ -74,21 +78,30 @@ const OptimizedImage = ({
         height={height}
         className={className}
         loading={loading}
-        fetchpriority={fetchpriority}
+        fetchPriority={effectiveFetchPriority}
         {...props}
       />
     );
   }
 
-  // Construct the ImageKit URL
+  // Construct the ImageKit URL while preserving cache-busting query params
   let imagePath;
+  let search = '';
   try {
     // Works for absolute URLs like "https://..."
     const urlObject = new URL(sanitizedSrc);
     imagePath = urlObject.pathname;
+    search = urlObject.search || '';
   } catch (e) {
     // Falls back for relative paths like "/media/image.webp"
-    imagePath = sanitizedSrc;
+    const [path, query] = sanitizedSrc.split('?');
+    imagePath = path;
+    search = query ? `?${query}` : '';
+  }
+
+  const customVersion = version || (updatedAt ? new Date(updatedAt).getTime() : null);
+  if (customVersion && !search.includes('v=')) {
+    search = search ? `${search}&v=${customVersion}` : `?v=${customVersion}`;
   }
   
   // Define ImageKit transformations
@@ -98,10 +111,10 @@ const OptimizedImage = ({
   // dpr-auto: Adjusts for device pixel ratio.
   const transformation = `tr:f-auto,q-auto,w-auto,dpr-auto`;
 
-  const optimizedSrc = `${IMAGEKIT_ENDPOINT}${transformation}${imagePath}`;
+  const optimizedSrc = `${IMAGEKIT_ENDPOINT}${transformation}${imagePath}${search}`;
 
   // For LCP elements, we must use 'eager' loading, not 'lazy'.
-  const effectiveLoading = fetchpriority === 'high' ? 'eager' : loading;
+  const effectiveLoading = effectiveFetchPriority === 'high' ? 'eager' : loading;
 
   return (
     <img
@@ -111,7 +124,7 @@ const OptimizedImage = ({
       height={height}
       className={className}
       loading={effectiveLoading}
-      fetchpriority={fetchpriority}
+      fetchPriority={effectiveFetchPriority}
       {...props}
     />
   );

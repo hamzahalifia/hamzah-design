@@ -49,46 +49,80 @@ function extractMediaFilename(url) {
   return filename ? decodeURIComponent(filename) : null;
 }
 
-/** Resolve relative media URLs to absolute (with automatic Render to Vercel migration) */
-function resolveMediaUrl(media) {
+/** Resolve relative media URLs to absolute (with automatic Render to Vercel migration and cache busting) */
+function resolveMediaUrl(media, fallbackUpdatedAt = null) {
   if (!media) return null;
+
+  let resolvedUrl = null;
+  let version = null;
+
+  if (typeof media === 'object' && media !== null) {
+    if (media.updatedAt) {
+      const mediaTime = new Date(media.updatedAt).getTime();
+      if (!Number.isNaN(mediaTime)) {
+        version = mediaTime;
+      }
+    }
+  }
+
+  if (fallbackUpdatedAt) {
+    const fallbackTime = new Date(fallbackUpdatedAt).getTime();
+    if (!Number.isNaN(fallbackTime)) {
+      version = version ? Math.max(version, fallbackTime) : fallbackTime;
+    }
+  }
 
   if (typeof media === 'string') {
     const sanitized = sanitizeCmsUrl(media);
-    if (sanitized.startsWith('http')) return sanitized;
-    if (R2_ENDPOINT) {
+    if (sanitized.startsWith('http')) {
+      resolvedUrl = sanitized;
+    } else if (R2_ENDPOINT) {
       const filename = extractMediaFilename(sanitized);
       const r2Url = buildR2MediaUrl(filename || sanitized);
-      if (r2Url) return r2Url;
+      if (r2Url) resolvedUrl = r2Url;
+      else if (sanitized.startsWith('/')) resolvedUrl = `${CMS_BASE}${sanitized}`;
+      else resolvedUrl = buildR2MediaUrl(sanitized) || `${CMS_BASE}/${trimSlashes(sanitized)}`;
+    } else {
+      if (sanitized.startsWith('/')) resolvedUrl = `${CMS_BASE}${sanitized}`;
+      else resolvedUrl = `${CMS_BASE}/${trimSlashes(sanitized)}`;
     }
-    if (sanitized.startsWith('/')) return `${CMS_BASE}${sanitized}`;
-    return buildR2MediaUrl(sanitized) || `${CMS_BASE}/${trimSlashes(sanitized)}`;
+  } else {
+    const fallbackPath =
+      media.filename ||
+      media.key ||
+      media.path ||
+      media.name ||
+      extractMediaFilename(media.url);
+    const r2Url = buildR2MediaUrl(fallbackPath);
+    if (r2Url) {
+      resolvedUrl = r2Url;
+    } else {
+      const directUrl =
+        media.url ||
+        media.thumbnailURL ||
+        media.thumbnailUrl ||
+        media.sizes?.card?.url ||
+        media.sizes?.tablet?.url ||
+        media.sizes?.hero?.url;
+
+      if (directUrl) {
+        const sanitized = sanitizeCmsUrl(directUrl);
+        if (sanitized.startsWith('http')) resolvedUrl = sanitized;
+        else if (sanitized.startsWith('/')) resolvedUrl = `${CMS_BASE}${sanitized}`;
+      }
+    }
   }
 
-  const fallbackPath =
-    media.filename ||
-    media.key ||
-    media.path ||
-    media.name ||
-    extractMediaFilename(media.url);
-  const r2Url = buildR2MediaUrl(fallbackPath);
-  if (r2Url) return r2Url;
+  if (!resolvedUrl) return null;
 
-  const directUrl =
-    media.url ||
-    media.thumbnailURL ||
-    media.thumbnailUrl ||
-    media.sizes?.card?.url ||
-    media.sizes?.tablet?.url ||
-    media.sizes?.hero?.url;
-
-  if (directUrl) {
-    const sanitized = sanitizeCmsUrl(directUrl);
-    if (sanitized.startsWith('http')) return sanitized;
-    if (sanitized.startsWith('/')) return `${CMS_BASE}${sanitized}`;
+  if (version && !Number.isNaN(version)) {
+    const separator = resolvedUrl.includes('?') ? '&' : '?';
+    if (!resolvedUrl.includes('v=')) {
+      resolvedUrl = `${resolvedUrl}${separator}v=${version}`;
+    }
   }
 
-  return null;
+  return resolvedUrl;
 }
 
 /** Resolve category relationship (returns name string or null) */
@@ -188,7 +222,7 @@ export async function fetchCaseStudies() {
     company: doc.company,
     year: doc.year,
     category: resolveCategory(doc.category),
-    heroImage: resolveMediaUrl(doc.heroImage),
+    heroImage: resolveMediaUrl(doc.heroImage, doc.updatedAt),
     featured: doc.featured || false,
     publishedAt: doc.publishedAt,
     creationType: doc.creationType || 'from-scratch',
@@ -207,7 +241,7 @@ function normalizeFeaturedCaseStudy(doc) {
     title: doc.title,
     slug: doc.slug,
     description: doc.description,
-    heroImage: resolveMediaUrl(doc.heroImage),
+    heroImage: resolveMediaUrl(doc.heroImage, doc.updatedAt),
     featured: true,
     publishedAt: doc.publishedAt,
     creationType: doc.creationType || 'from-scratch',
@@ -255,15 +289,15 @@ export async function fetchSingleCaseStudy(slug, preview = false) {
     teamMembers: (doc.teamMembers || []).map(member => ({
         fullName: member.fullName,
         linkedinURL: member.linkedinURL,
-        photo: resolveMediaUrl(member.photo)
+        photo: resolveMediaUrl(member.photo, doc.updatedAt)
     })),
     category: resolveCategory(doc.category),
-    heroImage: resolveMediaUrl(doc.heroImage),
-    logo: resolveMediaUrl(doc.logo),
+    heroImage: resolveMediaUrl(doc.heroImage, doc.updatedAt),
+    logo: resolveMediaUrl(doc.logo, doc.updatedAt),
     content: doc.content || null,
     seoTitle: doc.seoTitle || null,
     seoDescription: doc.seoDescription || null,
-    ogImage: resolveMediaUrl(doc.ogImage),
+    ogImage: resolveMediaUrl(doc.ogImage, doc.updatedAt),
     canonicalURL: doc.canonicalURL || null,
     keywords: doc.keywords || null,
     publishedAt: doc.publishedAt,
@@ -296,7 +330,7 @@ export async function fetchRelatedCaseStudies(currentId, currentSlug) {
     title: doc.title,
     slug: doc.slug,
     description: doc.description,
-    heroImage: resolveMediaUrl(doc.heroImage),
+    heroImage: resolveMediaUrl(doc.heroImage, doc.updatedAt),
     year: doc.year,
     publishedAt: doc.publishedAt,
     creationType: doc.creationType || 'from-scratch',
@@ -316,8 +350,8 @@ export async function fetchExplorations() {
     category: doc.category,
     description: doc.description,
     mediaType: doc.mediaType || 'image',
-    image: resolveMediaUrl(doc.image),
-    videoFile: resolveMediaUrl(doc.videoFile),
+    image: resolveMediaUrl(doc.image, doc.updatedAt || doc.createdAt),
+    videoFile: resolveMediaUrl(doc.videoFile, doc.updatedAt || doc.createdAt),
     videoEmbedUrl: doc.videoEmbedUrl || '',
     aspect_ratio: doc.aspectRatio || '1:1',
     keywords: doc.keywords || '',
@@ -338,8 +372,8 @@ function normalizeExploration(doc) {
     category: doc.category,
     description: doc.description,
     mediaType: doc.mediaType || 'image',
-    image: resolveMediaUrl(doc.image),
-    videoFile: resolveMediaUrl(doc.videoFile),
+    image: resolveMediaUrl(doc.image, doc.updatedAt || doc.createdAt),
+    videoFile: resolveMediaUrl(doc.videoFile, doc.updatedAt || doc.createdAt),
     videoEmbedUrl: doc.videoEmbedUrl || '',
     aspect_ratio: doc.aspectRatio || '1:1',
     keywords: doc.keywords || '',
@@ -369,7 +403,7 @@ function normalizeResource(doc) {
   if (!doc) return null;
 
   const rawImage = doc.thumbnail || doc.image || doc.featuredImage || doc.heroImage || doc.media;
-  const image = resolveMediaUrl(rawImage);
+  const image = resolveMediaUrl(rawImage, doc.updatedAt);
   let typeName = null;
   let typeSlug = null;
   let typeIcon = null;
@@ -377,7 +411,7 @@ function normalizeResource(doc) {
     if (typeof doc.type === 'object') {
       typeName = doc.type.name || doc.type.title || null;
       typeSlug = doc.type.slug || null;
-      typeIcon = typeof doc.type.icon === 'string' ? doc.type.icon.trim() : (resolveMediaUrl(doc.type.icon) || null);
+      typeIcon = typeof doc.type.icon === 'string' ? doc.type.icon.trim() : (resolveMediaUrl(doc.type.icon, doc.updatedAt) || null);
     } else if (typeof doc.type === 'string') {
       typeName = doc.type;
     }
@@ -388,7 +422,7 @@ function normalizeResource(doc) {
   if (doc.platform) {
     if (typeof doc.platform === 'object') {
       platformName = doc.platform.name || doc.platform.title || null;
-      platformLogo = resolveMediaUrl(doc.platform.logo || doc.platform.icon || doc.platform.image);
+      platformLogo = resolveMediaUrl(doc.platform.logo || doc.platform.icon || doc.platform.image, doc.updatedAt);
     } else if (typeof doc.platform === 'string') {
       platformName = doc.platform;
     }
@@ -399,7 +433,7 @@ function normalizeResource(doc) {
       return {
         id: tech.id,
         name: tech.name || tech.title || '',
-        logo: resolveMediaUrl(tech.logo || tech.icon || tech.image),
+        logo: resolveMediaUrl(tech.logo || tech.icon || tech.image, doc.updatedAt),
       };
     }
     return { name: String(tech), logo: null };
@@ -409,11 +443,11 @@ function normalizeResource(doc) {
   if (doc.gallery && Array.isArray(doc.gallery.images)) {
     galleryImages = doc.gallery.images.map((img) => {
       const raw = typeof img === 'object' && img.image ? img.image : img;
-      return resolveMediaUrl(raw);
+      return resolveMediaUrl(raw, doc.updatedAt);
     }).filter(Boolean);
   }
 
-  const galleryVideo = resolveMediaUrl(doc.gallery?.video || doc.video);
+  const galleryVideo = resolveMediaUrl(doc.gallery?.video || doc.video, doc.updatedAt);
   const videoEmbedUrl = doc.gallery?.videoEmbedUrl || doc.videoEmbedUrl || '';
 
   const priceType = doc.priceType || (doc.price ? 'paid' : 'free');
@@ -443,7 +477,7 @@ function normalizeResource(doc) {
     content: doc.content || null,
     seoTitle: doc.seoTitle || doc.title || '',
     seoDescription: doc.seoDescription || doc.description || '',
-    ogImage: resolveMediaUrl(doc.ogImage) || image,
+    ogImage: resolveMediaUrl(doc.ogImage, doc.updatedAt) || image,
     createdAt: doc.createdAt || doc.publishedAt || null,
     updatedAt: doc.updatedAt || null,
   };

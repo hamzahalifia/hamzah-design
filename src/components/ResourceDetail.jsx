@@ -134,19 +134,27 @@ export default function ResourceDetail() {
       <div className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809]">
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
           <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-[#FAF8F5] dark:bg-[#0A0A0B]">
-            <div className="w-full py-8 md:py-12">
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pb-3 border-b border-dashed border-neutral-200 dark:border-neutral-800">
-                <SkeletonLoader className="w-1/4 h-4 mb-3" />
+            <div className="w-full pb-8 md:pb-12">
+              {/* Skeleton Block 1: Actions Bar */}
+              <div className="border-b border-neutral-200 dark:border-neutral-800 py-3.5 sm:py-4 px-4 sm:px-8 lg:px-16 xl:px-20 flex items-center justify-between w-full">
+                <div className="flex items-center gap-3.5">
+                  <SkeletonLoader className="w-9 h-9 rounded-md" />
+                  <SkeletonLoader className="w-20 h-4" />
+                </div>
+                <div className="flex items-center gap-3">
+                  <SkeletonLoader className="w-9 h-9 rounded-md" />
+                  <SkeletonLoader className="w-9 h-9 rounded-md" />
+                </div>
               </div>
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-6 flex items-center gap-3">
-                <SkeletonLoader className="w-9 h-9 rounded-full" />
-                <SkeletonLoader className="w-24 h-7" />
-              </div>
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6">
+
+              {/* Skeleton Block 2: Title */}
+              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10">
                 <SkeletonLoader className="w-3/4 h-12 mb-2" />
                 <SkeletonLoader className="w-1/2 h-8" />
               </div>
-              <SkeletonLoader className="aspect-video w-full h-auto mb-8" />
+
+              {/* Skeleton Block 3: Thumbnail */}
+              <SkeletonLoader className="aspect-video w-full h-auto border-y border-neutral-200 dark:border-neutral-800" />
             </div>
           </div>
         </div>
@@ -196,10 +204,10 @@ export default function ResourceDetail() {
       >
         <div className="max-w-[1440px] mx-auto px-0 lg:px-6">
           <div className="border-l-0 border-r-0 lg:border-l lg:border-r border-attio-border-light dark:border-attio-border-dark min-h-full bg-[#FAF8F5] dark:bg-[#0A0A0B]">
-            <div className="w-full pt-4 pb-8 md:pt-6 md:pb-12">
-              {/* Back + Header Actions */}
-              <div className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-0 flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
+            <div className="w-full pb-8 md:pb-12">
+              {/* BLOCK 1: Back + Header Actions Bar */}
+              <div className="border-b border-neutral-200 dark:border-neutral-800 py-3.5 sm:py-4 px-4 sm:px-8 lg:px-16 xl:px-20 flex items-center justify-between w-full">
+                <div className="flex items-center gap-3.5">
                   <Link
                     to="/resources"
                     className={cn(
@@ -214,7 +222,7 @@ export default function ResourceDetail() {
                     />
                   </Link>
                   {data.type?.name && (
-                    <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 select-none">
+                    <span className="text-sm font-normal text-neutral-900 dark:text-neutral-100 select-none">
                       {data.type.name}
                     </span>
                   )}
@@ -256,8 +264,8 @@ export default function ResourceDetail() {
                 </div>
               </div>
 
-              {/* Title Header */}
-              <div ref={titleRef} className="px-4 sm:px-8 lg:px-16 xl:px-20 pt-3 pb-6">
+              {/* BLOCK 2: Title — scroll start anchor */}
+              <div ref={titleRef} className="px-4 sm:px-8 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10">
                 <h1 className="font-serif-attio text-4xl md:text-5xl lg:text-6xl font-medium text-black dark:text-white leading-tight tracking-tight">
                   {data.title}
                 </h1>
