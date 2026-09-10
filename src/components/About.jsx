@@ -4,7 +4,6 @@ import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import Navbar from "./Navbar";
 import FooterReveal from "./FooterReveal";
 import { RollingText } from "./magicui/RollingText";
-import { ProgressiveBlur } from "./magicui/ProgressiveBlur";
 import { Tilt } from "./core/tilt";
 import { BorderTrail } from "./core/border-trail";
 import { Button } from "@/components/ui/button";
@@ -393,8 +392,15 @@ function RollingTestimonials({ testimonials }) {
   return (
     <div className="relative">
       <div
-        className="overflow-hidden max-h-[460px] select-none"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="overflow-hidden max-h-[460px] select-none [--mask-h:48px] md:[--mask-h:80px] lg:[--mask-h:110px]"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, black var(--mask-h), black calc(100% - var(--mask-h)), transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent 0%, black var(--mask-h), black calc(100% - var(--mask-h)), transparent 100%)",
+        }}
       >
         <div className="animate-roll-testimonials flex flex-col">
           {/* First set of testimonials */}
@@ -412,12 +418,9 @@ function RollingTestimonials({ testimonials }) {
         </div>
       </div>
 
-      {/* Progressive Blur Overlays */}
-      <ProgressiveBlur direction="top" className="h-16 pointer-events-none" />
-      <ProgressiveBlur
-        direction="bottom"
-        className="h-16 pointer-events-none"
-      />
+      {/* Progressive Blur / Gradient Overlays */}
+      <div className="pointer-events-none absolute top-0 left-0 right-0 h-12 md:h-20 lg:h-28 z-10 bg-gradient-to-b from-[#FAF8F5] via-[#FAF8F5]/60 to-transparent dark:from-[#0A0A0B] dark:via-[#0A0A0B]/60 dark:to-transparent" />
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 md:h-20 lg:h-28 z-10 bg-gradient-to-t from-[#FAF8F5] via-[#FAF8F5]/60 to-transparent dark:from-[#0A0A0B] dark:via-[#0A0A0B]/60 dark:to-transparent" />
     </div>
   );
 }
@@ -510,10 +513,10 @@ export default function About() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <h1 className="font-serif-attio text-[30px] sm:text-[36px] lg:text-[46px] leading-tight text-black dark:text-white">
+                      <h1 className="text-3xl font-semibold leading-tight text-black dark:text-white">
                         Alifia Hamzah
                       </h1>
-                      <p className="text-base sm:text-lg text-neutral-500 dark:text-neutral-400 font-light">
+                      <p className="text-base text-neutral-500 dark:text-neutral-400 font-light">
                         Enterprise Product Designer
                       </p>
                     </div>
@@ -571,7 +574,7 @@ export default function About() {
                             : "twemoji:flag-indonesia";
                           const itemContent = (
                             <div className="group grid grid-cols-[60px_1fr] sm:grid-cols-[64px_2fr_1.2fr] lg:grid-cols-[80px_2.2fr_1.3fr] py-3 border-b border-neutral-100/50 dark:border-neutral-900/50 cursor-pointer gap-x-3 gap-y-1 sm:gap-4 items-start sm:items-center">
-                              <span className="text-sm font-mono text-neutral-400 dark:text-neutral-600 col-start-1 col-span-1">
+                              <span className="text-sm font-mono text-neutral-400 dark:text-neutral-500 col-start-1 col-span-1">
                                 {showYear ? item.year : ""}
                               </span>
                               <div className="col-start-2 col-span-1 flex items-center gap-2.5 min-w-0 transition-all duration-300 group-hover:pl-4">
@@ -645,7 +648,7 @@ export default function About() {
 
                           const itemContent = (
                             <div className="group grid grid-cols-[60px_1fr] sm:grid-cols-[64px_2fr_1.2fr] lg:grid-cols-[80px_2.2fr_1.3fr] py-3 border-b border-neutral-100/50 dark:border-neutral-900/50 cursor-pointer gap-x-3 gap-y-1 sm:gap-4 items-start sm:items-center">
-                              <span className="text-sm font-mono text-neutral-400 dark:text-neutral-600 col-start-1 col-span-1">
+                              <span className="text-sm font-mono text-neutral-400 dark:text-neutral-500 col-start-1 col-span-1">
                                 {showYear ? item.year : ""}
                               </span>
                               <div className="col-start-2 col-span-1 flex items-center gap-2.5 min-w-0 transition-all duration-300 group-hover:pl-4">
@@ -710,7 +713,7 @@ export default function About() {
                             : "twemoji:flag-indonesia";
                           const itemContent = (
                             <div className="group grid grid-cols-[60px_1fr] sm:grid-cols-[64px_2fr_1.2fr] lg:grid-cols-[80px_2.2fr_1.3fr] py-3 border-b border-neutral-100/50 dark:border-neutral-900/50 cursor-pointer gap-x-3 gap-y-1 sm:gap-4 items-start sm:items-center">
-                              <span className="text-sm font-mono text-neutral-400 dark:text-neutral-600 col-start-1 col-span-1">
+                              <span className="text-sm font-mono text-neutral-400 dark:text-neutral-500 col-start-1 col-span-1">
                                 {showYear ? item.year : ""}
                               </span>
                               <div className="col-start-2 col-span-1 flex items-center gap-2.5 min-w-0 transition-all duration-300 group-hover:pl-4">
@@ -779,7 +782,7 @@ export default function About() {
                             idx === 0 || EDUCATION[idx - 1].year !== item.year;
                           const itemContent = (
                             <div className="group grid grid-cols-[60px_1fr] sm:grid-cols-[64px_2fr_1.2fr] lg:grid-cols-[80px_2.2fr_1.3fr] py-3 border-b border-neutral-100/50 dark:border-neutral-900/50 cursor-pointer gap-x-3 gap-y-1 sm:gap-4 items-start sm:items-center">
-                              <span className="text-sm font-mono text-neutral-400 dark:text-neutral-600 col-start-1 col-span-1">
+                              <span className="text-sm font-mono text-neutral-400 dark:text-neutral-500 col-start-1 col-span-1">
                                 {showYear ? item.year : ""}
                               </span>
                               <div className="col-start-2 col-span-1 flex items-center gap-2.5 min-w-0 transition-all duration-300 group-hover:pl-4">
@@ -835,11 +838,11 @@ export default function About() {
                       community, discussing workflow solutions, and sharing
                       insights about enterprise product design.
                     </p>
-                    <div className="flex flex-row md:justify-center justify-start items-center -space-x-8 md:-space-x-12 pt-16 pb-12 w-full overflow-x-auto md:overflow-x-visible select-none scrollbar-none px-10 md:px-0">
+                    <div className="flex flex-row md:justify-center justify-start items-center -space-x-5 sm:-space-x-6 md:-space-x-7 lg:-space-x-6 xl:-space-x-7 2xl:-space-x-8 pt-14 pb-10 sm:pt-16 sm:pb-12 w-full max-w-full overflow-x-auto select-none scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-6 md:px-0">
                       {COMMUNITY_PHOTOS.map((photo) => (
                         <div
                           key={photo.id}
-                          className={`group relative flex-shrink-0 w-[145px] sm:w-[155px] md:w-[165px] bg-white dark:bg-zinc-900 border border-neutral-200/80 dark:border-zinc-800 rounded-sm p-2 pb-8 sm:p-2.5 sm:pb-10 md:p-3 md:pb-12 shadow-md hover:shadow-xl dark:shadow-black/40 transition-all duration-300 ease-out cursor-pointer hover:scale-[1.05] hover:-translate-y-3 hover:z-30 ${photo.rotation}`}
+                          className={`group relative flex-shrink-0 w-[125px] sm:w-[130px] md:w-[135px] lg:w-[110px] xl:w-[130px] 2xl:w-[145px] bg-white dark:bg-zinc-900 border border-neutral-200/80 dark:border-zinc-800 rounded-sm p-2 pb-7 sm:p-2.5 sm:pb-9 md:p-2.5 md:pb-10 lg:p-2 lg:pb-8 xl:p-2.5 xl:pb-10 2xl:p-3 2xl:pb-12 shadow-md hover:shadow-xl dark:shadow-black/40 transition-all duration-300 ease-out cursor-pointer hover:scale-[1.05] hover:-translate-y-3 hover:z-30 ${photo.rotation}`}
                         >
                           {/* Bubble Chat Tooltip */}
                           <div className="absolute bottom-[104%] left-1/2 -translate-x-1/2 opacity-0 translate-y-1 pointer-events-none transition-all duration-250 group-hover:opacity-100 group-hover:translate-y-0 z-50 select-none">

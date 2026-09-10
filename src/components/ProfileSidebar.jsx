@@ -181,14 +181,15 @@ export default function ProfileSidebar() {
 
             {/* Sapaan */}
             <div>
-              <h1 className="font-serif-attio text-[30px] leading-tight text-black dark:text-white">
+              <h1 className="font-serif-attio text-3xl leading-tight text-black dark:text-white">
                 I'm Hamzah, Your Design Partner.
               </h1>
             </div>
 
             {/* Bio */}
             <p className="text-base leading-6 text-primary-body font-normal">
-              Helping companies build scalable enterprise tools with a story-data approach
+              Helping companies build scalable enterprise tools with a
+              story-data approach
             </p>
           </div>
 
@@ -259,7 +260,11 @@ export default function ProfileSidebar() {
                     <div className="w-[110px] h-[48px] flex items-center justify-end">
                       <img
                         src={currentTestimonial.logoUrl}
-                        alt={currentTestimonial.name ? `${currentTestimonial.name} company logo` : "Client company logo"}
+                        alt={
+                          currentTestimonial.name
+                            ? `${currentTestimonial.name} company logo`
+                            : "Client company logo"
+                        }
                         className="max-h-8 sm:max-h-9 max-w-full object-contain dark:grayscale dark:invert transition-all duration-300"
                       />
                     </div>
