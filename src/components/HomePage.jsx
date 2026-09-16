@@ -15,7 +15,7 @@ export default function HomePage() {
       className="min-h-screen bg-[#F2F0EB] dark:bg-[#080809] text-app-main transition-colors duration-300 selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-black"
     >
       <PageMeta
-        title="Alifia Hamzah — Product Designer | Portfolio"
+        title="Alifia Hamzah - Product Designer"
         description="Product Designer specializing in data-driven enterprise tools. Explore case studies, UI/UX explorations, and design systems crafted with a story-data approach."
         keywords="Alifia Hamzah, Alifia Hamzah Product Designer, Alifia Hamzah UI/UX Designer, Alif Designer, Hamzah Design, Hamzah Designer, Alif Hamzah, Hamzah Alifia, Hamzah Alif, Hamzah Alif Design, Hamzah Alif UI/UX Designer, Hamzah Alif Product Designer, Hamzah Alifia Hamzah, Alifia Hamzah Indonesia, Alifia Hamzah Bandung, Alifia Hamzah BWA, Alifia Hamzah Neuron, Alifia Hamzah Neuronworks, Hamzah Neuronworks, Hamzah Neuronworks Indonesia, Hamzah Catalyst Team, Hamzah The Catalyst Team, Hamzah CTC, Hamzah Upwork, Hamzah Contra, Hamzah Freelancer Upwork"
         schema={{

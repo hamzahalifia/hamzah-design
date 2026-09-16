@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
 export default function PageMeta({
-  title = 'Alifia Hamzah — Product Designer',
+  title = 'Alifia Hamzah - Product Designer',
   description = 'Portfolio of Alifia Hamzah, Product Designer specializing in data-driven enterprise tools and story-data approach.',
   keywords = 'product designer, UI/UX, portfolio, enterprise design, data-driven, Alifia Hamzah',
   ogImage = 'https://hamzah.design/images/general/og-image.png',
