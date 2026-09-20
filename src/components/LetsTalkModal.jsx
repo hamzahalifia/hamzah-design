@@ -88,7 +88,7 @@ export default function LetsTalkModal({ isOpen, onClose }) {
 
                 {/* Heading + subtitle */}
                 <div className="space-y-1 pt-1">
-                  <h3 className="font-serif-attio text-[30px] leading-tight text-primary-title">
+                  <h3 className="font-sans font-semibold text-[28px] sm:text-[30px] leading-tight tracking-tight text-primary-title">
                     Let's Talk
                   </h3>
                   <p className="text-base leading-6 text-primary-body font-normal">

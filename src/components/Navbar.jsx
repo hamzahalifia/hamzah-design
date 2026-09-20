@@ -3,11 +3,9 @@ import { Link, NavLink } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../context/ThemeContext";
-import { isSoundEnabled, setSoundEnabled } from "../lib/sound";
 import { fetchResourceTypes } from "../lib/cmsendpoint";
 
 import { RollingText } from "./magicui/RollingText";
-import AnimatedThemeToggler from "./magicui/AnimatedThemeToggler";
 
 const fallbackCategories = [
   { name: "UI Kits", slug: "ui-kit", icon: "solar:widget-5-linear" },
@@ -54,7 +52,6 @@ export default function Navbar({ hideNavLinks = false }) {
   const { theme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [cmsCategories, setCmsCategories] = useState([]);
 
   useEffect(() => {
@@ -74,12 +71,6 @@ export default function Navbar({ hideNavLinks = false }) {
   const displayCategories = (
     cmsCategories.length > 0 ? cmsCategories : fallbackCategories
   ).slice(0, 6);
-
-  const toggleSound = () => {
-    const newState = !soundOn;
-    setSoundOn(newState);
-    setSoundEnabled(newState);
-  };
 
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const closeMobileMenu = () => setMobileMenuOpen(false);
@@ -183,7 +174,9 @@ export default function Navbar({ hideNavLinks = false }) {
                   }`
                 }
               >
-                <RollingText className="whitespace-nowrap">Exploration</RollingText>
+                <RollingText className="whitespace-nowrap">
+                  Exploration
+                </RollingText>
               </NavLink>
 
               {/* Resources Mega Menu Trigger */}
@@ -202,7 +195,9 @@ export default function Navbar({ hideNavLinks = false }) {
                     }`
                   }
                 >
-                  <RollingText className="whitespace-nowrap">Resources</RollingText>
+                  <RollingText className="whitespace-nowrap">
+                    Resources
+                  </RollingText>
                   <Icon
                     icon="solar:alt-arrow-down-linear"
                     className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
@@ -225,30 +220,32 @@ export default function Navbar({ hideNavLinks = false }) {
                           : "bg-[#FAF8F5] text-neutral-900"
                       }`}
                     >
-                      <div className="w-full max-w-[1440px] px-4 sm:px-8 flex items-center justify-center">
-                        <div className="flex items-center justify-center gap-3.5 sm:gap-4 max-w-full">
-                          
+                      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex flex-col md:flex-row lg:grid lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6 w-full items-center">
                           {/* Categories: 3 Columns x 2 Rows Grid */}
-                          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+                          <div className="grid grid-cols-3 grid-rows-2 gap-2.5 sm:gap-3 flex-1 min-w-0 w-full h-[194px] sm:h-[212px]">
                             {displayCategories.map((cat) => (
                               <Link
                                 key={cat.slug || cat.id}
                                 to={`/resources?type=${cat.slug}`}
                                 onClick={() => setMegaMenuOpen(false)}
-                                className={`group relative flex flex-col items-center justify-center w-[135px] sm:w-[155px] md:w-[165px] h-[92px] sm:h-[100px] rounded-xl border transition-all duration-200 text-center cursor-pointer ${
+                                className={`group relative flex flex-col items-center justify-center w-full h-full rounded-xl border transition-all duration-200 text-center cursor-pointer ${
                                   theme === "dark"
                                     ? "bg-[#141416] hover:bg-[#1A1A1D] border-neutral-800/90 hover:border-neutral-700 text-neutral-200 hover:text-white hover:shadow-lg hover:shadow-black/20"
                                     : "bg-white hover:bg-neutral-50/80 border-neutral-200/80 hover:border-neutral-300 hover:shadow-sm text-neutral-800 hover:text-black"
                                 }`}
                               >
                                 <div
-                                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-200 shadow-xs ${
+                                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform duration-200 shadow-xs ${
                                     theme === "dark"
                                       ? "bg-[#202024] border-neutral-700/60 text-neutral-200 group-hover:text-white"
                                       : "bg-neutral-100/80 border-neutral-200/70 text-neutral-700 group-hover:text-black"
                                   }`}
                                 >
-                                  {renderCategoryIcon(cat, "w-4.5 h-4.5 sm:w-5 sm:h-5")}
+                                  {renderCategoryIcon(
+                                    cat,
+                                    "w-4.5 h-4.5 sm:w-5 sm:h-5",
+                                  )}
                                 </div>
                                 <span className="text-xs sm:text-[13px] font-medium transition-colors leading-tight line-clamp-1 px-2">
                                   {cat.name}
@@ -257,8 +254,8 @@ export default function Navbar({ hideNavLinks = false }) {
                             ))}
                           </div>
 
-                          {/* Right Column: Matched Height Promo Card (Opens UI8 Team Link) */}
-                          <div className="h-[194px] sm:h-[212px] aspect-square flex-shrink-0">
+                          {/* Right Column: Promo Card (1:1 aspect-square on md, expands to 50% grid on lg) */}
+                          <div className="h-[194px] sm:h-[212px] aspect-square flex-shrink-0 lg:aspect-auto lg:w-full lg:flex-1 min-w-0">
                             <a
                               href="https://ui8.net/users/onfire-studio"
                               target="_blank"
@@ -270,14 +267,31 @@ export default function Navbar({ hideNavLinks = false }) {
                                   : "border-neutral-200/80 bg-white hover:border-neutral-300"
                               }`}
                             >
+                              {/* 1:1 Promo Banner for md screens (tablet / small desktop before mobile) */}
                               <img
                                 src="/images/general/mega_menu_promo.webp"
                                 alt="Team Promo"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-auto select-none"
+                                className="block lg:hidden w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-auto select-none"
                               />
+
+                              {/* Widescreen 2-layer Banner for lg+ screens */}
+                              <div className="hidden lg:block absolute inset-0 w-full h-full">
+                                {/* Layer 1: Background Image (Person & Room, fills and anchors to right) */}
+                                <img
+                                  src="/images/general/megamenu_backads.webp"
+                                  alt="Team Promo Background"
+                                  className="absolute inset-0 w-full h-full object-cover object-right group-hover:scale-105 transition-transform duration-700 pointer-events-auto select-none"
+                                />
+
+                                {/* Layer 2: Foreground 1:1 CTA Text (Flush to top, left, bottom) */}
+                                <img
+                                  src="/images/general/front-ads.svg"
+                                  alt="Team Promo Content"
+                                  className="absolute inset-y-0 left-0 z-10 h-full w-auto aspect-square object-cover object-left pointer-events-auto select-none"
+                                />
+                              </div>
                             </a>
                           </div>
-
                         </div>
                       </div>
                     </motion.div>
@@ -286,21 +300,6 @@ export default function Navbar({ hideNavLinks = false }) {
               </div>
             </nav>
           )}
-
-          {/* Sound Toggle Button */}
-          <button
-            onClick={toggleSound}
-            aria-label="Toggle Sound"
-            className="w-10 h-10 flex items-center justify-center rounded-full text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 cursor-pointer touch-manipulation"
-          >
-            <Icon
-              icon={soundOn ? "pixel:sound-on-solid" : "pixel:sound-mute-solid"}
-              className="w-5 h-5 text-neutral-700 dark:text-neutral-200"
-            />
-          </button>
-
-          {/* Animated Theme Toggle Button */}
-          <AnimatedThemeToggler />
 
           {/* Mobile Hamburger Menu Button */}
           {!hideNavLinks && (

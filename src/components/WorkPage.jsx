@@ -180,7 +180,7 @@ export default function WorkPage() {
 
                 <div className="relative z-10 space-y-4">
                   <div>
-                    <h1 className="font-serif-attio text-[30px] sm:text-[36px] lg:text-[46px] leading-tight text-black dark:text-white">
+                    <h1 className="font-sans font-bold text-[30px] sm:text-[36px] lg:text-[46px] leading-tight tracking-tight text-black dark:text-white">
                       Work
                     </h1>
                     <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">

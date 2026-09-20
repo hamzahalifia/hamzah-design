@@ -66,7 +66,7 @@ export default class ErrorBoundary extends React.Component {
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
-              className="font-serif-attio text-[36px] sm:text-[48px] leading-tight mb-4"
+              className="font-sans font-bold text-[36px] sm:text-[48px] leading-tight tracking-tight mb-4"
             >
               Something broke
             </motion.h1>

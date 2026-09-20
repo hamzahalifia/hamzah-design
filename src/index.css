@@ -245,7 +245,7 @@
   }
 
   .font-serif-attio {
-    font-family: "Geist Pixel", sans-serif;
+    font-family: var(--font-sans, "Inter", sans-serif);
     font-size: clamp(1.875rem, 1.25rem + 2vw, 3rem);
   }
 

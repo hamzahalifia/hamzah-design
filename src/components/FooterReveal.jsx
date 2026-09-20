@@ -93,7 +93,7 @@ export default function FooterReveal() {
             <div className="relative z-20 w-full flex flex-col items-center justify-start justify-center text-center p-0 pointer-events-none my-0 my-auto">
               <div className="space-y-[24px] pointer-events-auto flex flex-col items-center">
                 <h2 className="text-[30px] sm:text-[36px] lg:text-[64px] leading-tight text-neutral-900 dark:text-white flex flex-col items-center">
-                  <span className="block font-geist-regular">
+                  <span className="block font-sans font-semibold tracking-tight">
                     Less distraction,
                   </span>
                   <DynamicWeight

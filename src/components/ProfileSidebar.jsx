@@ -181,7 +181,7 @@ export default function ProfileSidebar() {
 
             {/* Sapaan */}
             <div>
-              <h1 className="font-serif-attio text-3xl leading-tight text-black dark:text-white">
+              <h1 className="font-sans font-semibold text-3xl leading-tight tracking-tight text-black dark:text-white">
                 I'm Hamzah, Your Design Partner.
               </h1>
             </div>

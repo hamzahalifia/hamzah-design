@@ -116,10 +116,10 @@ export default function WorkShowcase() {
       {loading && (
         <div className="divide-y divide-attio-border-light dark:divide-attio-border-dark">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="p-5 flex flex-col md:flex-row items-start justify-start gap-4">
-              <SkeletonLoader className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg flex-shrink-0" />
-              <div className="flex-1 flex flex-col items-start justify-start space-y-3 pt-0.5">
-                <SkeletonLoader className="w-3/4 h-5 rounded-md" />
+            <div key={i} className="p-5 flex flex-col xl:flex-row items-start justify-start gap-4 sm:gap-5">
+              <SkeletonLoader className="w-full xl:w-[320px] 2xl:w-[360px] h-[220px] sm:h-[260px] md:h-[280px] xl:h-[240px] 2xl:h-[260px] rounded-lg flex-shrink-0" />
+              <div className="w-full flex-1 flex flex-col items-start justify-start space-y-3 pt-0.5">
+                <SkeletonLoader className="w-3/4 h-6 rounded-md" />
                 <SkeletonLoader className="w-full h-4 rounded-md" />
                 <SkeletonLoader className="w-full h-4 rounded-md" />
                 <SkeletonLoader className="w-1/2 h-4 rounded-md" />
@@ -144,7 +144,7 @@ export default function WorkShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className={`p-5 flex flex-col md:flex-row items-start justify-start gap-4 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer ${index < works.length - 1 ? "border-b border-attio-border-light dark:border-attio-border-dark" : ""}`}
+              className={`p-5 flex flex-col xl:flex-row items-start justify-start gap-4 sm:gap-5 hover:bg-neutral-50/90 dark:hover:bg-neutral-900/50 transition-colors cursor-pointer ${index < works.length - 1 ? "border-b border-attio-border-light dark:border-attio-border-dark" : ""}`}
             >
               {/* Project Image Preview */}
               <div
@@ -153,7 +153,7 @@ export default function WorkShowcase() {
                   setCursorText(isExternal ? "Read Externally" : "Read Case Study");
                 }}
                 onMouseLeave={() => setIsCursorHovering(false)}
-                className="w-full md:w-[360px] h-[220px] md:h-[270px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative border border-attio-border-light dark:border-attio-border-dark"
+                className="w-full xl:w-[320px] 2xl:w-[360px] h-[220px] sm:h-[260px] md:h-[280px] xl:h-[240px] 2xl:h-[260px] rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex-shrink-0 relative border border-attio-border-light dark:border-attio-border-dark"
               >
                 {work.heroImage && (work.heroImage.endsWith(".mp4") || work.heroImage.toLowerCase().includes(".mp4")) ? (
                   <video
@@ -170,19 +170,19 @@ export default function WorkShowcase() {
                     alt={work.title || "Showcase case study"}
                     loading={index === 0 ? "eager" : "lazy"}
                     fetchpriority={index === 0 ? "high" : undefined}
-                    width={360}
-                    height={270}
+                    width={500}
+                    height={300}
                     className="w-full h-full object-cover transform-gpu will-change-transform pointer-events-auto"
                   />
                 )}
               </div>
 
               {/* Project Details */}
-              <div className="flex-1 flex flex-col items-start justify-start space-y-2.5 pt-0.5">
-                <h3 className="text-base font-semibold text-attio-text-primary-light dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
+              <div className="w-full flex-1 flex flex-col items-start justify-start space-y-2 sm:space-y-2.5 pt-1 xl:pt-0.5">
+                <h3 className="text-lg sm:text-xl xl:text-lg font-semibold text-attio-text-primary-light dark:text-neutral-100 leading-snug group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
                   <span>{work.title}</span>
                 </h3>
-                <p className="text-sm font-normal text-attio-text-secondary-light dark:text-neutral-400 leading-relaxed line-clamp-3">
+                <p className="text-sm sm:text-[15px] xl:text-sm font-normal text-attio-text-secondary-light dark:text-neutral-400 leading-relaxed line-clamp-3">
                   {work.description}
                 </p>
               </div>

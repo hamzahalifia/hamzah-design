@@ -266,7 +266,7 @@ export default function ResourceDetail() {
 
               {/* BLOCK 2: Title — scroll start anchor */}
               <div ref={titleRef} className="px-4 sm:px-8 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10">
-                <h1 className="font-serif-attio text-4xl md:text-5xl lg:text-6xl font-medium text-black dark:text-white leading-tight tracking-tight">
+                <h1 className="font-sans text-4xl md:text-5xl lg:text-6xl font-semibold text-black dark:text-white leading-tight tracking-tight">
                   {data.title}
                 </h1>
               </div>
