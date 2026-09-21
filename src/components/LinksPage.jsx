@@ -137,7 +137,7 @@ export default function LinksPage() {
 
       if (response.result === "success") {
         setEmailInput("");
-        toast.success("Thank you for subscribing! Check your inbox.");
+        toast.success("Thank you for subscribing!");
       } else {
         const cleanMsg = response.msg
           ? response.msg.replace(/<[^>]*>?/gm, "").trim()
