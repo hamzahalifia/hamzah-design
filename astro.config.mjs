@@ -7,7 +7,12 @@ import { fileURLToPath } from 'url';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://hamzah.design',
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    sitemap({
+      filter: (page) => !page.includes('/links'),
+    }),
+  ],
   server: {
     headers: {
       'Link': '</.well-known/api-catalog>; rel="api-catalog", </docs/api>; rel="service-doc"',

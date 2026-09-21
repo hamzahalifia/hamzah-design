@@ -17,6 +17,7 @@ const WorkDetail = lazy(() => import('./WorkDetail'));
 const ExplorationPage = lazy(() => import('./ExplorationPage'));
 const ResourcesPage = lazy(() => import('./ResourcesPage'));
 const ResourceDetail = lazy(() => import('./ResourceDetail'));
+const LinksPage = lazy(() => import('./LinksPage'));
 const NotFound = lazy(() => import('./NotFound'));
 
 function AppRoutes() {
@@ -49,6 +50,7 @@ function AppRoutes() {
         <Route path="/exploration/:slug" element={<ExplorationPage />} />
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/resources/:slug" element={<ResourceDetail />} />
+        <Route path="/links" element={<LinksPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

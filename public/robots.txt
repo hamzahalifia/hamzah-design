@@ -21,7 +21,9 @@ Allow: /
 User-agent: Omgili
 Allow: /
 
-# Disallow admin paths
+# Disallow admin & unlisted paths
 User-agent: *
 Disallow: /login
 Disallow: /admin/
+Disallow: /links
+Disallow: /links/

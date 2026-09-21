@@ -9,7 +9,8 @@ export async function getStaticPaths() {
     { params: { all: 'work' } },
     { params: { all: 'about' } },
     { params: { all: 'exploration' } },
-    { params: { all: 'resources' } }
+    { params: { all: 'resources' } },
+    { params: { all: 'links' } }
   ];
 
   try {
@@ -125,6 +126,9 @@ if (all) {
   } else if (all === 'resources') {
     seoTitle = 'Resources & Templates — Alifia Hamzah';
     seoDescription = 'Design systems, website templates, UI Kits, and components by Alifia Hamzah.';
+  } else if (all === 'links') {
+    seoTitle = 'Links — Alifia Hamzah';
+    seoDescription = 'Design links collection by Alifia Hamzah.';
   }
 }
 ---
@@ -137,6 +141,7 @@ if (all) {
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-friendly content summary" />
 		<link rel="alternate" type="text/markdown" href="/llms-full.txt" title="LLM-friendly full profile" />
+		{all === 'links' && <meta name="robots" content="noindex, nofollow, noarchive" />}
 		
 		<!-- Primary Meta -->
 		<title>{seoTitle}</title>
