@@ -2,6 +2,8 @@ import React from 'react';
 
 // Your ImageKit URL Endpoint
 const IMAGEKIT_ENDPOINT = 'https://ik.imagekit.io/nr1gjsmwr/';
+// Set to false to temporarily stop ImageKit (e.g. while resolving regional DNS block) without deleting config
+const ENABLE_IMAGEKIT = false;
 const DEFAULT_CMS_BASE = 'https://hamzah-design-cms.vercel.app';
 
 function sanitizeCmsUrl(url = '') {
@@ -60,14 +62,15 @@ const OptimizedImage = ({
   ...props
 }) => {
   const effectiveFetchPriority = fetchPriority || fetchpriority;
+  const effectiveLoading = effectiveFetchPriority === 'high' ? 'eager' : loading;
   const sanitizedSrc = sanitizeCmsUrl(src);
   if (!sanitizedSrc) {
     return null;
   }
 
-  // If the src is not from our CMS, use it as is (e.g., local images, SVGs).
+  // If ImageKit is disabled or src is not from our CMS, use it directly (e.g., local images, SVGs).
   const optimizableBases = getOptimizableBases();
-  const shouldOptimize = optimizableBases.some((base) => sanitizedSrc.startsWith(base));
+  const shouldOptimize = ENABLE_IMAGEKIT && optimizableBases.some((base) => sanitizedSrc.startsWith(base));
 
   if (!shouldOptimize) {
     return (
@@ -77,7 +80,7 @@ const OptimizedImage = ({
         width={width}
         height={height}
         className={className}
-        loading={loading}
+        loading={effectiveLoading}
         fetchPriority={effectiveFetchPriority}
         {...props}
       />
@@ -112,9 +115,6 @@ const OptimizedImage = ({
   const transformation = `tr:f-auto,q-auto,w-auto,dpr-auto`;
 
   const optimizedSrc = `${IMAGEKIT_ENDPOINT}${transformation}${imagePath}${search}`;
-
-  // For LCP elements, we must use 'eager' loading, not 'lazy'.
-  const effectiveLoading = effectiveFetchPriority === 'high' ? 'eager' : loading;
 
   return (
     <img
