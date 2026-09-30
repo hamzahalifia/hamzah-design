@@ -157,6 +157,12 @@ function ExplorationCard({ exp, isHovering, onHoverChange, targetRef }) {
           alt={exp.title || "Exploration media"}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
+          decoding="async"
+          onError={(e) => {
+            if (e.currentTarget.src.includes('?')) {
+              e.currentTarget.src = e.currentTarget.src.split('?')[0];
+            }
+          }}
         />
       </div>
 
@@ -452,6 +458,12 @@ export default function ExplorationPage() {
                                   alt={exp.title || "Exploration media"}
                                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                   loading="lazy"
+                                  decoding="async"
+                                  onError={(e) => {
+                                    if (e.currentTarget.src.includes('?')) {
+                                      e.currentTarget.src = e.currentTarget.src.split('?')[0];
+                                    }
+                                  }}
                                 />
 
                                 {/* Hover overlay */}

@@ -23,6 +23,7 @@ import ScrollProgress from "./ScrollProgress";
 import RelatedStudies from "./RelatedStudies";
 import VideoPopup from "./VideoPopup"; // Import VideoPopup
 import ReactPlayer from "react-player"; // For video embeds
+import OptimizedImage from "./OptimizedImage";
 import { RollingText } from "./magicui/RollingText";
 import { RainbowButton } from "./ui/rainbow-button";
 import SkeletonLoader from "./ui/SkeletonLoader";
@@ -494,10 +495,11 @@ export default function WorkDetail() {
 
               {/* Thumbnail */}
               <div className="relative aspect-video bg-neutral-100 dark:bg-neutral-900 border-y border-neutral-200 dark:border-neutral-800">
-                <img
+                <OptimizedImage
                   src={data.heroImage}
                   alt={data.title || "Case study hero image"}
                   className="w-full h-full object-cover"
+                  fetchPriority="high"
                 />
               </div>
 
@@ -595,6 +597,9 @@ export default function WorkDetail() {
                                   src={m.photo}
                                   alt={m.fullName || "Team member"}
                                   className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = "none";
+                                  }}
                                 />
                               </a>
                               {/* Tooltip */}

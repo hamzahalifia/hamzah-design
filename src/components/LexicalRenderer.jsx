@@ -253,6 +253,12 @@ function renderUploadNode(node, key, context) {
           !isGif && onImageClick ? 'cursor-zoom-in hover:opacity-95 transition-all duration-300 hover:shadow-md' : ''
         }`}
         loading="lazy" 
+        decoding="async"
+        onError={(e) => {
+          if (e.currentTarget.src.includes('?')) {
+            e.currentTarget.src = e.currentTarget.src.split('?')[0];
+          }
+        }}
         onClick={!isGif && onImageClick ? handleClick : undefined}
       />
       {value.alt ? <figcaption className="mt-3 text-center text-sm text-neutral-500 dark:text-neutral-400">{value.alt}</figcaption> : null}
