@@ -140,6 +140,26 @@ const SOCIAL_LINKS = [
 
 const EXPERIENCE = [
   {
+    role: "UI Designer",
+    company: "PT Bank Central Asia Tbk",
+    location: "Remote",
+    period: "Oct 2026 - Now",
+    year: "2026",
+    logo: "/images/experience/BCA.svg",
+    link: "https://www.bca.co.id",
+    dotColor: "bg-blue-500",
+  },
+  {
+    role: "UI Designer",
+    company: "PT Pilar Kreasi Digital (Paperpillar)",
+    location: "Remote",
+    period: "Oct 2026 - Now",
+    year: "2026",
+    logo: "/images/experience/paperpillar.svg",
+    link: "https://paperpillar.com",
+    dotColor: "bg-blue-500",
+  },
+  {
     role: "UI/UX Designer",
     company: "PT Neuronworks Indonesia",
     location: "Bandung, ID",
@@ -159,16 +179,16 @@ const EXPERIENCE = [
     link: "https://greatplaybookasia.framer.website/",
     dotColor: "bg-purple-500",
   },
-  {
-    role: "Product Designer",
-    company: "Freelancing",
-    location: "Remote",
-    period: "Sep 2022 - Now",
-    year: "2022",
-    logo: "/images/experience/freelance.svg",
-    link: "",
-    dotColor: "bg-emerald-500",
-  },
+  // {
+  //   role: "Product Designer",
+  //   company: "Freelancing",
+  //   location: "Remote",
+  //   period: "Sep 2022 - Now",
+  //   year: "2022",
+  //   logo: "/images/experience/freelance.svg",
+  //   link: "",
+  //   dotColor: "bg-emerald-500",
+  // },
   {
     role: "Sr. Graphic Designer",
     company: "PT Teknologi Mudah Terhubung",
