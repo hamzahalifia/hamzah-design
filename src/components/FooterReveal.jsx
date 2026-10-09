@@ -6,8 +6,8 @@ import { RollingText } from "./magicui/RollingText";
 import { RainbowButton } from "./ui/rainbow-button";
 import { SlidingNumber } from "./core/sliding-number";
 import LetsTalkModal from "./LetsTalkModal";
-import DynamicWeight from "./DynamicWeight";
 import AsciiBackground from "./AsciiBackground";
+import { RainbowText } from "./ui/rainbow-text";
 
 export default function FooterReveal() {
   const { theme } = useTheme();
@@ -96,18 +96,9 @@ export default function FooterReveal() {
                   <span className="block font-sans font-semibold tracking-tight">
                     Less distraction,
                   </span>
-                  <DynamicWeight
-                    label="More execution."
-                    fromWeight={500}
-                    toWeight={700}
-                    strength={40}
-                    transition={{
-                      type: "tween",
-                      duration: 0.3,
-                      ease: "easeOut",
-                    }}
-                    className="block font-sans text-[30px] sm:text-[36px] lg:text-[64px] leading-tight tracking-tight text-neutral-900 dark:text-white"
-                  />
+                  <RainbowText animated speed="4s" className="inline-block font-sans font-semibold tracking-tight">
+                    More execution.
+                  </RainbowText>
                 </h2>
                 <RainbowButton
                   onClick={() => setIsContactModalOpen(true)}

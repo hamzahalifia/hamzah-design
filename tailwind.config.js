@@ -84,6 +84,7 @@ export default {
         'shimmer-spin': 'shimmer-spin 3s linear infinite',
         'shimmer-slide': 'shimmer-slide 3s ease-in-out infinite alternate',
         'rainbow': 'rainbow var(--speed, 2s) infinite linear',
+        'rainbow-sweep': 'rainbow-sweep var(--speed, 4s) linear infinite',
       },
       keyframes: {
         'shimmer-spin': {
@@ -97,6 +98,10 @@ export default {
         'rainbow': {
           '0%': { 'background-position': '0%' },
           '100%': { 'background-position': '200%' },
+        },
+        'rainbow-sweep': {
+          '0%, 10%': { 'background-position': '100% 0' },
+          '90%, 100%': { 'background-position': '0% 0' },
         },
       },
       screens: {
