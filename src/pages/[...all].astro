@@ -50,6 +50,7 @@ export async function getStaticPaths() {
 }
 
 const { all } = Astro.params;
+const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
 let seoTitle = 'Alifia Hamzah - Product Designer';
 let seoDescription = 'Portfolio of Alifia Hamzah, Senior Product & Mobile App Designer specializing in data-driven enterprise platforms and iOS/Android applications.';
@@ -166,13 +167,17 @@ if (all) {
 		<meta name="twitter:image" content={ogImage} />
 		<meta name="twitter:creator" content="@hamzahalifia" />
 
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-TVV6202JTF"></script>
-		<script is:inline>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'G-TVV6202JTF');
-		</script>
+		{gaId && (
+			<>
+				<script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+				<script is:inline define:vars={{ gaId }}>
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+					gtag('config', gaId);
+				</script>
+			</>
+		)}
 	</head>
 	<body>
 		<div id="root">
